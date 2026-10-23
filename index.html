@@ -1750,6 +1750,7 @@ function exitDemo(){
 
 /* ================= v1.4.1: all remaining tools (Sessions 6–18) + LEARN cards 6–18 ================= */
 const TOOL_SCREENS={}, TOOL_WIRE={};
+/* (v1.4.1b) */
 /* shared shell: header, indicator strip, 1-2-3 guide, body, AI Try box, real-school line, digital/paper */
 function shell(id,steps,body,real){
   const t=TOOLS.find(x=>x.id===id), a=AITRY[t.s]||{};
@@ -2283,7 +2284,10 @@ function wireMentor(){
       `Present: ${nm.filter(n=>truthy((b[n]||{}).att)).length} of ${nm.length}`,`Mini-Teach turns done: ${nm.filter(n=>truthy((b[n]||{}).mt)).length}`,
       `Tasks done:`,...tk.map(t=>`  ${t.t}: ${pc(t.k)}%`),`Agency moments saved: ${nm.filter(n=>(b[n]||{}).agency).length}`,`Positive notes:`,grp("P"),`Needs work:`,grp("N"),`Other notes:`,grp("O"),`(Codes S1–S${nm.length} only.)`].join("\n"))};
   const showCounts=d=>{const el=$("#mCnt"); if(!el) return;
-    if(!d||!Object.keys(d).length){el.innerHTML=`<p class="small muted">No tool use yet.</p>`;return}
+    if(d===null){el.innerHTML=`<p class="small warn">The app could not read the tool list from the Sheet.</p><button class="btn alt" id="mDiag">${ic("search","sm")}Show the Sheet answer</button><pre id="mDiagOut" class="out small" style="white-space:pre-wrap;overflow-wrap:anywhere" hidden></pre>`;
+      $("#mDiag").onclick=async()=>{const o=$("#mDiagOut");o.hidden=false;o.textContent="Asking the Sheet…";
+        try{const r=await fetch(SHEET_URL+`?a=counts&c=${enc(cc)}`);const t=await r.text();o.textContent=`Status ${r.status}\nClass: ${cc}\n`+t.slice(0,400)}catch(e){o.textContent="No answer: "+e.message}};return}
+    if(!Object.keys(d).length){el.innerHTML=`<p class="small muted">No tool use yet for <b>${esc(cc)}</b>. It fills when students open tools from the GitHub link.</p>`;return}
     const rows=Object.entries(d).map(([k,v])=>[(TOOLS.find(t=>t.id===k)||{}).t||({ai:"AI Try",hint:"Give me a hint",thanks:"Thank a classmate",report:"Report a problem"}[k]||k),v.n,v.students]).sort((a,b)=>b[1]-a[1]);
     el.innerHTML=`<div class="gridwrap"><table style="min-width:320px"><tr><th>Tool</th><th>Uses</th><th>Students</th></tr>${rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</table></div><p class="small muted">Students = how many different students (no names).</p>`;
     const cb=$("#mCntCopy");cb.hidden=false;cb.onclick=()=>copy(["Tool\tUses\tStudents",...rows.map(r=>r.join("\t"))].join("\n"),"Table copied. Paste it in Word or Excel.")};
