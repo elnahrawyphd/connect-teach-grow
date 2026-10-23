@@ -1,0 +1,33 @@
+{
+ "name": "Connect, Teach and Grow",
+ "short_name": "CTG",
+ "description": "A pocket toolkit for EFL student teachers.",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#e3f2ef",
+ "theme_color": "#14324a",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-180.png",
+   "sizes": "180x180",
+   "type": "image/png"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml"
+  }
+ ]
+}

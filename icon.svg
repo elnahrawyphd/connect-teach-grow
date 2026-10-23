@@ -1,0 +1,20 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><defs>
+  <linearGradient id="bgi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1c4a6e"/><stop offset="1" stop-color="#0c2a3a"/></linearGradient>
+  <radialGradient id="sTi" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#9fd0ff"/><stop offset=".55" stop-color="#3b8ee6"/><stop offset="1" stop-color="#1a4f94"/></radialGradient>
+  <radialGradient id="sPi" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#b6f2d2"/><stop offset=".55" stop-color="#34b878"/><stop offset="1" stop-color="#136b42"/></radialGradient>
+  <radialGradient id="sCi" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#ffe0bf"/><stop offset=".55" stop-color="#f28a2e"/><stop offset="1" stop-color="#a84c0c"/></radialGradient>
+  <radialGradient id="sGi" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff6cf"/><stop offset=".5" stop-color="#ffcc3d"/><stop offset="1" stop-color="#c98a00"/></radialGradient>
+  <radialGradient id="hli" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+  <radialGradient id="shi" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+  <rect width="512" height="512" rx="112" fill="url(#bgi)"/>
+  <polygon points="256.0,60.0 425.7,158.0 425.7,354.0 256.0,452.0 86.3,354.0 86.3,158.0" fill="none" stroke="#ffffff" stroke-opacity=".35" stroke-width="6" stroke-dasharray="14 12"/>
+  <line x1="256" y1="248" x2="256.0" y2="60.0" stroke="#ffffff" stroke-opacity=".5" stroke-width="6"/><line x1="256" y1="248" x2="425.7" y2="158.0" stroke="#ffffff" stroke-opacity=".5" stroke-width="6"/><line x1="256" y1="248" x2="425.7" y2="354.0" stroke="#ffffff" stroke-opacity=".5" stroke-width="6"/><line x1="256" y1="248" x2="256.0" y2="452.0" stroke="#ffffff" stroke-opacity=".5" stroke-width="6"/><line x1="256" y1="248" x2="86.3" y2="354.0" stroke="#ffffff" stroke-opacity=".5" stroke-width="6"/><line x1="256" y1="248" x2="86.3" y2="158.0" stroke="#ffffff" stroke-opacity=".5" stroke-width="6"/>
+  <ellipse cx="256" cy="420" rx="170" ry="26" fill="url(#shi)"/>
+  <circle cx="200" cy="212" r="104" fill="url(#sTi)" opacity=".93"/>
+  <circle cx="312" cy="212" r="104" fill="url(#sPi)" opacity=".9"/>
+  <circle cx="256" cy="306" r="104" fill="url(#sCi)" opacity=".9"/>
+  <ellipse cx="168" cy="166" rx="40" ry="24" fill="url(#hli)"/><ellipse cx="282" cy="166" rx="40" ry="24" fill="url(#hli)"/><ellipse cx="226" cy="262" rx="40" ry="24" fill="url(#hli)" opacity=".8"/>
+  <circle cx="256" cy="244" r="38" fill="url(#sGi)" stroke="#fff" stroke-width="7"/>
+  <ellipse cx="244" cy="230" rx="14" ry="9" fill="#fff" opacity=".8"/>
+  <circle cx="256.0" cy="60.0" r="27" fill="#ffffff"/><circle cx="256.0" cy="60.0" r="16" fill="#4aa3ff"/><circle cx="425.7" cy="158.0" r="27" fill="#ffffff"/><circle cx="425.7" cy="158.0" r="16" fill="#5fd69a"/><circle cx="425.7" cy="354.0" r="27" fill="#ffffff"/><circle cx="425.7" cy="354.0" r="16" fill="#ffb36b"/><circle cx="256.0" cy="452.0" r="27" fill="#ffffff"/><circle cx="256.0" cy="452.0" r="16" fill="#c597ea"/><circle cx="86.3" cy="354.0" r="27" fill="#ffffff"/><circle cx="86.3" cy="354.0" r="16" fill="#ffd35c"/><circle cx="86.3" cy="158.0" r="27" fill="#ffffff"/><circle cx="86.3" cy="158.0" r="16" fill="#5fd6d0"/>
+  <g font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="50" fill="#ffffff" text-anchor="middle"><text x="166" y="206">T</text><text x="346" y="206">P</text><text x="256" y="372">C</text></g></svg>
