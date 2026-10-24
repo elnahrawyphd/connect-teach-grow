@@ -676,7 +676,7 @@ let CFG = DEMO ? DEMO_CFG : store.get("cfg",{classes:{[DEFAULT_CLASS]:DEFAULT_NA
 let NET = DEMO ? false : null;            /* null = checking, true = Sheet connected, false = this device only */
 let mentorOn = DEMO;
 let ROUTE = "home";
-let SCRIPT_V=0;
+let SCRIPT_V=0, SHEET_COUNTS=null, SHEET_USAGE=null, SHEET_ERR="";
 const $ = s => document.querySelector(s);
 const esc = s => String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const enc = encodeURIComponent;
@@ -760,6 +760,7 @@ async function connect(){
       const nc={classes:c.classes,open:c.open||{},next:c.next||{}};
       const changed = JSON.stringify(nc)!==JSON.stringify(CFG);
       SCRIPT_V=Number(c.v)||2; CFG=nc; store.set("cfg",CFG);
+      SHEET_COUNTS=c.counts||null; SHEET_USAGE=c.usage||null; SHEET_ERR=c.err||"";
       setNet(true); flush();
       if(((changed && (ROUTE==="home"||ROUTE==="today")) || ROUTE==="mentor") && !(document.activeElement && document.activeElement.matches("input,textarea,select"))) render(ROUTE);
     } else setNet(false);
@@ -2286,14 +2287,18 @@ function wireMentor(){
   const showCounts=d=>{const el=$("#mCnt"); if(!el) return;
     if(d===null){el.innerHTML=`<p class="small warn">The app could not read the tool list from the Sheet.</p><button class="btn alt" id="mDiag">${ic("search","sm")}Show the Sheet answer</button><pre id="mDiagOut" class="out small" style="white-space:pre-wrap;overflow-wrap:anywhere" hidden></pre>`;
       $("#mDiag").onclick=async()=>{const o=$("#mDiagOut");o.hidden=false;o.textContent="Asking the Sheet…";
-        try{const r=await fetch(SHEET_URL+`?a=counts&c=${enc(cc)}`);const t=await r.text();o.textContent=`Status ${r.status}\nClass: ${cc}\n`+t.slice(0,400)}catch(e){o.textContent="No answer: "+e.message}};return}
+        const lines=[`Class: ${cc} · Script v${SCRIPT_V}${SHEET_ERR?" · "+SHEET_ERR:""}`];
+        for(const [n,q] of [["config","?a=config"],["ticks",`?a=ticks&c=${enc(cc)}&s=5`],["counts",`?a=counts&c=${enc(cc)}`]]){
+          try{const r=await fetch(SHEET_URL+q);const t=await r.text();lines.push(`${n}: OK ${r.status} · ${t.slice(0,80)}`)}catch(e){lines.push(`${n}: FAILED (${e.message})`)}}
+        o.textContent=lines.join("\n")};return}
     if(!Object.keys(d).length){el.innerHTML=`<p class="small muted">No tool use yet for <b>${esc(cc)}</b>. It fills when students open tools from the GitHub link.</p>`;return}
     const rows=Object.entries(d).map(([k,v])=>[(TOOLS.find(t=>t.id===k)||{}).t||({ai:"AI Try",hint:"Give me a hint",thanks:"Thank a classmate",report:"Report a problem"}[k]||k),v.n,v.students]).sort((a,b)=>b[1]-a[1]);
     el.innerHTML=`<div class="gridwrap"><table style="min-width:320px"><tr><th>Tool</th><th>Uses</th><th>Students</th></tr>${rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</table></div><p class="small muted">Students = how many different students (no names).</p>`;
     const cb=$("#mCntCopy");cb.hidden=false;cb.onclick=()=>copy(["Tool\tUses\tStudents",...rows.map(r=>r.join("\t"))].join("\n"),"Table copied. Paste it in Word or Excel.")};
-  if(DEMO) showCounts({abcd:{n:31,students:9},tasks:{n:58,students:9},samr:{n:17,students:7},growth:{n:22,students:8},agency:{n:12,students:6},ai:{n:9,students:5},hint:{n:14,students:6}});
+  if(!DEMO && SHEET_COUNTS) showCounts(SHEET_COUNTS[cc]||{});
+  else if(DEMO) showCounts({abcd:{n:31,students:9},tasks:{n:58,students:9},samr:{n:17,students:7},growth:{n:22,students:8},agency:{n:12,students:6},ai:{n:9,students:5},hint:{n:14,students:6}});
   else if(SCRIPT_V>=4) loadCounts(cc).then(showCounts);
-  if(SCRIPT_V>=3 && !DEMO) loadUsage(cc).then(d=>{const el=$("#mOth"); if(!el) return;
+  if(SCRIPT_V>=3 && !DEMO) (SHEET_USAGE?Promise.resolve(SHEET_USAGE[cc]||{}):loadUsage(cc)).then(d=>{const el=$("#mOth"); if(!el) return;
     if(!d||!Object.keys(d).length){el.innerHTML=`<p class="small muted">No own words yet.</p>`;return}
     el.innerHTML=Object.entries(d).map(([k,list])=>`<p class="small"><b>${esc(OTHER_NAMES[k]||k)}:</b> ${list.map(([v,c])=>`${esc(v)} (${c})`).join(" · ")}</p>`).join("")});
   if(DEMO){const el=$("#mOth");if(el)el.innerHTML=`<p class="small"><b>ABCD · Verb:</b> point and say (3) · act out the words (2)</p><p class="small"><b>SAMR · Tool:</b> Wordwall (2)</p>`}
