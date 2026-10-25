@@ -292,7 +292,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"1.4.4", updated:"25 Oct 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"1.4.5", updated:"25 Oct 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 /* Google Sheet data link (Apps Script web app). Leave "" to keep everything on the device. */
@@ -315,7 +315,6 @@ const LINKS = [
   {t:"Our Team (Teams)", u:"https://teams.microsoft.com/l/team/19%3AnuKR0HxBzVMhMnvrzKziSlakN7mdEzHCbwNsC9921_81%40thread.tacv2/conversations?groupId=18826b72-07b2-4429-963f-6a3e9d4ba19c&tenantId=de3ab106-64d5-41aa-93e2-f615f3359099", ic:"teams"},
   {t:"Our PLN (Padlet)", u:"https://padlet.com/wallaismail82/our-pln-share-learn-connect-s0244rqrpdq9757hptj4", ic:"padlet"},
   {t:"Activities & Questions", u:"https://teams.microsoft.com/l/channel/19%3A4de369e3644b41cd8d34ac7a31d4b9c2%40thread.tacv2/%F0%9F%92%AC%20Activities%2C%20Questions%20and%20Clarifications?groupId=18826b72-07b2-4429-963f-6a3e9d4ba19c&tenantId=de3ab106-64d5-41aa-93e2-f615f3359099", ic:"chat"},
-  {t:"Reflective Journals", u:"https://teams.microsoft.com/l/channel/19%3Ac05b6f25ff44462bb4dd281524867fe4%40thread.tacv2/%F0%9F%93%9D%20Reflective%20Journals?groupId=18826b72-07b2-4429-963f-6a3e9d4ba19c&tenantId=de3ab106-64d5-41aa-93e2-f615f3359099", ic:"journal"},
   {t:"Three Takeaways", u:"https://forms.cloud.microsoft/r/ZjSZqK6szd?origin=lprLink", ic:"form"},
   {t:"Weekly Journal", u:"https://forms.cloud.microsoft/r/Gr7DfGJx0v?origin=lprLink", ic:"journal"},
   {t:"Monthly Journal", u:"https://forms.cloud.microsoft/r/Gi33RdAtFw?origin=lprLink", ic:"journal"},
@@ -971,8 +970,8 @@ function topbar(){
   <button class="ghost ${big?"on":""}" data-bigtext aria-pressed="${big}" aria-label="Large text" title="Large text">${ic("size","sm")}<span class="gt">A+</span></button>
   <button class="ghost" data-go="mentor" aria-label="${MENTOR.name}">${ic("key","sm")}<span class="gt">${mentorOn&&!DEMO?"● ":""}${MENTOR.name}</span></button></div></div>`}
 function backBtn(to="home",t="Home"){return `<button class="back noprint" data-go="${to}">${ic("left","sm")}${t}</button>`}
-const LKC={"Our Team (Teams)":"plan","Our PLN (Padlet)":"teach","Micro-Teaching Wall":"teach","Activities & Questions":"check","Pre-Session Videos":"check","Summary & Review Videos":"check","Reflective Journals":"grow","Gemini Notebook":"grow","Three Takeaways":"learn","Weekly Journal":"learn","Monthly Journal":"learn"};
-const LKI={"Our Team (Teams)":"teams","Our PLN (Padlet)":"padlet","Micro-Teaching Wall":"teach","Activities & Questions":"chat","Reflective Journals":"journal","Weekly Journal":"calendar","Monthly Journal":"flag","Three Takeaways":"bulb","Pre-Session Videos":"video","Summary & Review Videos":"play","Gemini Notebook":"ai"};
+const LKC={"Our Team (Teams)":"plan","Our PLN (Padlet)":"teach","Micro-Teaching Wall":"teach","Activities & Questions":"check","Pre-Session Videos":"check","Summary & Review Videos":"check","Gemini Notebook":"grow","Three Takeaways":"learn","Weekly Journal":"learn","Monthly Journal":"learn"};
+const LKI={"Our Team (Teams)":"teams","Our PLN (Padlet)":"padlet","Micro-Teaching Wall":"teach","Activities & Questions":"chat","Weekly Journal":"calendar","Monthly Journal":"flag","Three Takeaways":"bulb","Pre-Session Videos":"video","Summary & Review Videos":"play","Gemini Notebook":"ai"};
 function linkChip(l){const i=LKI[l.t]||l.ic,c="var(--"+(LKC[l.t]||"plan")+")";
  const inner=`<span class="lki">${ic(i)}</span><span class="lkt">${esc(l.t)}</span>`;
  return l.u?`<a class="lkr" style="--c:${c}" href="${esc(l.u)}" target="_blank" rel="noopener">${inner}</a>`:`<button class="lkr soon" style="--c:${c}" data-soon="${esc(l.t)}">${inner}<span class="pill">soon</span></button>`}
@@ -1594,7 +1593,7 @@ function wireTasks(){
 /* ---------- My Growth Path ---------- */
 function growth(){
   const m=me(), c=myClass(), cur=current();
-  const ss=[]; for(let s=5;s<=18;s++) ss.push(s);
+  const ss=[]; for(let s=1;s<=18;s++) ss.push(s);
   const res=ss.map(s=>{const r=m.n&&s<=cur?sessionDone(c,m.n,s):{d:0,all:1};return {s,open:s<=cur,star:m.n&&s<=cur&&r.d===r.all,part:r.d>0&&r.d<r.all,r}});
   const stars=res.filter(x=>x.star).length, used=store.get("used",[]).filter(id=>TOOLS.some(t=>t.id===id)), openTools=TOOLS.filter(toolOpen).length;
   const moments=store.get("agency",[]).length, badge=res.find(x=>x.s===18).star;
@@ -1739,7 +1738,8 @@ function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v1.4.4 · 25 Oct 2026","Bigger star and a cheerful sound when a task is ticked (sound button in My Tasks). One icon for each link in My Links. The duplicate PLN link in Teams was removed: Our PLN opens on Padlet."],
+ const v=[["v1.4.5 · 25 Oct 2026","My Growth Path now starts at Session 1. The Reflective Journals link was removed: the three journal forms open directly from My Links."],
+  ["v1.4.4 · 25 Oct 2026","Bigger star and a cheerful sound when a task is ticked (sound button in My Tasks). One icon for each link in My Links. The duplicate PLN link in Teams was removed: Our PLN opens on Padlet."],
   ["v1.4.3 · 25 Oct 2026","My Tasks now lists Sessions 1 to the open session. My Links are coloured buttons with icons, all visible together. Tip of the day card. Mentor Desk: open the next session with one tap (at the top of the page)."],
   ["v1.4.1 · 24 Oct 2026","New name on every screen: Connect, Teach and Grow. All tools are built: Warm-Up Bank, Timer (bell × 3), Name Picker, Word Cards with sound, Plan B Cards + School Day Kit, Teacher Talk with the 8-word check, Group Maker with roles, Exit Ticket Maker, Quick Check + Feedback Starters, Lesson Plan Builder (45 minutes), Turn Board + Ready for Mini-Teach?, My Card and My Tool Idea. Each tool opens with its session. Fifteen new LEARN cards (Sessions 5–18) with tap-to-see diagrams. Icons on every part of ABCD and SAMR. Solved example and practice in Agency Moments and Redefinition Ideas. Report a problem by WhatsApp or Teams. New link: Our PLN channel in Teams. The word “students” is used everywhere."],["v1.4 · 24 Oct 2026","New 3D app icon (TPACK spheres in a network). Phrase of the day and PLN Pick of the Week on the home screen. Next session date in This Week. Indicator strip on every tool (Checklist · TPACK · SAMR · Agency). AI Try on every tool (copy the prompt: a model answer and feedback) and a new Give me a hint card that works without internet. Print is back. New tools: Redefinition Ideas (open now), My Agency Moments, My Growth Path with stars, a program badge and Thank a classmate. Celebrations in My Tasks and a class progress bar. Pre-session questions and AI Try inside My Tasks. Glossary with sound. Large text button. Get the app (QR, Add to Home Screen, Teams tab), Privacy & Data, Report a problem. For examiners: a visual tour, the Alignment Matrix and a Demo mode. Mentor Desk: Before class checklist, tool use table, backup reminder, next session date."],
   ["v1.3 · 24 Oct 2026","One tool pattern: every list ends with Other (write your own), your own words come back next time, an AI helper, Listen, Copy and a 1-2-3 guide. New ABCD Builder checks. New SAMR Ladder Checker with four boxes and a ladder. New diagrams: Program Journey road, CCER ring, TPACK, SAMR ladder, Teacher Agency road and the five Connectivism principles. In a real school line on every card. Mentor Desk: note lists, Session Report, students' own words. New app icon."],
