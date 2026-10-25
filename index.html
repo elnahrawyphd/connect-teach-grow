@@ -96,7 +96,7 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,te
 .lki .i{width:18px;height:18px}
 .lkt{min-width:0}
 .lkr.soon{border-style:dashed;opacity:.75}
-.mylinks{gap:10px}
+.mylinks{gap:10px;background:color-mix(in srgb,var(--teach) 9%,var(--card));border-color:color-mix(in srgb,var(--teach) 30%,var(--line))}
 .lk{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:.92rem;white-space:nowrap}
 .lk.soon{color:var(--muted);border-style:dashed}
 /* section tiles */
@@ -282,6 +282,9 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 .qod.tip .ic2{background:var(--accent);color:#1b1b1b}
 .qod.ph{background:color-mix(in srgb,var(--plan) 10%,var(--card));border-left-color:var(--plan)}
 .qod.ph .ic2{background:var(--plan);color:var(--onTile)}
+.starbig{position:absolute;left:-4px;top:-14px;font-size:40px;line-height:1;pointer-events:none;z-index:2;opacity:0}
+@media (prefers-reduced-motion:no-preference){.starbig{animation:sbig 1.1s ease-out forwards}@keyframes sbig{0%{opacity:0;transform:scale(.3) rotate(-25deg)}30%{opacity:1;transform:scale(1.3) rotate(8deg)}100%{opacity:0;transform:translateY(-22px) scale(1)}}}
+@media (prefers-reduced-motion:reduce){.starbig{opacity:1}}
 </style>
 </head>
 <body>
@@ -289,7 +292,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"1.4.3", updated:"25 Oct 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"1.4.4", updated:"25 Oct 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 /* Google Sheet data link (Apps Script web app). Leave "" to keep everything on the device. */
@@ -311,7 +314,6 @@ const FINISH_TASK = { /* 6:"Finish your warm-up card" */ };
 const LINKS = [
   {t:"Our Team (Teams)", u:"https://teams.microsoft.com/l/team/19%3AnuKR0HxBzVMhMnvrzKziSlakN7mdEzHCbwNsC9921_81%40thread.tacv2/conversations?groupId=18826b72-07b2-4429-963f-6a3e9d4ba19c&tenantId=de3ab106-64d5-41aa-93e2-f615f3359099", ic:"teams"},
   {t:"Our PLN (Padlet)", u:"https://padlet.com/wallaismail82/our-pln-share-learn-connect-s0244rqrpdq9757hptj4", ic:"padlet"},
-  {t:"Our PLN (Teams channel)", u:"https://teams.microsoft.com/l/channel/19%3Af2570b406d2545b4b7eede0277a3de0e%40thread.tacv2/%F0%9F%8C%90%20Our%20PLN-Share-Learn-%20Connect?groupId=18826b72-07b2-4429-963f-6a3e9d4ba19c&tenantId=de3ab106-64d5-41aa-93e2-f615f3359099", ic:"teams"},
   {t:"Activities & Questions", u:"https://teams.microsoft.com/l/channel/19%3A4de369e3644b41cd8d34ac7a31d4b9c2%40thread.tacv2/%F0%9F%92%AC%20Activities%2C%20Questions%20and%20Clarifications?groupId=18826b72-07b2-4429-963f-6a3e9d4ba19c&tenantId=de3ab106-64d5-41aa-93e2-f615f3359099", ic:"chat"},
   {t:"Reflective Journals", u:"https://teams.microsoft.com/l/channel/19%3Ac05b6f25ff44462bb4dd281524867fe4%40thread.tacv2/%F0%9F%93%9D%20Reflective%20Journals?groupId=18826b72-07b2-4429-963f-6a3e9d4ba19c&tenantId=de3ab106-64d5-41aa-93e2-f615f3359099", ic:"journal"},
   {t:"Three Takeaways", u:"https://forms.cloud.microsoft/r/ZjSZqK6szd?origin=lprLink", ic:"form"},
@@ -969,8 +971,8 @@ function topbar(){
   <button class="ghost ${big?"on":""}" data-bigtext aria-pressed="${big}" aria-label="Large text" title="Large text">${ic("size","sm")}<span class="gt">A+</span></button>
   <button class="ghost" data-go="mentor" aria-label="${MENTOR.name}">${ic("key","sm")}<span class="gt">${mentorOn&&!DEMO?"● ":""}${MENTOR.name}</span></button></div></div>`}
 function backBtn(to="home",t="Home"){return `<button class="back noprint" data-go="${to}">${ic("left","sm")}${t}</button>`}
-const LKC={"Our Team (Teams)":"plan","Our PLN (Teams channel)":"plan","Our PLN (Padlet)":"teach","Micro-Teaching Wall":"teach","Activities & Questions":"check","Pre-Session Videos":"check","Summary & Review Videos":"check","Reflective Journals":"grow","Gemini Notebook":"grow","Three Takeaways":"learn","Weekly Journal":"learn","Monthly Journal":"learn"};
-const LKI={"Our PLN (Teams channel)":"net","Three Takeaways":"bulb","Summary & Review Videos":"play"};
+const LKC={"Our Team (Teams)":"plan","Our PLN (Padlet)":"teach","Micro-Teaching Wall":"teach","Activities & Questions":"check","Pre-Session Videos":"check","Summary & Review Videos":"check","Reflective Journals":"grow","Gemini Notebook":"grow","Three Takeaways":"learn","Weekly Journal":"learn","Monthly Journal":"learn"};
+const LKI={"Our Team (Teams)":"teams","Our PLN (Padlet)":"padlet","Micro-Teaching Wall":"teach","Activities & Questions":"chat","Reflective Journals":"journal","Weekly Journal":"calendar","Monthly Journal":"flag","Three Takeaways":"bulb","Pre-Session Videos":"video","Summary & Review Videos":"play","Gemini Notebook":"ai"};
 function linkChip(l){const i=LKI[l.t]||l.ic,c="var(--"+(LKC[l.t]||"plan")+")";
  const inner=`<span class="lki">${ic(i)}</span><span class="lkt">${esc(l.t)}</span>`;
  return l.u?`<a class="lkr" style="--c:${c}" href="${esc(l.u)}" target="_blank" rel="noopener">${inner}</a>`:`<button class="lkr soon" style="--c:${c}" data-soon="${esc(l.t)}">${inner}<span class="pill">soon</span></button>`}
@@ -1500,6 +1502,13 @@ function wireRedef(){
 /* ---------- My Tasks (shared tracker + celebration) ---------- */
 const CHEERS=["Great job!","Well done!","One more step!","Super!","You did it!","Keep going!"];
 function starSVG(cls="bigstar"){return `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${IC.star.match(/d="([^"]+)"/)[1]}" fill="var(--accent)" stroke="#8a5a00" stroke-width="1.2" stroke-linejoin="round"/></svg>`}
+function ding(big){
+  if(store.gget("snd","1")==="0") return;
+  try{const C=window.AudioContext||window.webkitAudioContext,a=window._ac||(window._ac=new C());a.resume&&a.resume();
+    (big?[523.25,659.25,783.99,1046.5]:[659.25,987.77]).forEach((f,i)=>{const t=a.currentTime+i*(big?.14:.11),o=a.createOscillator(),g=a.createGain();
+      o.type="triangle";o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.25,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+(big?.45:.3));
+      o.connect(g).connect(a.destination);o.start(t);o.stop(t+.5)})}catch(e){}
+}
 function celebrate(s){
   const d=document.createElement("div");d.className="cheer";d.setAttribute("role","dialog");d.setAttribute("aria-label","Session complete");
   d.innerHTML=`<div class="box">${starSVG()}<h2>Session ${s} complete!</h2><p>All tasks are done. You earned a star on your Growth Path.</p><div class="row" style="justify-content:center"><button class="btn" data-go="tool:growth">${ic("award","sm")}My Growth Path</button><button class="btn alt" data-close>Close</button></div></div>`;
@@ -1514,6 +1523,7 @@ function tasksScreen(){
   return `${topbar()}${backBtn("sec:grow","GROW")}<div class="panel">${secHead("grow","My Tasks","GROW")}
    ${indStrip("tasks")}
    ${guide(["Choose your name","Tick each task when it is done","Copy my update"])}
+   <div class="row"><button class="ghost" id="tSnd" aria-pressed="true">${ic("sound","sm")}<span id="tSndT">Sound on</span></button></div>
    <div class="two">
    ${cl.length>1?`<div class="field"><label for="tC">My class</label><select id="tC">${cl.map(x=>`<option ${x===c?"selected":""}>${esc(x)}</option>`).join("")}</select></div>`:""}
    <div class="field"><label for="tMe">My name</label><select id="tMe"><option value="">Choose your name</option>${names(c).map(s=>`<option ${s===m.n?"selected":""}>${esc(s)}</option>`).join("")}</select></div>
@@ -1546,9 +1556,9 @@ function wireTasks(){
     $("#tList").querySelectorAll("[data-aitry]").forEach(b=>b.onclick=()=>{const a=AITRY[+b.dataset.aitry];copy(AIP(a.task,a.work),"Prompt copied. Paste it in "+a.tool+".");logUse("ai","task:"+b.dataset.aitry)});
     $("#tList").querySelectorAll("input[type=checkbox]").forEach(i=>i.onchange=()=>{const k=i.id.slice(2);const o=store.get(tKey(c,n,s),{});const was=sessionDone(c,n,s);o[k]=i.checked;store.set(tKey(c,n,s),o);
       const r=paintBar(c,n,s);
-      if(i.checked){const b=document.createElement("span");b.className="burst";b.innerHTML="<span>⭐</span><span>✨</span><span>⭐</span><span>✨</span><span>⭐</span>";i.parentElement.appendChild(b);setTimeout(()=>b.remove(),1000);
+      if(i.checked){const b=document.createElement("span");b.className="burst";b.innerHTML="<span>⭐</span><span>✨</span><span>⭐</span><span>✨</span><span>⭐</span>";i.parentElement.appendChild(b);setTimeout(()=>b.remove(),1000);const sb=document.createElement("span");sb.className="starbig";sb.textContent="⭐";i.parentElement.appendChild(sb);setTimeout(()=>sb.remove(),1200);
         toast(CHEERS[Math.floor(Math.random()*CHEERS.length)]+" ✓");
-        if(r.d===r.all && was.d<was.all) setTimeout(()=>celebrate(s),500);}
+        if(r.d===r.all && was.d<was.all){ding(true);setTimeout(()=>celebrate(s),500)}else ding(false);}
       sendTick(c,s,n,k,i.checked)});
   };
   const classBar=(c,s,data)=>{
@@ -1573,6 +1583,8 @@ function wireTasks(){
     classBar(c,s,data);
   };
   if(cSel) cSel.onchange=()=>{const c=cSel.value;$("#tMe").innerHTML=`<option value="">Choose your name</option>`+names(c).map(s=>`<option>${esc(s)}</option>`).join("");draw()};
+  const sndT=()=>{const on=store.gget("snd","1")!=="0";$("#tSndT").textContent=on?"Sound on":"Sound off";$("#tSnd").setAttribute("aria-pressed",on);$("#tSnd").classList.toggle("on",on)};
+  $("#tSnd").onclick=()=>{store.gset("snd",store.gget("snd","1")==="0"?"1":"0");sndT();ding(false)};sndT();
   $("#tMe").onchange=draw; $("#tS").onchange=draw; draw();
   $("#tSend").onclick=()=>{const c=cls(),n=$("#tMe").value,s=+$("#tS").value;if(!n){toast("Choose your name first");return}
     const st=store.get(tKey(c,n,s),{});
@@ -1727,7 +1739,8 @@ function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v1.4.3 · 25 Oct 2026","My Tasks now lists Sessions 1 to the open session. My Links are coloured buttons with icons, all visible together. Tip of the day card. Mentor Desk: open the next session with one tap (at the top of the page)."],
+ const v=[["v1.4.4 · 25 Oct 2026","Bigger star and a cheerful sound when a task is ticked (sound button in My Tasks). One icon for each link in My Links. The duplicate PLN link in Teams was removed: Our PLN opens on Padlet."],
+  ["v1.4.3 · 25 Oct 2026","My Tasks now lists Sessions 1 to the open session. My Links are coloured buttons with icons, all visible together. Tip of the day card. Mentor Desk: open the next session with one tap (at the top of the page)."],
   ["v1.4.1 · 24 Oct 2026","New name on every screen: Connect, Teach and Grow. All tools are built: Warm-Up Bank, Timer (bell × 3), Name Picker, Word Cards with sound, Plan B Cards + School Day Kit, Teacher Talk with the 8-word check, Group Maker with roles, Exit Ticket Maker, Quick Check + Feedback Starters, Lesson Plan Builder (45 minutes), Turn Board + Ready for Mini-Teach?, My Card and My Tool Idea. Each tool opens with its session. Fifteen new LEARN cards (Sessions 5–18) with tap-to-see diagrams. Icons on every part of ABCD and SAMR. Solved example and practice in Agency Moments and Redefinition Ideas. Report a problem by WhatsApp or Teams. New link: Our PLN channel in Teams. The word “students” is used everywhere."],["v1.4 · 24 Oct 2026","New 3D app icon (TPACK spheres in a network). Phrase of the day and PLN Pick of the Week on the home screen. Next session date in This Week. Indicator strip on every tool (Checklist · TPACK · SAMR · Agency). AI Try on every tool (copy the prompt: a model answer and feedback) and a new Give me a hint card that works without internet. Print is back. New tools: Redefinition Ideas (open now), My Agency Moments, My Growth Path with stars, a program badge and Thank a classmate. Celebrations in My Tasks and a class progress bar. Pre-session questions and AI Try inside My Tasks. Glossary with sound. Large text button. Get the app (QR, Add to Home Screen, Teams tab), Privacy & Data, Report a problem. For examiners: a visual tour, the Alignment Matrix and a Demo mode. Mentor Desk: Before class checklist, tool use table, backup reminder, next session date."],
   ["v1.3 · 24 Oct 2026","One tool pattern: every list ends with Other (write your own), your own words come back next time, an AI helper, Listen, Copy and a 1-2-3 guide. New ABCD Builder checks. New SAMR Ladder Checker with four boxes and a ladder. New diagrams: Program Journey road, CCER ring, TPACK, SAMR ladder, Teacher Agency road and the five Connectivism principles. In a real school line on every card. Mentor Desk: note lists, Session Report, students' own words. New app icon."],
   ["v1.2 · 23 Oct 2026","Brighter home screen. New logo: a speech bubble with English letters (Aa) at the centre of the network. New links: Our Team (Teams) and Micro-Teaching Wall."],
