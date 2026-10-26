@@ -96,6 +96,22 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,te
 .lki .i{width:18px;height:18px}
 .lkt{min-width:0}
 .lkr.soon{border-style:dashed;opacity:.75}
+.aut{display:block;font-size:.62rem;font-weight:700;color:var(--muted);line-height:1}
+.gsc{display:block;font-size:.72rem;font-weight:700;color:var(--check)}
+.lastt{display:block;font-size:.7rem;color:var(--muted);font-weight:400}
+.upd{position:fixed;left:12px;right:12px;bottom:14px;z-index:60;display:flex;gap:10px;align-items:center;justify-content:center;background:var(--accent);color:#1b1b1b;border:0;border-radius:16px;padding:12px 16px;font:inherit;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.gm{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gm button{min-height:64px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:.98rem;padding:8px 10px;text-align:left;line-height:1.25}
+.gm button.sel{border-color:var(--plan);background:color-mix(in srgb,var(--plan) 14%,var(--card))}
+.gm button.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--card));opacity:.85}
+.gm button.no{border-color:var(--warn);animation:gshake .35s}
+@keyframes gshake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.gm .gl{font-weight:700}
+.fcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.fc{min-height:120px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;padding:10px;display:grid;place-items:center;text-align:center}
+.fc .em{font-size:2.2rem;line-height:1}.fc b{font-size:1.1rem}.fc.back{background:color-mix(in srgb,var(--learn) 16%,var(--card));border-color:var(--learn)}
+.gscore{text-align:center;font-family:var(--display);font-size:2.6rem;font-weight:800;color:var(--ok)}
+.gname{font-family:var(--display);font-weight:800;font-size:1.05rem}
 .mylinks{gap:10px;background:color-mix(in srgb,var(--teach) 9%,var(--card));border-color:color-mix(in srgb,var(--teach) 30%,var(--line))}
 .lk{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:.92rem;white-space:nowrap}
 .lk.soon{color:var(--muted);border-style:dashed}
@@ -292,7 +308,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"1.4.5", updated:"25 Oct 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"1.5.1", updated:"26 Oct 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 /* Google Sheet data link (Apps Script web app). Leave "" to keep everything on the device. */
@@ -302,13 +318,27 @@ const DEFAULT_NAMES = ["Alaa O.","Alaa M.","Aya","Georgina","Habiba","Sagda","So
 /* Sessions open for students when the Sheet cannot be reached. The Settings sheet (or Mentor Desk) overrides it. */
 const RELEASED_UP_TO = 5;
 /* Optional: open a session automatically on a date (YYYY-MM-DD). */
-const SESSION_DATES = { /* 6:"2026-10-28" */ };
+const SESSION_DATES = { 6:"2026-10-28" };
 /* Date shown in the This Week banner (display only; it does not open a session). Mentor Desk (Script v4) overrides it. */
-const NEXT_DATES = { 5:"2026-10-27" };
+const NEXT_DATES = { 5:"2026-10-27", 6:"2026-10-28" };
 /* Summary & Review videos (YouTube, Unlisted). Add the playlist link and one link per session. */
 const PLAYLIST = "https://www.youtube.com/playlist?list=PLKz1A7W5D9_c";
 const VIDEOS = { /* 5:"https://youtu.be/..." */ };
 /* Extra "Finish" task set by the instructor for one session */
+/* In-app games (v1.5): one game per session inside the app, no Teams Learning Activities.
+   type: match (tap a term, then its meaning) | cards (flip cards, optional) | quiz (choose the answer). */
+const GAMES = {
+ 6:[{step:"Step 2",type:"match",title:"Match It! The Warm-Up Recipe",how:"Tap an ingredient, then tap its meaning.",
+     pairs:[["Short and timed","Two to five minutes, with a timer everyone can see."],["Everyone answers","The tool lets every student answer, not only one."],["Picture first","Start with a picture: it helps students talk."],["Linked to the lesson","Use the words of today’s unit."]]},
+    {step:"Home",type:"cards",optional:true,title:"Places in Our Community",how:"Tap a card to turn it. Say the answer aloud.",
+     cards:[["🍽️","restaurant","What can you eat at the restaurant?"],["☕","coffee shop","What can you drink at the coffee shop?"],["🥖","bakery","What can you buy at the bakery?"],["🛒","supermarket","What can you buy at the supermarket?"],["🏊","club","What can you do at the club?"],["🎢","theme park","What can you ride at the theme park?"],["⛲","main square","What do people do in the main square?"],["🏢","community center","What can you play at the community center?"],["🌾","field","What do farmers do in the field?"],["🏡","cottage","Who lives in a cottage?"],["🐄","barn","What animals live in the barn?"],["🏘️","neighborhood","What places are in your neighborhood?"]]}]
+};
+const gameName=(s,g)=>`S${s} ${g.step} – ${g.title}`;
+const gameLink=(s,i)=>APP_URL+"#game:"+s+":"+(i||0);
+const sessDate=s=>SESSION_DATES[s]||NEXT_DATES[s]||"";
+const isAuto=v=>/^auto/.test(String(v==null?"":v));
+const present=v=>truthy(v)||isAuto(v);
+const hhmm=()=>{const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")};
 const FINISH_TASK = { /* 6:"Finish your warm-up card" */ };
 
 const LINKS = [
@@ -533,6 +563,7 @@ const IND = {
  groups:{pi:["B2"],tp:"TPACK",sa:"M",ag:"P",agi:"B10",cn:"Learning through networks"},
  exit:{pi:["B3"],tp:"TPK",sa:"A",ag:"P",agi:"B9",cn:"Decision-making as learning"},
  quick:{pi:["C1","C2"],tp:"TPK",sa:"A",ag:"P",agi:"B7",cn:"Decision-making as learning"},
+ games:{pi:["A3","C1"],tp:"TPK",sa:"A",ag:"P",agi:"B7",cn:"Decision-making as learning"},
  tasks:{pi:[],tp:"—",sa:"N/A",ag:"F",agi:"C2",cn:"Maintaining connections"},
  growth:{pi:[],tp:"—",sa:"N/A",ag:"F",agi:"C4",cn:"Capacity to know more"},
  agency:{pi:[],tp:"—",sa:"N/A",ag:"IPF",agi:"A2 · B7 · C1",cn:"Decision-making as learning"},
@@ -558,6 +589,7 @@ const TOOLS = [
  {id:"groups",sec:"teach",s:11,ic:"teams",t:"Group Maker",d:"Make groups in one click.",how:"Choose the group size. Tap Make groups.",dig:"Wheel of Names",paper:"Number slips",pv:["Groups of 2, 3 or 4","Roles: Leader, Checker, Timekeeper"],kw:"groups pairs collaboration"},
  {id:"exit",sec:"check",s:12,ic:"ticket",t:"Exit Ticket Maker",d:"Three closing questions.",how:"Choose three questions. Copy them to Forms.",dig:"Microsoft Forms",paper:"Exit slip",pv:["One thing I learned…","One word I can spell…","One question I still have…"],kw:"closure exit ticket"},
  {id:"quick",sec:"check",s:13,ic:"traffic",t:"Quick Check + Feedback Starters",d:"Traffic light check and kind feedback.",how:"Students show green, yellow or red. Use a starter.",dig:"Teams reactions",paper:"Colour cards",pv:["Green: I can do it.","Yellow: I need one more example.","Red: Please help me."],kw:"feedback formative check"},
+ {id:"games",sec:"check",s:6,ic:"play",t:"Session Games",d:"Play each session's game. Your score goes to your teacher.",how:"Choose a game. Play. Your score is saved when you finish.",dig:"Wordwall",paper:"Game cards on paper (backup slide)",pv:["Session 6: Match It! The Warm-Up Recipe","Practice: Places in Our Community"],kw:"game games play matching flashcards quiz score"},
  {id:"tasks",sec:"grow",s:5,ic:"tasks",t:"My Tasks",d:"What to do before, during and after.",how:"Choose your class and name. Tick each task.",dig:"Teams post",paper:"Task list in the handouts",kw:"tracker homework journal ai try"},
  {id:"growth",sec:"grow",s:5,ic:"award",t:"My Growth Path",d:"Your stars, tools tried and sessions done.",how:"Look at your stars. Thank a classmate.",dig:"Teams post",paper:"Stars on your handout",kw:"stars badge progress thank"},
  {id:"agency",sec:"grow",s:5,ic:"compass",t:"My Agency Moments",d:"Past, present and future teaching choices.",how:"Choose past, present or future. Finish the sentence. Save it.",dig:"Weekly Journal (Critical Incident)",paper:"Agency card",kw:"agency past present future choice iterational projective"},
@@ -780,7 +812,8 @@ async function connect(){
 async function loadTicks(c,s){
   if(DEMO){const b=store.get(mKey(c,s),{});const m=me();if(m.n){b[m.n]=Object.assign({},b[m.n]||{},store.get(tKey(c,m.n,s),{}))}return b}
   if(!SHEET_URL || NET===false) return null;
-  try{return await getJSON(`?a=ticks&c=${enc(c)}&s=${enc(s)}`)}catch(e){return null}
+  if(SCRIPT_V && SCRIPT_V<6) return null; /* Google drops requests with a parameter named c: Script v6 reads cls/ses */
+  try{return await getJSON(`?a=ticks&cls=${enc(c)}&ses=${enc(s)}`)}catch(e){return null}
 }
 
 /* ================= TASKS ================= */
@@ -791,6 +824,7 @@ function tasksFor(n){
   if([4,8,12,16].includes(n)) t.push({k:"mo",w:"After",t:"Monthly Reflective Journal",u:L("Monthly Journal"),ty:"journal"});
   t.push({k:"pln",w:"After",t:"Add your PLN contribution",u:L("Our PLN (Padlet)"),ty:"padlet"});
   t.push({k:"sr",w:"After",t:"Watch the Summary & Review video",sub:"Also in Teams › Class Work › Session "+n,u:VIDEOS[n]||PLAYLIST||"",ty:"video"});
+  (GAMES[n]||[]).forEach((g,i)=>t.push({k:g.optional?"fc":"game",w:g.optional?"Optional":"During",t:(g.optional?"Practice game: ":"Play the session game: ")+g.title,sub:"In this app: "+gameName(n,g),ty:"play",gi:i}));
   (SESSION_TASKS[n]||[]).forEach(x=>t.push(Object.assign({},x,{u:x.u?L(x.u)||x.u:""})));
   if(FINISH_TASK[n]) t.push({k:"fin",w:"After",t:FINISH_TASK[n],ty:"check"});
   t.push({k:"ai",w:"Optional",t:AITRY[n]?"AI Try: "+AITRY[n].t:"AI Try (if your teacher shared one)",ty:"ai"});
@@ -801,6 +835,19 @@ const mKey=(c,s)=>`m|${c}|${s}`;
 const required = list => list.filter(t=>t.w!=="Optional");
 function sessionDone(c,n,s){const st=store.get(tKey(c,n,s),{}),r=required(tasksFor(s));return {d:r.filter(t=>truthy(st[t.k])).length,all:r.length}}
 /* tools tried on this phone */
+/* auto attendance: only on the session date, from in-class actions */
+function autoAtt(s){
+  if(DEMO) return; const m=me(); if(!m.n) return; const c=myClass(), t=todayISO();
+  const d=sessDate(s), nx=(CFG.next||{})[c];
+  if(!(d===t || (s===current() && nx===t))) return;
+  const k=`att|${c}|${m.n}|${s}|${t}`; if(store.get(k,false)) return; store.set(k,true);
+  sendTick(c,s,m.n,"att","auto "+hhmm());
+}
+let LAST_SENT=0;
+function lastActive(c,n,s){
+  if(DEMO||!n) return; const now=Date.now(); if(now-LAST_SENT<60000) return; LAST_SENT=now;
+  sendTick(c,s,n,"last",hhmm()+" · "+niceDate(todayISO()));
+}
 function markUsed(id){const u=store.get("used",[]);if(!u.includes(id)){u.push(id);store.set("used",u)}}
 
 /* ================= VISUALS (visual first: tap a part to see its meaning) ================= */
@@ -1076,8 +1123,8 @@ function logUse(tool,v){
   const m=me(); post({a:"usage",c:myClass(),n:m.n||"",t:tool,v:String(v||"").slice(0,200)}).catch(()=>{});
 }
 const OTHER_NAMES={abcd_A:"ABCD · Audience",abcd_B:"ABCD · Verb",abcd_C:"ABCD · Condition",abcd_D:"ABCD · Degree",samr_do:"SAMR · What students do",samr_tool:"SAMR · Tool",samr_how:"SAMR · How students work",samr_who:"SAMR · Who sees it",mentor_note:"Mentor notes",redef_idea:"Redefinition · Idea",redef_aud:"Redefinition · Audience",redef_pb:"Redefinition · Plan B",agency_st:"Agency · Starter",thanks_why:"Thanks · Reason",prob_kind:"Report · Problem"};
-async function loadUsage(c){try{return await getJSON(`?a=usage&c=${enc(c)}`)}catch(e){return null}}
-async function loadCounts(c){try{return await getJSON(`?a=counts&c=${enc(c)}`)}catch(e){return null}}
+async function loadUsage(c){try{return await getJSON(`?a=usage&cls=${enc(c)}`)}catch(e){return null}}
+async function loadCounts(c){try{return await getJSON(`?a=counts&cls=${enc(c)}`)}catch(e){return null}}
 
 /* ================= SCREENS ================= */
 function qodCard(n){
@@ -1112,6 +1159,7 @@ function home(){
     <div class="tiles">${["plan","teach","check","grow"].map(k=>`<button class="tile t-${k}" data-go="sec:${k}">${ic(SECS[k].ic,"lg")}<b>${SECS[k].t}</b><span>${SECS[k].d}</span></button>`).join("")}
       <button class="tile t-learn wide" data-go="sec:learn">${ic("learn","lg")}<b>LEARN</b><span>${SECS.learn.d}: TPACK, SAMR, CCER, PLN, ABCD… and a glossary with sound</span></button></div>
     <div class="panel mylinks"><span class="label">${ic("link","sm")} My Links</span><div class="links">${LINKS.map(linkChip).join("")}</div></div>
+    ${store.get("toured",false)?`<div class="row"><button class="btn alt" data-go="start">${ic("play","sm")}Start here: the app in 5 steps</button>${(GAMES[n]||[]).length?`<button class="btn" data-go="game:${n}:0">${ic("play","sm")}Today's game</button>`:""}</div>`:""}
     <div class="panel"><span class="label">My Journey · 18 sessions</span>${visual("journey")}</div>
     <footer><button data-go="start">Start here</button><button data-go="getapp">Get the app (QR)</button><button data-go="news">What's New</button><button data-go="tour">Examiner Tour</button><button data-go="privacy">Privacy &amp; Data</button><button data-go="report">Report a problem</button><button data-go="about">About &amp; Cite</button></footer>
     <p class="small muted" style="text-align:center">${APP.name} v${APP.version} · ${APP.tagline}</p>
@@ -1230,14 +1278,14 @@ function start(){
    <div class="head"><span class="hico" style="background:${cols[k]}">${ic(s[0])}</span><h1>${s[1]}</h1></div>
    <p>${s[2]}</p>
    ${k===2?`<div class="row">${Object.keys(SECS).map(x=>`<span class="pill" style="background:${SECS[x].c};color:var(--onTile)">${ic(SECS[x].ic,"sm")}${SECS[x].t}</span>`).join("")}</div>`:""}
-   ${s[3]?`<button class="btn alt" data-go="${s[3]}">${ic("right","sm")}${s[4]}</button>`:""}
+   ${s[3]?`<button class="btn alt" data-go="${s[3]}" data-fromtour>${ic("right","sm")}${s[4]}</button>`:""}
    <div class="row" style="justify-content:space-between"><button class="btn alt" id="tPrev" ${k===0?"disabled":""}>${ic("left","sm")}Back</button><button class="btn" id="tNext">${k===4?"Finish":"Next"}${ic("right","sm")}</button></div>
   </div>`;
 }
 function wireStart(){
   const k=store.get("tourStep",0);
   $("#tPrev").onclick=()=>{store.set("tourStep",Math.max(0,k-1));render("start")};
-  $("#tNext").onclick=()=>{if(k>=4){store.set("toured",true);store.set("tourStep",0);toast("You are ready!");render("home")}else{store.set("tourStep",k+1);render("start")}};
+  $("#tNext").onclick=()=>{if(k>=4){store.set("toured",true);store.set("tourStep",0);store.set("fromTour",false);toast("You are ready!");render("home")}else{store.set("tourStep",k+1);render("start")}};
 }
 
 /* ---------- Today in class ---------- */
@@ -1249,6 +1297,7 @@ function today(){
    ${n>=5?`<p class="muted">${esc(ex.l)}</p>`:""}
    ${n===5?`<div class="tip"><b>Today:</b> a three-minute app tour. <button class="btn alt" data-go="start">${ic("play","sm")}Start here</button></div>`:""}
    ${qodCard(n)}
+   ${(GAMES[n]||[]).length?`<span class="label">Games today</span><div class="list">${GAMES[n].map((g,i)=>`<button class="item" data-go="game:${n}:${i}"><span class="ico" style="background:var(--check);color:var(--onTile)">${ic(g.type==="cards"?"cards":"play")}</span><span class="txt"><b>${esc(gameName(n,g))}</b><span class="small muted">${esc(g.how)}${g.optional?" · Optional":""}</span></span>${ic("right","sm")}</button>`).join("")}</div>`:""}
    <span class="label">New in the app today</span>
    <div class="list">${newTools.length?newTools.map(toolItem).join(""):`<p class="muted small">No new tool today. Use the tools you already have.</p>`}</div>
   </div>
@@ -1535,6 +1584,7 @@ function tasksScreen(){
    <div class="row"><button class="btn" id="tSend">${ic("copy","sm")}Copy my update</button><button class="btn alt" data-go="tool:growth">${ic("award","sm")}My Growth Path</button></div></div>`;
 }
 function taskExtra(t,s){
+  if(t.k==="game"||t.k==="fc") return `<div class="sub2"><div class="row"><button class="btn" data-go="game:${s}:${t.gi||0}">${ic("play","sm")}Play now</button></div><span class="small muted">Your score is saved for your teacher when you finish.</span></div>`;
   if(t.k==="pre"){const q=(REUSE[s]||{}).pre; return q?`<div class="sub2"><b>Answer on Padlet (comment):</b>${q.map((x,i)=>`<span>${i+1}. ${esc(x)}</span>`).join("")}</div>`:""}
   if(t.k==="ai"){const a=AITRY[s]; if(!a) return "";
     if(!a.tool) return `<div class="sub2"><span>${esc(a.task)}</span><span class="small muted">Write your answer in your Weekly Journal.</span></div>`;
@@ -1557,8 +1607,9 @@ function wireTasks(){
       const r=paintBar(c,n,s);
       if(i.checked){const b=document.createElement("span");b.className="burst";b.innerHTML="<span>⭐</span><span>✨</span><span>⭐</span><span>✨</span><span>⭐</span>";i.parentElement.appendChild(b);setTimeout(()=>b.remove(),1000);const sb=document.createElement("span");sb.className="starbig";sb.textContent="⭐";i.parentElement.appendChild(sb);setTimeout(()=>sb.remove(),1200);
         toast(CHEERS[Math.floor(Math.random()*CHEERS.length)]+" ✓");
-        if(r.d===r.all && was.d<was.all){ding(true);setTimeout(()=>celebrate(s),500)}else ding(false);}
-      sendTick(c,s,n,k,i.checked)});
+        if(r.d===r.all && was.d<was.all){ding(true);setTimeout(()=>celebrate(s),500)}else ding(false);
+        const tt=tasksFor(s).find(x=>x.k===k); if(tt&&tt.w==="During") autoAtt(s);}
+      sendTick(c,s,n,k,i.checked); lastActive(c,n,s)});
   };
   const classBar=(c,s,data)=>{
     const nm=names(c); if(!data||!nm.length){$("#tCls").hidden=true;return}
@@ -1738,7 +1789,8 @@ function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v1.4.5 · 25 Oct 2026","My Growth Path now starts at Session 1. The Reflective Journals link was removed: the three journal forms open directly from My Links."],
+ const v=[["v1.5.1 · 26 Oct 2026","Fix: the Mentor Desk and My Tasks now read the ticks from the Sheet (needs Sheet script v6)."],["v1.5 · 26 Oct 2026","Session Games inside the app (Session 6: Match It! and Places flash cards): scores go to your teacher. Mentor Desk loads the newest ticks by itself every 30 seconds and shows when each student was last active. The WhatsApp reminder loads the newest ticks first and lists what is left for each student. Attendance is marked automatically when a student works in class on the session day. Start here stays on the home screen. A message tells you when a new version is ready."],
+  ["v1.4.5 · 25 Oct 2026","My Growth Path now starts at Session 1. The Reflective Journals link was removed: the three journal forms open directly from My Links."],
   ["v1.4.4 · 25 Oct 2026","Bigger star and a cheerful sound when a task is ticked (sound button in My Tasks). One icon for each link in My Links. The duplicate PLN link in Teams was removed: Our PLN opens on Padlet."],
   ["v1.4.3 · 25 Oct 2026","My Tasks now lists Sessions 1 to the open session. My Links are coloured buttons with icons, all visible together. Tip of the day card. Mentor Desk: open the next session with one tap (at the top of the page)."],
   ["v1.4.1 · 24 Oct 2026","New name on every screen: Connect, Teach and Grow. All tools are built: Warm-Up Bank, Timer (bell × 3), Name Picker, Word Cards with sound, Plan B Cards + School Day Kit, Teacher Talk with the 8-word check, Group Maker with roles, Exit Ticket Maker, Quick Check + Feedback Starters, Lesson Plan Builder (45 minutes), Turn Board + Ready for Mini-Teach?, My Card and My Tool Idea. Each tool opens with its session. Fifteen new LEARN cards (Sessions 5–18) with tap-to-see diagrams. Icons on every part of ABCD and SAMR. Solved example and practice in Agency Moments and Redefinition Ideas. Report a problem by WhatsApp or Teams. New link: Our PLN channel in Teams. The word “students” is used everywhere."],["v1.4 · 24 Oct 2026","New 3D app icon (TPACK spheres in a network). Phrase of the day and PLN Pick of the Week on the home screen. Next session date in This Week. Indicator strip on every tool (Checklist · TPACK · SAMR · Agency). AI Try on every tool (copy the prompt: a model answer and feedback) and a new Give me a hint card that works without internet. Print is back. New tools: Redefinition Ideas (open now), My Agency Moments, My Growth Path with stars, a program badge and Thank a classmate. Celebrations in My Tasks and a class progress bar. Pre-session questions and AI Try inside My Tasks. Glossary with sound. Large text button. Get the app (QR, Add to Home Screen, Teams tab), Privacy & Data, Report a problem. For examiners: a visual tour, the Alignment Matrix and a Demo mode. Mentor Desk: Before class checklist, tool use table, backup reminder, next session date."],
@@ -1805,6 +1857,78 @@ function wirePrac(id,items,name){
     document.querySelector(`[data-pxf="${id}|${i}"]`).innerHTML=ok?fb(true,`<b>Correct: ${esc(name(p.a))}.</b> ${esc(p.why)}`):fb(false,`<b>Not quite. Try again.</b> Hint: ${esc(p.h)}`)});
 }
 function solved(title,parts){return `<div class="exbox"><span class="exl">${ic("bulb","sm")} Solved example</span><p>${title}</p><ul class="ckl">${parts.map(([i,t])=>`<li class="g">${ic(i,"sm")}<span>${t}</span></li>`).join("")}</ul></div>`}
+
+/* ---------- Session Games (v1.5) ---------- */
+TOOL_SCREENS.games=()=>{const list=[];for(let s=current();s>=1;s--)(GAMES[s]||[]).forEach((g,i)=>list.push([s,i,g]));
+  return shell("games",["Choose a game","Play","Your score is saved"],`
+  ${list.length?`<div class="list">${list.map(([s,i,g])=>`<button class="item" data-go="game:${s}:${i}"><span class="ico" style="background:var(--check);color:var(--onTile)">${ic(g.type==="cards"?"cards":"play")}</span><span class="txt"><b>${esc(gameName(s,g))}</b><span class="small muted">${esc(g.how)}${g.optional?" · Optional practice":""}</span></span>${ic("right","sm")}</button>`).join("")}</div>`:`<p class="muted">The first game opens in Session 6.</p>`}`,
+  "a short game before the worksheet: students practise the easy part first, then write.")};
+TOOL_WIRE.games=()=>{wireAI("gamesAI",()=>AIP("Make a short matching game (4 pairs) for Grade 5 students about this topic.","[my topic]"),()=>({tip:"Four pairs are enough. Use pictures or words from the unit.",ex:"bakery → What can you buy at the bakery?"}))};
+function gameScreen(s,i){
+  const g=(GAMES[s]||[])[i]; if(!g) return home();
+  const m=me(), nm=names(myClass());
+  if(!isOpenS(s)) return `${topbar()}${backBtn("tool:games","Games")}<div class="panel"><h1>${esc(gameName(s,g))}</h1><p>This game opens with Session ${s}${sessDate(s)?" on "+esc(niceDate(sessDate(s))):""}.</p></div>`;
+  const who=m.n?`<p class="small">${ic("person","sm")} Playing as <b>${esc(m.n)}</b>. <button class="linkb" data-go="tool:tasks">Not you?</button></p>`:
+    `<div class="field"><label for="gMe">${L2("person","Choose your name (so your teacher sees your score)")}</label><select id="gMe"><option value="">Choose your name</option>${nm.map(x=>`<option>${esc(x)}</option>`).join("")}</select></div>`;
+  let body="";
+  if(g.type==="match"){
+    const L=g.pairs.map((p,j)=>[j,p[0]]), Rr=g.pairs.map((p,j)=>[j,p[1]]);
+    for(let a=Rr.length-1;a>0;a--){const b=Math.floor(Math.random()*(a+1));[Rr[a],Rr[b]]=[Rr[b],Rr[a]]}
+    body=`<div class="gm" id="gBoard">${L.map((x,j)=>`<button class="gl" data-gl="${x[0]}">${esc(x[1])}</button><button data-gr="${Rr[j][0]}">${esc(Rr[j][1])}</button>`).join("")}</div>`;
+  } else if(g.type==="cards"){
+    body=`<div class="fcg">${g.cards.map((c,j)=>`<button class="fc" data-fc="${j}"><span><span class="em">${c[0]}</span><br><b>${esc(c[1])}</b></span></button>`).join("")}</div>
+     <div class="row"><button class="btn" id="gFcDone">${ic("done","sm")}I studied all the cards</button></div>`;
+  } else if(g.type==="quiz"){
+    body=g.qs.map((q,j)=>`<div class="qcard"><b>${j+1}. ${esc(q.q)}</b><div class="yn">${q.o.map((o,k)=>`<button data-gq="${j}|${k}">${esc(o)}</button>`).join("")}</div><div data-gqf="${j}"></div></div>`).join("");
+  }
+  return `${topbar()}${backBtn("tool:games","Games")}<div class="panel" id="gameP">
+   ${secHead("check",esc(g.title),`GAME · Session ${s} · ${g.step}`)}
+   <p class="gname">${esc(gameName(s,g))}</p>
+   ${guide(g.type==="match"?["Tap an ingredient","Tap its meaning","Green = correct"]:g.type==="cards"?["Look at the picture and word","Tap to turn the card","Say the answer aloud"]:["Read the question","Tap your answer","See your score"])}
+   ${who}
+   <p class="small muted">${esc(g.how)}</p>
+   ${body}
+   <div id="gEnd" hidden></div>
+  </div>`;
+}
+function gameDone(s,i,score,total){
+  const g=GAMES[s][i]; let m=me();
+  const sel=$("#gMe"); if(!m.n && sel && sel.value){store.set("me",{c:myClass(),n:sel.value});m=me()}
+  const c=myClass(), k=g.optional?"fc":"game";
+  if(m.n){const o=store.get(tKey(c,m.n,s),{});o[k]=true;store.set(tKey(c,m.n,s),o);
+    sendTick(c,s,m.n,k,true); if(!g.optional) sendTick(c,s,m.n,"gscore",`${score}/${total}`); autoAtt(s); lastActive(c,m.n,s)}
+  logUse("games",`S${s}-${i}:${score}/${total}`);
+  ding(true);
+  const e=$("#gEnd"); e.hidden=false;
+  e.innerHTML=`${g.optional?`<p class="gscore">⭐ Well done!</p>`:`<p class="gscore">⭐ ${score} / ${total}</p>`}
+   <p style="text-align:center">${m.n?(g.optional?"Saved in My Tasks.":"Your score is saved for your teacher."):"Choose your name above, then play again to save your score."}</p>
+   <div class="row" style="justify-content:center"><button class="btn alt" data-go="game:${s}:${i}">${ic("refresh","sm")}Play again</button><button class="btn" data-go="tool:tasks">${ic("tasks","sm")}My Tasks</button></div>`;
+  e.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function wireGame(s,i){
+  const g=(GAMES[s]||[])[i]; if(!g||!$("#gameP")) return;
+  const sel=$("#gMe"); if(sel) sel.onchange=()=>{if(sel.value) store.set("me",{c:myClass(),n:sel.value})};
+  if(g.type==="match"){
+    let pick=null, first={}, done=0;
+    const tryPair=(l,r)=>{const lj=+l.dataset.gl, rj=+r.dataset.gr;
+      if(lj===rj){l.classList.remove("sel");l.classList.add("ok");r.classList.add("ok");l.disabled=r.disabled=true;done++;if(first[lj]===undefined)first[lj]=true;ding(false);
+        if(done===g.pairs.length){const sc=Object.values(first).filter(Boolean).length;setTimeout(()=>gameDone(s,i,sc,g.pairs.length),400)}}
+      else{first[lj]=false;r.classList.add("no");setTimeout(()=>r.classList.remove("no"),400);toast("Not this one. Try again!")}};
+    document.querySelectorAll("[data-gl]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-gl]").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");pick=b});
+    document.querySelectorAll("[data-gr]").forEach(b=>b.onclick=()=>{if(!pick){toast("First tap an ingredient on the left");return}tryPair(pick,b);pick=null});
+  } else if(g.type==="cards"){
+    document.querySelectorAll("[data-fc]").forEach(b=>b.onclick=()=>{const c=g.cards[+b.dataset.fc],back=b.classList.toggle("back");
+      b.innerHTML=back?`<span><b>${esc(c[2])}</b></span>`:`<span><span class="em">${c[0]}</span><br><b>${esc(c[1])}</b></span>`;if(back) speak(c[2])});
+    $("#gFcDone").onclick=()=>gameDone(s,i,g.cards.length,g.cards.length);
+  } else if(g.type==="quiz"){
+    const res={};
+    document.querySelectorAll("[data-gq]").forEach(b=>b.onclick=()=>{const [j,k]=b.dataset.gq.split("|").map(Number),q=g.qs[j],ok=k===q.a;
+      if(res[j]===undefined) res[j]=ok;
+      b.parentElement.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+      document.querySelector(`[data-gqf="${j}"]`).innerHTML=fb(ok,ok?`<b>Correct!</b> ${esc(q.why||"")}`:"<b>Not quite. Try again.</b>");
+      if(Object.keys(res).length===g.qs.length && ok && g.qs.every((_,x)=>document.querySelector(`[data-gqf="${x}"] .good`))) gameDone(s,i,Object.values(res).filter(Boolean).length,g.qs.length)});
+  }
+}
 
 /* ---------- Warm-Up Bank (S6) ---------- */
 const WARMS=[
@@ -2221,6 +2345,19 @@ function prepList(s){
     ["board","After class: tick attendance and Mini-Teach turns here, then Copy WhatsApp reminder."]];
 }
 const BACKUP_DAYS=30;
+let MAUTO=null, MLAST={key:"",t:0,ok:null};
+const mBusy=()=>!!(document.activeElement && document.activeElement.matches("input,textarea,select"));
+async function mLoad(cc,s){
+  if(DEMO) return true;
+  if(NET!==true) await connect();
+  const d=await loadTicks(cc,s);
+  if(!d){MLAST={key:cc+"|"+s,t:Date.now(),ok:false};return false}
+  const b=store.get(mKey(cc,s),{}), before=JSON.stringify(b); Object.entries(d).forEach(([n,r])=>{b[n]=Object.assign(b[n]||{},r)}); store.set(mKey(cc,s),b);
+  MLAST={key:cc+"|"+s,t:Date.now(),ok:true,changed:JSON.stringify(b)!==before}; return true;
+}
+function mRender(force){ if(ROUTE!=="mentor"||mBusy()) return; if(!force&&MLAST.ok&&!MLAST.changed){const st=$("#mStat"); if(st) st.textContent=st.textContent.replace(/Loaded \d\d:\d\d/,"Loaded "+new Date(MLAST.t).toTimeString().slice(0,5)); return}
+  const y=window.scrollY; render("mentor"); window.scrollTo(0,y) }
+const TSHORT={pre:"pre-session video",tt:"Three Takeaways",wk:"Weekly Journal",mo:"Monthly Journal",pln:"PLN contribution",sr:"Summary & Review video",game:"the session game"};
 function sheetMsg(v){
   if(NET===null) return "Checking the Sheet… wait a few seconds.";
   if(NET===false) return inFrame?"This preview cannot reach the Sheet. Open the app from the GitHub link to see this table.":"Not connected to the Sheet (no internet, or the Sheet link is wrong).";
@@ -2233,7 +2370,9 @@ function mentor(){
   const s=store.get("mS",openUpTo(cc)), tk=tasksFor(s), nm=names(cc);
   const b=store.get(mKey(cc,s),{}), prep=store.get("prep|"+s,{}), pl=prepList(s);
   const lastB=store.get("backup",""), daysB=lastB?Math.floor((new Date(todayISO())-new Date(lastB))/864e5):999;
-  const cell=(n,k,on)=>`<td><button data-cell="${esc(n)}|${k}" aria-label="${esc(n+" "+k)}" class="${on?"y":"n"}">${ic(on?"done":"empty")}</button></td>`;
+  const cell=(n,k,on,extra)=>`<td><button data-cell="${esc(n)}|${k}" aria-label="${esc(n+" "+k)}" class="${on?"y":"n"}">${ic(on?"done":"empty")}</button>${extra||""}</td>`;
+  const key=cc+"|"+s, nTick=nm.filter(n=>Object.entries(b[n]||{}).some(([k,v])=>!["note","last","agency"].includes(k)&&(present(v)||(k==="gscore"&&v)))).length;
+  const stat=DEMO?"Demo class on this device.":MLAST.key===key&&MLAST.ok===true?`Loaded ${new Date(MLAST.t).toTimeString().slice(0,5)} · ${nTick} of ${nm.length} students have ticks · updates every 30 seconds`:MLAST.key===key&&MLAST.ok===false?(SCRIPT_V&&SCRIPT_V<6?"The Sheet script must be updated to v6 (one time): Apps Script › paste Code_v6 › Deploy › Manage deployments › Edit › New version › Deploy.":"Could not reach the Sheet. Check the internet. The table may be old."):"Loading the newest ticks…";
   const ag=nm.filter(n=>(b[n]||{}).agency).length;
   return `${topbar()}${backBtn()}<div class="stack">
    ${!DEMO&&daysB>=BACKUP_DAYS?`<div class="tip">${ic("export","sm")} <b>Monthly backup:</b> ${lastB?`your last backup was ${daysB} days ago.`:"no backup recorded yet."} Open the Sheet › File › Download › Microsoft Excel. Save it on your private OneDrive. <button class="btn alt" id="mBk">${ic("done","sm")}I made a backup today</button></div>`:""}
@@ -2247,10 +2386,10 @@ function mentor(){
    <div class="field"><label for="mC">Class</label><select id="mC">${classes().map(x=>`<option ${x===cc?"selected":""}>${esc(x)}</option>`).join("")}</select></div>
    <div class="field"><label for="mS">Session</label><select id="mS">${Array.from({length:18},(_,i)=>i+1).map(x=>`<option ${x===s?"selected":""} value="${x}">Session ${x}</option>`).join("")}</select></div>
    </div>
-   <div class="row"><button class="btn alt" id="mRef">${ic("refresh","sm")}Refresh from the Sheet</button><span class="small muted" id="mStat">${DEMO?"Demo class on this device.":NET===true?"Connected to the Sheet.":NET===false?"This device only. Changes are sent when connected.":"Checking the Sheet…"}</span></div>
+   <div class="row"><button class="btn alt" id="mRef">${ic("refresh","sm")}Refresh from the Sheet</button><span class="small ${MLAST.key===key&&MLAST.ok===false?"warn":"muted"}" id="mStat">${stat}</span></div>
    <div class="gridwrap"><table><tr><th>Student</th><th>Code</th><th title="Present">${ic("usercheck","sm")}</th><th title="Mini-Teach turn done">MT</th>${tk.map(t=>`<th title="${esc(t.t)}">${t.k.toUpperCase()}</th>`).join("")}<th title="Agency moment saved">AG</th><th>Note</th></tr>
-   ${nm.map((n,i)=>{const r=b[n]||{};return `<tr><td>${esc(n)}</td><td>S${i+1}</td>${cell(n,"att",truthy(r.att))}${cell(n,"mt",truthy(r.mt))}${tk.map(t=>cell(n,t.k,truthy(r[t.k]))).join("")}<td>${r.agency?ic("compass","sm"):""}</td><td class="notec">${noteSel(n,r.note||"")}</td></tr>`}).join("")}</table></div>
-   <p class="small muted">${ic("usercheck","sm")} = Present · MT = Mini-Teach turn done · AG = agency moment saved · ${tk.map(t=>t.k.toUpperCase()+" = "+esc(t.t)).join(" · ")}</p>
+   ${nm.map((n,i)=>{const r=b[n]||{};return `<tr><td>${esc(n)}${r.last?`<span class="lastt">${esc(r.last)}</span>`:""}</td><td>S${i+1}</td>${cell(n,"att",present(r.att),isAuto(r.att)?`<span class="aut">auto ${esc(String(r.att).slice(5))}</span>`:"")}${cell(n,"mt",truthy(r.mt))}${tk.map(t=>cell(n,t.k,truthy(r[t.k]),t.k==="game"&&r.gscore?`<span class="gsc">${esc(r.gscore)}</span>`:"")).join("")}<td>${r.agency?ic("compass","sm"):""}</td><td class="notec">${noteSel(n,r.note||"")}</td></tr>`}).join("")}</table></div>
+   <p class="small muted">${ic("usercheck","sm")} = Present (auto = marked by the app when the student worked in class on the session day) · MT = Mini-Teach turn done · AG = agency moment saved · ${tk.map(t=>t.k.toUpperCase()+" = "+esc(t.t)).join(" · ")}</p>
    <p class="small muted">Notes: choose Positive or Needs work, or Other to write your own. Write no names inside notes: the report uses codes only.</p>
    <div class="row"><button class="btn" id="mWA">${ic("msg","sm")}Copy WhatsApp reminder</button><button class="btn alt" id="mRep">${ic("form","sm")}Copy Session Report</button><button class="btn alt" id="mCSV">${ic("export","sm")}Show export (codes)</button></div>
    <textarea id="mOut" hidden readonly aria-label="Export"></textarea>
@@ -2278,20 +2417,27 @@ function wireMentor(){
   $("#mS").onchange=e=>{store.set("mS",+e.target.value);render("mentor")};
   const bk=$("#mBk"); if(bk) bk.onclick=()=>{store.set("backup",todayISO());toast("Backup date saved. Next reminder in 30 days.");render("mentor")};
   document.querySelectorAll("[data-prep]").forEach(x=>x.onchange=()=>{const p=store.get("prep|"+s,{});p[x.dataset.prep]=x.checked;store.set("prep|"+s,p);render("mentor")});
-  document.querySelectorAll("[data-cell]").forEach(btn=>btn.onclick=()=>{const [n,k]=btn.dataset.cell.split("|");const b=get();b[n]=b[n]||{};b[n][k]=!truthy(b[n][k]);put(b);
-    btn.className=b[n][k]?"y":"n";btn.innerHTML=ic(b[n][k]?"done":"empty");sendTick(cc,s,n,k,b[n][k])});
+  document.querySelectorAll("[data-cell]").forEach(btn=>btn.onclick=()=>{const [n,k]=btn.dataset.cell.split("|");const b=get();b[n]=b[n]||{};b[n][k]=k==="att"?!present(b[n][k]):!truthy(b[n][k]);put(b);
+    btn.className=b[n][k]?"y":"n";btn.innerHTML=ic(b[n][k]?"done":"empty");const au=btn.parentElement.querySelector(".aut");if(au)au.remove();sendTick(cc,s,n,k,b[n][k])});
+  const key=cc+"|"+s;
+  if(!DEMO && (MLAST.key!==key || Date.now()-MLAST.t>25000)) mLoad(cc,s).then(()=>mRender(true));
+  clearInterval(MAUTO);
+  if(!DEMO) MAUTO=setInterval(()=>{if(ROUTE!=="mentor"){clearInterval(MAUTO);return} if(mBusy()) return; mLoad(cc,s).then(()=>mRender(false))},30000);
   const saveNote=(n,v)=>{const b=get();b[n]=b[n]||{};b[n].note=v;put(b);sendTick(cc,s,n,"note",v)};
   document.querySelectorAll("[data-note]").forEach(sel=>{const n=sel.dataset.note,o=document.querySelector(`[data-noteo="${CSS.escape(n)}"]`);
     sel.onchange=()=>{o.hidden=sel.value!==OTHER; if(sel.value===OTHER){o.focus();return} saveNote(n,sel.value)};
     o.onchange=()=>{const v=o.value.trim(); if(!v) return; saveOther("mentor_note",v); saveNote(n,v)};});
   $("#mRef").onclick=async()=>{if(DEMO){toast("Demo class: nothing to load");return}$("#mStat").textContent="Loading…";
     if(NET!==true) await connect();
-    const d=await loadTicks(cc,s);
-    if(!d){$("#mStat").textContent="Could not reach the Sheet. Showing this device.";return}
-    const b=get(); Object.entries(d).forEach(([n,r])=>{b[n]=Object.assign(b[n]||{},r)}); put(b); render("mentor"); toast("Board updated")};
-  $("#mWA").onclick=()=>{const b=get();
-    const absent=nm.filter(n=>!truthy((b[n]||{}).att));
-    const lines=tk.filter(t=>t.k!=="ai").map(t=>{const miss=nm.filter(n=>!truthy((b[n]||{})[t.k]));return miss.length?`• ${t.t}: ${miss.join(", ")}`:null}).filter(Boolean);
+    const ok=await mLoad(cc,s); render("mentor"); toast(ok?"Board updated":"Could not reach the Sheet")};
+  $("#mWA").onclick=async()=>{
+    if(!DEMO){$("#mStat").textContent="Loading the newest ticks…";const ok=await mLoad(cc,s);
+      if(!ok){$("#mStat").textContent=SCRIPT_V&&SCRIPT_V<6?"Nothing was copied: the Sheet script must be updated to v6 first (one time).":"Could not reach the Sheet. Nothing was copied. Check the internet and tap again.";$("#mStat").className="small warn";toast("Not copied: the Sheet could not be reached",3500);return}}
+    const b=get();
+    const absent=nm.filter(n=>!present((b[n]||{}).att));
+    const req=tk.filter(t=>t.w!=="Optional");
+    const lines=nm.map(n=>{const r=b[n]||{},miss=req.filter(t=>!truthy(r[t.k])).map(t=>TSHORT[t.k]||t.t);return miss.length?`• ${n}: ${miss.join(", ")}`:null}).filter(Boolean);
+    const allDone=nm.filter(n=>req.every(t=>truthy((b[n]||{})[t.k])));
     const mt=nm.filter(n=>!truthy((b[n]||{}).mt));
     const nb=n=>(b[n]||{}).note||"";
     const pos=nm.filter(n=>noteKind(nb(n))==="P").map(n=>`🌟 ${n}: ${nb(n)}. Thank you!`);
@@ -2300,26 +2446,27 @@ function wireMentor(){
     const notes=[...pos,...need,...own];
     let msg=`Hello teachers 🌱\nSession ${s}`;
     msg+= lines.length?` – still to do:\n${lines.join("\n")}`:`: all tasks done. Well done! 🌟`;
+    if(lines.length && allDone.length) msg+=`\n\n🌟 All done: ${allDone.join(", ")}. Thank you!`;
     if(absent.length && absent.length<nm.length) msg+=`\n\nWe missed you: ${absent.join(", ")}. Please watch the Summary & Review video in Class Work.`;
     if(mt.length && mt.length<nm.length) msg+=`\n\nMini-Teach next time: ${mt.join(", ")}.`;
     if(notes.length) msg+=`\n\nA note for you:\n${notes.join("\n")}`;
     msg+=`\n\nOpen ${APP.name} › My Tasks for the links: ${APP_URL}\nThank you!`;
-    copy(msg)};
+    {const y=window.scrollY; render("mentor"); window.scrollTo(0,y)} const o=$("#mOut"); o.hidden=false; o.value=msg; o.select(); copy(msg,"WhatsApp reminder copied. Paste it in WhatsApp.")};
   $("#mCSV").onclick=()=>{const b=get(),o=$("#mOut");o.hidden=false;
     const q=v=>{v=String(v==null?"":v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
-    o.value=["Code,att,mt,"+tk.map(t=>t.k).join(",")+",agency,note"].concat(nm.map((n,i)=>{const r=b[n]||{};return ["S"+(i+1),truthy(r.att)?1:0,truthy(r.mt)?1:0,...tk.map(t=>truthy(r[t.k])?1:0),r.agency?1:0,q(r.note||"")].join(",")})).join("\n");
+    o.value=["Code,att,mt,"+tk.map(t=>t.k).join(",")+",agency,note"].concat(nm.map((n,i)=>{const r=b[n]||{};return ["S"+(i+1),present(r.att)?1:0,truthy(r.mt)?1:0,...tk.map(t=>truthy(r[t.k])?1:0),r.agency?1:0,q(r.note||"")].join(",")})).join("\n");
     o.select();copy(o.value)};
   $("#mRep").onclick=()=>{const b=get(),N=nm.length||1,pc=k=>Math.round(100*nm.filter(n=>truthy((b[n]||{})[k])).length/N);
     const code=n=>"S"+(nm.indexOf(n)+1), nb=n=>(b[n]||{}).note||"";
     const grp=kind=>nm.filter(n=>noteKind(nb(n))===kind).map(n=>`  ${code(n)}: ${nb(n)}`).join("\n")||"  none";
     copy([`Session Report · ${APP.name}`,`Class: ${cc} · Session ${s}: ${SESSIONS[s]} · ${todayISO()}`,
-      `Present: ${nm.filter(n=>truthy((b[n]||{}).att)).length} of ${nm.length}`,`Mini-Teach turns done: ${nm.filter(n=>truthy((b[n]||{}).mt)).length}`,
+      `Present: ${nm.filter(n=>present((b[n]||{}).att)).length} of ${nm.length}`,`Mini-Teach turns done: ${nm.filter(n=>truthy((b[n]||{}).mt)).length}`,
       `Tasks done:`,...tk.map(t=>`  ${t.t}: ${pc(t.k)}%`),`Agency moments saved: ${nm.filter(n=>(b[n]||{}).agency).length}`,`Positive notes:`,grp("P"),`Needs work:`,grp("N"),`Other notes:`,grp("O"),`(Codes S1–S${nm.length} only.)`].join("\n"))};
   const showCounts=d=>{const el=$("#mCnt"); if(!el) return;
     if(d===null){el.innerHTML=`<p class="small warn">The app could not read the tool list from the Sheet.</p><button class="btn alt" id="mDiag">${ic("search","sm")}Show the Sheet answer</button><pre id="mDiagOut" class="out small" style="white-space:pre-wrap;overflow-wrap:anywhere" hidden></pre>`;
       $("#mDiag").onclick=async()=>{const o=$("#mDiagOut");o.hidden=false;o.textContent="Asking the Sheet…";
         const lines=[`Class: ${cc} · Script v${SCRIPT_V}${SHEET_ERR?" · "+SHEET_ERR:""}`];
-        for(const [n,q] of [["config","?a=config"],["ticks",`?a=ticks&c=${enc(cc)}&s=5`],["counts",`?a=counts&c=${enc(cc)}`]]){
+        for(const [n,q] of [["config","?a=config"],["ticks",`?a=ticks&cls=${enc(cc)}&ses=5`],["counts",`?a=counts&cls=${enc(cc)}`]]){
           try{const r=await fetch(SHEET_URL+q);const t=await r.text();lines.push(`${n}: OK ${r.status} · ${t.slice(0,80)}`)}catch(e){lines.push(`${n}: FAILED (${e.message})`)}}
         o.textContent=lines.join("\n")};return}
     if(!Object.keys(d).length){el.innerHTML=`<p class="small muted">No tool use yet for <b>${esc(cc)}</b>. It fills when students open tools from the GitHub link.</p>`;return}
@@ -2351,7 +2498,7 @@ let ROUTE_PREV="home";
 function render(r){
   ROUTE_PREV=ROUTE; ROUTE=r;
   const app=$("#app"); let html="";
-  const [kind,arg]=r.split(":");
+  const [kind,arg,arg2]=r.split(":");
   if(kind==="home") html=home();
   else if(kind==="sec") html=section(arg);
   else if(kind==="card") html=isOpenS((CARDS.find(x=>x.id===arg)||{}).s)?card(arg):lockCard(arg);
@@ -2362,19 +2509,23 @@ function render(r){
   else if(kind==="gloss") html=gloss(); else if(kind==="getapp") html=getapp(); else if(kind==="privacy") html=privacy();
   else if(kind==="report") html=report(); else if(kind==="matrix") html=matrix();
   else if(kind==="mentor") html=mentor();
+  else if(kind==="game") html=gameScreen(+arg,+(arg2||0));
   else if(kind==="tool"){
     const t=TOOLS.find(x=>x.id===arg);
     const V=Object.assign({abcd,tasks:tasksScreen,samr,redef,growth,agency:agencyScreen},TOOL_SCREENS);
-    if(!t || !toolOpen(t) || !V[arg]) html=preview(arg); else {html=V[arg](); markUsed(arg); logUse(arg,"open")}
+    if(!t || !toolOpen(t) || !V[arg]) html=preview(arg); else {html=V[arg](); markUsed(arg); logUse(arg,"open"); if(t.s===current()) autoAtt(t.s)}
   }
   else html=home();
+  if(kind==="home") store.set("fromTour",false);
+  if(store.get("fromTour",false) && kind!=="start") html=html.replace('<div class="panel"',`<div class="tip noprint"><button class="btn alt" data-go="start">${ic("left","sm")}Back to Start here</button></div><div class="panel"`);
   app.innerHTML=html; window.scrollTo(0,0);
   app.querySelectorAll(".panel").forEach(wireVisual);
   wireInd();
   app.querySelectorAll(".quiz button").forEach(b=>b.onclick=()=>{const ok=b.dataset.j===b.dataset.a;b.classList.add(ok?"right":"wrong");b.textContent=(ok?"✓ ":"✗ ")+b.textContent.replace(/^[✓✗] /,"").replace(/ — (Yes!|Try again)$/,"")+(ok?" — Yes!":" — Try again")});
   if(kind==="home") wireSearch();
   if(kind==="start") wireStart();
-  if(kind==="mentor") wireMentor(); else wireMentor._auto=false;
+  if(kind==="mentor") wireMentor(); else {wireMentor._auto=false; clearInterval(MAUTO)}
+  if(kind==="game") wireGame(+arg,+(arg2||0));
   if(kind==="report") wireReport();
   if(kind==="tool"){
     if($("#abcdp")) wireAbcd(); if($("#tList")) wireTasks(); if($("#samrp")) wireSamr();
@@ -2390,7 +2541,7 @@ function render(r){
     toast("Cleared on this phone"); if(DEMO) exitDemo(); else render("home")};
 }
 document.addEventListener("click",e=>{
-  const g=e.target.closest("[data-go]"); if(g){e.preventDefault();render(g.dataset.go);return}
+  const g=e.target.closest("[data-go]"); if(g){e.preventDefault(); if(g.hasAttribute("data-fromtour")) store.set("fromTour",true); else if(g.dataset.go!=="start" && ROUTE==="start") store.set("fromTour",false); render(g.dataset.go);return}
   const s=e.target.closest("[data-soon]"); if(s){toast(s.dataset.soon+": link coming soon");return}
   const l=e.target.closest("[data-listen]"); if(l){const t=$("#"+l.dataset.listen); if(t) speak(t.innerText.replace(/•/g,"")); return}
   if(e.target.closest("[data-bigtext]")){store.gset("size",store.gget("size","")==="lg"?null:"lg");applySize();render(ROUTE);return}
@@ -2398,8 +2549,17 @@ document.addEventListener("click",e=>{
   if(e.target.closest("[data-demo-exit]")){exitDemo();return}
   if(e.target.closest("[data-print]")) window.print();
 });
-render("home");
+(()=>{const h=decodeURIComponent((location.hash||"").slice(1)); render(/^(game|tool|card|sec|today|start):?/.test(h)?h:"home")})();
 connect();
+window.addEventListener("hashchange",()=>{const h=decodeURIComponent((location.hash||"").slice(1)); if(/^(game|tool|card|sec|today|start):?/.test(h)) render(h)});
+/* new version check (GitHub copy only) */
+async function checkVersion(){
+  if(inFrame||DEMO||!/github\.io$/.test(location.hostname)||$("#upd")) return;
+  try{const r=await fetch(location.pathname+"?v="+Date.now(),{cache:"no-store"}); const t=await r.text(); const m=t.match(/version:"([\d.]+)"/);
+    if(m&&m[1]!==APP.version){const b=document.createElement("button");b.id="upd";b.className="upd";b.innerHTML=ic("refresh","sm")+"New version of the app: tap to refresh";b.onclick=()=>location.reload();document.body.appendChild(b)}}catch(e){}
+}
+setTimeout(checkVersion,4000);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible") checkVersion()});
 </script>
 </body>
 </html>
