@@ -353,7 +353,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"1.8.1", updated:"29 Oct 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"1.9", updated:"30 Oct 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 /* Google Sheet data link (Apps Script web app). Leave "" to keep everything on the device. */
@@ -363,9 +363,9 @@ const DEFAULT_NAMES = ["Alaa O.","Alaa M.","Aya","Georgina","Habiba","Sagda","So
 /* Sessions open for students when the Sheet cannot be reached. The Settings sheet (or Mentor Desk) overrides it. */
 const RELEASED_UP_TO = 5;
 /* Optional: open a session automatically on a date (YYYY-MM-DD). */
-const SESSION_DATES = { 6:"2026-10-28", 7:"2026-11-02" };
+const SESSION_DATES = { 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04" };
 /* Date shown in the This Week banner (display only; it does not open a session). Mentor Desk (Script v4) overrides it. */
-const NEXT_DATES = { 5:"2026-10-27", 6:"2026-10-28", 7:"2026-11-02" };
+const NEXT_DATES = { 5:"2026-10-27", 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04" };
 /* Summary & Review videos (YouTube, Unlisted). Add the playlist link and one link per session. */
 const PLAYLIST = "https://www.youtube.com/playlist?list=PLKz1A7W5D9_c";
 const VIDEOS = { /* 5:"https://youtu.be/..." */ };
@@ -380,7 +380,11 @@ const GAMES = {
  7:[{step:"Step 2",type:"match",title:"Why Does It Help?",how:"Tap a scaffold, then tap why it helps students.",
      pairs:[["Show: a picture","Students see the meaning.","eye"],["Say: the sound","Students hear the right sound.","sound"],["Use: a sentence","Students see how we use the word.","chat"],["Check: a question","Students show they understand.","check"]]},
     {step:"Home",type:"cards",optional:true,title:"Heart and Blood",how:"Tap a card to turn it. Say the word, then answer the question.",
-     cards:[["🫀","heart","What pumps blood?"],["🫁","lungs","What do we breathe with?"],["💪","muscles","What helps us move?"],["🦴","bones","What makes our bones strong?"],["🩸","blood","What carries oxygen?"],["✊","fist","Show me your fist!"],["🏃","fit","What do you do to stay fit?"],["😟","stressed","When do you feel stressed?"],["🌬️","oxygen","What do we need to live?"],["🧠","organ","Is the heart an organ?"]]}]
+     cards:[["🫀","heart","What pumps blood?"],["🫁","lungs","What do we breathe with?"],["💪","muscles","What helps us move?"],["🦴","bones","What makes our bones strong?"],["🩸","blood","What carries oxygen?"],["✊","fist","Show me your fist!"],["🏃","fit","What do you do to stay fit?"],["😟","stressed","When do you feel stressed?"],["🌬️","oxygen","What do we need to live?"],["🧠","organ","Is the heart an organ?"]]}],
+ 8:[{step:"Step 2",type:"match",title:"Failure and Backup",how:"Tap a failure, then tap its low-tech backup.",
+     pairs:[["No internet","Printed cards (or download it before class).","cloud"],["Projector stops","The board, the book pictures, or printed slides.","eye"],["Platform crash","A paper game, or play it aloud.","bug"],["Battery dies","Paper flashcards and my voice.","device"]]},
+    {step:"Home",type:"cards",optional:true,title:"The Nile River",how:"Tap a card to turn it. Say the word, then answer the question.",
+     cards:[["🐊","crocodile","Where do crocodiles live?"],["🎯","hunt","What do crocodiles hunt?"],["🌿","water weeds","What do small fish eat?"],["🦟","insects","What do birds eat?"],["🏞️","river","What is the longest river in Africa?"],["🐟","fish","What lives in the river?"],["🐦","birds","What flies over the Nile?"],["🌱","plants","What grows near the river?"],["🛡️","protect","How can we protect the Nile?"],["⚠️","dangerous","Is a crocodile dangerous?"]]}]
 };
 const gameName=(s,g)=>`S${s} ${g.step} – ${g.title}`;
 const gameLink=(s,i)=>APP_URL+"#game:"+s+":"+(i||0);
@@ -445,7 +449,7 @@ const REUSE = {
  5:{pre:["Which verb is better for an objective: “say” or “know”? Why?","Which is clearer: “Students will learn weather words” or “Students will say five weather words”?"]},
  6:{pre:["What is a warm-up, and how long is it?","Name two things that make a warm-up good."]},
  7:{pre:["What does the teacher do in the presentation stage?","Name two things that help students understand a new word."]},
- 8:{pre:["What can stop working in a class with technology?","What can a teacher do when the projector stops?"]},
+ 8:{pre:["What can stop working in a class with technology?","What can a teacher do when the projector stops?"],pick:[["Idea","The Plan B Box"],["Website","British Council Voices: Tips for teaching in a low-tech classroom"]]},
  11:{pick:[["Website","Edutopia 60-Second Strategy: Cooperative Learning Roles"],["Tool","Microsoft co-authoring guide"]]},
  12:{pick:[["Website","HMH: What Is an Exit Ticket?"],["Idea","Word of the Day closure (The TEFL Org)"]]},
  13:{pick:[["Tool","Kahoot teacher guide"],["Website","Edutopia: 3 Tips for Better Peer Feedback"]]},
@@ -646,7 +650,7 @@ const TOOLS = [
  {id:"groups",sec:"teach",s:11,ic:"teams",t:"Group Maker",d:"Make groups in one click.",how:"Choose the group size. Tap Make groups.",dig:"Wheel of Names",paper:"Number slips",pv:["Groups of 2, 3 or 4","Roles: Leader, Checker, Timekeeper"],kw:"groups pairs collaboration"},
  {id:"exit",sec:"check",s:12,ic:"ticket",t:"Exit Ticket Maker",d:"Three closing questions.",how:"Choose three questions. Copy them to Forms.",dig:"Microsoft Forms",paper:"Exit slip",pv:["One thing I learned…","One word I can spell…","One question I still have…"],kw:"closure exit ticket"},
  {id:"quick",sec:"check",s:13,ic:"traffic",t:"Quick Check + Feedback Starters",d:"Traffic light check and kind feedback.",how:"Students show green, yellow or red. Use a starter.",dig:"Teams reactions",paper:"Colour cards",pv:["Green: I can do it.","Yellow: I need one more example.","Red: Please help me."],kw:"feedback formative check"},
- {id:"games",sec:"check",s:6,ic:"play",t:"Session Games",d:"Play each session's game. Your score goes to your teacher.",how:"Choose a game. Play. Your score is saved when you finish.",dig:"Wordwall",paper:"Game cards on paper (backup slide)",pv:["Session 6: Match It! The Warm-Up Recipe","Practice: Places in Our Community"],kw:"game games play matching flashcards quiz score"},
+ {id:"games",sec:"check",s:6,ic:"play",t:"Session Games",d:"Play each session's game. Your score goes to your teacher.",how:"Choose a game. Play. Your score is saved when you finish.",dig:"Teams Learning Activities (Matching)",paper:"Game cards on paper (backup slide)",pv:["Session 6: Match It! The Warm-Up Recipe","Practice: Places in Our Community"],kw:"game games play matching flashcards quiz score"},
  {id:"tasks",sec:"grow",s:5,ic:"tasks",t:"My Tasks",d:"What to do before, during and after.",how:"Choose your class and name. Tick each task.",dig:"Teams post",paper:"Task list in the handouts",kw:"tracker homework journal ai try"},
  {id:"growth",sec:"grow",s:5,ic:"award",t:"My Growth Path",d:"Your stars, tools tried and sessions done.",how:"Look at your stars. Thank a classmate.",dig:"Teams post",paper:"Stars on your handout",kw:"stars badge progress thank"},
  {id:"agency",sec:"grow",s:5,ic:"compass",t:"My Agency Moments",d:"Past, present and future teaching choices.",how:"Choose past, present or future. Finish the sentence. Save it.",dig:"Weekly Journal (Critical Incident)",paper:"Agency card",kw:"agency past present future choice iterational projective"},
@@ -1881,7 +1885,8 @@ function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v1.8.1 · 29 Oct 2026","Our PLN from Session 7: in class you comment on one classmate’s post; at home you add your new contribution before the next session (My Tasks shows it as homework)."],
+ const v=[["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
+  ["v1.8.1 · 29 Oct 2026","Our PLN from Session 7: in class you comment on one classmate’s post; at home you add your new contribution before the next session (My Tasks shows it as homework)."],
   ["v1.8 · 29 Oct 2026","Session 7 is ready: the game Why Does It Help? (the four scaffolds), Heart and Blood word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 7, and the pre-session questions. Session 7 opens on 2 Nov 2026."],
   ["v1.7 · 29 Oct 2026","New home screen order: Today in class, My Tasks, the five sections, My Links, then I need… and Search. A small search button at the top of every screen. Tools and LEARN cards of earlier sessions fold under “Earlier sessions”. Brighter colours, and every new tool and game has its own bright colour. Demo mode is now called Program map. Mentor Desk: copy a Session line for the Session Log, download the Session Report, and export all sessions as a CSV file (codes only). Pre-session questions for Sessions 5 and 6 in My Tasks. Back now returns to the screen you came from (also the phone’s back button). New app icon colours; Tip of the day and This week at the top; Search and I need… at the end of the home screen."],
   ["v1.6 · 27 Oct 2026","Journal Helper (Three Takeaways, Weekly, Monthly): choose session ideas, add one detail in your own words, copy, open the form; AI helper for English and questions. Name Picker is a colourful wheel with our class names. Today in class lists everything for the session in order. My Tasks shows an automatic message and your teacher's note. Mentor Desk: Suggest notes; the WhatsApp group message shows only positive notes. Games with icons, sounds and confetti."],
@@ -1932,7 +1937,7 @@ const TOOL_SCREENS={}, TOOL_WIRE={};
 function shell(id,steps,body,real){
   const t=TOOLS.find(x=>x.id===id), a=AITRY[t.s]||{};
   return `${topbar()}${backBtn("sec:"+t.sec,SECS[t.sec].t)}<div class="panel" id="${id}p">
-  ${secHead(t.sec,esc(t.t),`${SECS[t.sec].t} · Session ${t.s}`)}
+  ${secHead(t.sec,esc(t.t),`${SECS[t.sec].t} · Since Session ${t.s}`)}
   ${indStrip(id)}${guide(steps)}${body}
   ${aiBox(id+"AI",a.tool||"Gemini",a.alt||"Copilot")}
   ${real?`<div class="real">${ic("teach","sm")}<span><b>In a real school:</b> ${real}</span></div>`:""}
@@ -1975,7 +1980,17 @@ const JH = {
   did:["I clicked the sound button","I said “Say it with me”","I asked my check question","I used my fist to show the size of the heart","I said my TPK sentence"],
   why:["students hear the right sound","a picture shows the meaning","a question shows if students understand","it matches the unit in the book"],
   learned:["a new word needs a picture and a sound","a model sentence shows how we use the word","a check question is better than “Do you understand?”","a short time makes me speak clearly"],
-  next:["say the word slowly two times","wait three seconds for answers","use a gesture with my word","prepare one more check question"]}
+  next:["say the word slowly two times","wait three seconds for answers","use a gesture with my word","prepare one more check question"]},
+ 8:{words:["Plan B","black screen","paper flashcard","the board","same goal","my choice"],
+  rate:{network:"my Plan B reply • the Plan B Box",tpack:"Keep the goal, change the tool",agency:"I chose my backup"},
+  surprised:["the lesson can go on when the screen turns black","a printed card works as well as a slide","my classmates did not stop in the drill","one paper card keeps the same goal"],
+  learn:["how to print my slides as handouts","more low-tech backups for Grade 5","how to plan a Plan B for every activity","how to stay calm when technology stops"],
+  apply:["prepare a Plan B for every technology activity","keep a Plan B Box in my class","print my slides before class","ask “What can fail?” before every lesson"],
+  happened:["in my Mini-Teach, the screen turned black","in my Mini-Teach, the sound did not work","when I wrote my Plan B Card, I chose my backup","when my classmate’s screen stopped, she used her card"],
+  did:["I said “No problem! Look!”","I held up my printed card","I drew my word on the board","I showed the picture in the book","I said the word slowly two times"],
+  why:["students still see the meaning","students still hear the word","it keeps the same goal","it is fast and easy"],
+  learned:["a Plan B keeps the lesson going","the tool can change, but the goal stays the same","printed slides are a good backup","a calm teacher keeps the class calm"],
+  next:["hold my card higher","prepare my backup before class","practise my switch once at home","use the book page number on my card"]}
 };
 const JMON=[4,8,12,16];
 const jhFor=s=>{for(let x=s;x>=1;x--) if(JH[x]) return [x,JH[x]]; return [s,null]};
@@ -2080,7 +2095,7 @@ function gameScreen(s,i){
   return `${topbar()}${backBtn("tool:games","Games")}<div class="panel" id="gameP">
    ${secHead("check",esc(g.title),`GAME · Session ${s} · ${g.step}`)}
    <p class="gname">${esc(gameName(s,g))}</p>
-   ${guide(g.type==="match"?["Tap an ingredient","Tap its meaning","Green = correct"]:g.type==="cards"?["Look at the picture and word","Tap to turn the card","Say the answer aloud"]:["Read the question","Tap your answer","See your score"])}
+   ${guide(g.type==="match"?["Tap one card on the left","Tap its match","Green = correct"]:g.type==="cards"?["Look at the picture and word","Tap to turn the card","Say the answer aloud"]:["Read the question","Tap your answer","See your score"])}
    ${who}
    <p class="small muted">${esc(g.how)}</p>
    ${body}
@@ -2235,6 +2250,7 @@ TOOL_WIRE.picker=()=>{
 
 /* ---------- Word Cards (S7): picture + word + sound inside the page ---------- */
 const WSETS={
+ "The Nile River (Session 8)":[["🎯","hunt","Crocodiles hunt fish and birds."],["🌿","water weeds","Small fish eat water weeds."],["🦟","insects","Birds eat insects."],["🏞️","river","The Nile is a long river."],["🐟","fish","Fish swim in the river."],["🐦","birds","Birds fly over the Nile."],["🌱","plants","Plants grow near the river."],["🛡️","protect","We protect the Nile."],["⚠️","dangerous","A crocodile is dangerous."]],
  "Heart and Blood (Grade 5)":[["🫀","heart","The heart pumps blood."],["🫁","lungs","We breathe with our lungs."],["💪","muscles","Muscles help us move."],["🦴","bones","Milk makes our bones strong."],["🩸","blood","Blood carries oxygen."],["✊","fist","My heart is the size of my fist."],["🏃","fit","I play football to stay fit."],["😟","stressed","I feel stressed before exams."],["🌬️","oxygen","We need oxygen to live."],["🧠","organ","The heart is an organ."]],
  "Food (Grade 5)":[["🍎","apple","I eat an apple every day."],["🍞","bread","We eat bread for breakfast."],["🍚","rice","Rice is white."],["🐟","fish","Fish is healthy food."],["🥛","milk","I drink milk."],["🥚","egg","The egg is in the box."]],
  "The Nile River (Grade 5)":[["🐊","crocodile","Crocodiles live in the Nile."],["⛵","boat","The boat is on the river."],["🐟","fish","Fish swim in the river."],["👨‍🌾","farmer","The farmer works near the Nile."],["💧","water","The Nile gives us water."],["🌴","palm tree","Palm trees grow near the river."]],
@@ -2731,7 +2747,7 @@ function wireMentor(){
   if(SCRIPT_V>=3 && !DEMO) (SHEET_USAGE?Promise.resolve(SHEET_USAGE[cc]||{}):loadUsage(cc)).then(d=>{const el=$("#mOth"); if(!el) return;
     if(!d||!Object.keys(d).length){el.innerHTML=`<p class="small muted">No own words yet.</p>`;return}
     el.innerHTML=Object.entries(d).map(([k,list])=>`<p class="small"><b>${esc(OTHER_NAMES[k]||k)}:</b> ${list.map(([v,c])=>`${esc(v)} (${c})`).join(" · ")}</p>`).join("")});
-  if(DEMO){const el=$("#mOth");if(el)el.innerHTML=`<p class="small"><b>ABCD · Verb:</b> point and say (3) · act out the words (2)</p><p class="small"><b>SAMR · Tool:</b> Wordwall (2)</p>`}
+  if(DEMO){const el=$("#mOth");if(el)el.innerHTML=`<p class="small"><b>ABCD · Verb:</b> point and say (3) · act out the words (2)</p><p class="small"><b>SAMR · Tool:</b> Slido (2)</p>`}
   $("#mOpenGo").onclick=async()=>{const v=+$("#mOpen").value;CFG.open=CFG.open||{};CFG.open[cc]=v;if(!DEMO)store.set("cfg",CFG);
     if(DEMO||NET===false||!SHEET_URL){toast(DEMO?"Demo: opened on this device":"Saved on this device. Change the Settings sheet so students see it.");render("mentor");return}
     try{const r=await post({a:"open",pin:MENTOR.pin,c:cc,s:v});toast(r&&r.ok===false?"The Sheet refused the PIN":`Sessions 1–${v} are open for ${cc}`)}catch(e){toast("Could not reach the Sheet. Change the Settings sheet.")}
