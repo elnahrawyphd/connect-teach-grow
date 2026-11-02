@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Connect, Teach and Grow: a pocket toolkit for EFL student teachers (Ain Shams University).">
 <meta name="theme-color" content="#1463e0">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-32.png?v=201" type="image/png" sizes="32x32">
+<link rel="icon" href="icon.svg?v=201" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png?v=201">
 <link rel="manifest" href="manifest.json">
 <meta name="claude:viewport-fit-sides" content="cover">
 <title>Connect, Teach and Grow</title>
@@ -110,6 +111,8 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,te
 .fcg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .fc{min-height:120px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;padding:10px;display:grid;place-items:center;text-align:center}
 .fc .em{font-size:2.2rem;line-height:1}.fc b{font-size:1.1rem}.fc.back{background:color-mix(in srgb,var(--learn) 16%,var(--card));border-color:var(--learn)}
+[data-gr].hintc{outline:3px dashed var(--accent);outline-offset:2px}
+.illus{display:block;width:min(320px,80%);height:auto;margin:6px auto 12px;border-radius:22px}
 .gscore{text-align:center;font-family:var(--display);font-size:2.6rem;font-weight:800;color:var(--ok)}
 .gname{font-family:var(--display);font-weight:800;font-size:1.05rem}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
@@ -179,7 +182,7 @@ details.early[open] summary{margin-bottom:8px}
 .btn{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--bg);border:0;border-radius:12px;padding:10px 16px;font-weight:700;text-decoration:none}
 .btn.alt{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
 .btn:disabled{opacity:.5}
-.out{background:var(--soft);border-radius:12px;padding:14px;font-size:1.08rem;min-height:3em}
+.out{background:var(--soft);border-radius:12px;padding:14px;font-size:1.08rem;min-height:3em;overflow-wrap:anywhere}
 .tip{border-left:4px solid var(--accent);padding:8px 12px;background:var(--soft);border-radius:0 10px 10px 0}
 .note{display:flex;gap:8px;align-items:flex-start;font-size:.9rem;color:var(--muted)}
 label{font-weight:700;font-size:.95rem}
@@ -207,6 +210,7 @@ textarea{min-height:96px}
 .vis text{font-family:var(--body);fill:var(--ink)}
 .node{cursor:pointer}
 .info{background:var(--soft);border-radius:12px;padding:12px 14px;min-height:4.2em}
+.jcard{display:flex;gap:12px;align-items:flex-start;border-left:6px solid var(--c);padding-left:10px}.jico{flex:0 0 auto;width:46px;height:46px;border-radius:14px;background:var(--c);color:var(--onTile);display:grid;place-items:center}.jico svg{width:26px;height:26px}.jtx{display:flex;flex-direction:column;gap:6px}.jph{font-size:.82rem;font-weight:700;color:var(--muted)}.jtx .btn{align-self:flex-start}
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
 .tabs button{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 12px;display:inline-flex;gap:6px;align-items:center}
 .tabs button.on{background:var(--c,var(--ink));color:var(--onTile);border-color:var(--c,var(--ink))}
@@ -344,7 +348,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 .brand b{white-space:nowrap;font-size:1.35rem}
 .topr{justify-content:flex-start;flex-wrap:nowrap;gap:5px}
 .topr .ghost{padding:5px 8px;font-size:.8rem;white-space:nowrap}.topr .sync{font-size:.74rem;padding:4px 7px}
-@media (max-width:480px){.brand b{font-size:1.2rem}.ghost .gt{display:inline}.sync .st{display:inline}}
+@media (max-width:480px){.brand b{font-size:1.2rem}}
 @media (max-width:360px){.brand b{font-size:1.05rem}}
 </style>
 </head>
@@ -353,13 +357,14 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"1.9", updated:"30 Oct 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0", updated:"3 Nov 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
+const mpin = v => {try{if(v===undefined) return sessionStorage.getItem("ctg_mpin")||""; if(v) sessionStorage.setItem("ctg_mpin",v); else sessionStorage.removeItem("ctg_mpin")}catch(e){return ""}};
 /* Google Sheet data link (Apps Script web app). Leave "" to keep everything on the device. */
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbw7fHr2Fef6H6x4CHmnqx_gVbK8x-ti-97fj6340TL2SsAqaNtC8vxbjFL6UPfUz1utMQ/exec";
 const DEFAULT_CLASS = "Microteaching 2026-2027";
-const DEFAULT_NAMES = ["Alaa O.","Alaa M.","Aya","Georgina","Habiba","Sagda","Sondos","Maram","Nour"];
+const DEFAULT_NAMES = ["Alaa O.","Alaa M.","Aya","Georgina","Habiba","Sagda","Sondos","Maram","Nour","Rahma"];
 /* Sessions open for students when the Sheet cannot be reached. The Settings sheet (or Mentor Desk) overrides it. */
 const RELEASED_UP_TO = 5;
 /* Optional: open a session automatically on a date (YYYY-MM-DD). */
@@ -419,6 +424,7 @@ const SESSIONS = {
  13:"Formative Tracking and Feedback",14:"Microteaching Checkpoint II",15:"Redefinition-Level Assessment",16:"Integrated Lesson Planning",
  17:"Final Microteaching",18:"Projective Agency and Vision"};
 const PHASE = n => n<=2?1:n<=6?2:n<=10?3:n<=14?4:5;
+const PHASE_IC=[null,"compass","network","layers","ladder","star"];
 const PHASECOL = ["","var(--muted)","var(--learn)","var(--plan)","var(--teach)","var(--grow)"];
 
 /* Phrase of the day (one per session). a = verified author; no a = a classroom phrase (no author). */
@@ -580,28 +586,7 @@ const ic = (n,c="") => `<svg class="i ${c}" viewBox="0 0 24 24" aria-hidden="tru
 
 /* ================= APP ICON (option A: TPACK spheres + network) ================= */
 function appIcon(u="a"){
-  const nodes=[0,1,2,3,4,5].map(k=>{const a=(-90+60*k)*Math.PI/180;return [256+196*Math.cos(a),256+196*Math.sin(a)]});
-  const ncol=["#e8365d","#22a6ff","#1fc46e","#ff7a3d","#ffc83d","#c23bd4"];
-  return `<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
-  <linearGradient id="bg${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1463e0"/><stop offset="1" stop-color="#8b3ff0"/></linearGradient>
-  <radialGradient id="sT${u}" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#bfe9ff"/><stop offset=".55" stop-color="#22a6ff"/><stop offset="1" stop-color="#0063c4"/></radialGradient>
-  <radialGradient id="sP${u}" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#c4f7d9"/><stop offset=".55" stop-color="#1fc46e"/><stop offset="1" stop-color="#05874a"/></radialGradient>
-  <radialGradient id="sC${u}" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#ffd8b8"/><stop offset=".55" stop-color="#ff7a3d"/><stop offset="1" stop-color="#d9480f"/></radialGradient>
-  <radialGradient id="sG${u}" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff6cf"/><stop offset=".5" stop-color="#ffc83d"/><stop offset="1" stop-color="#ff9f00"/></radialGradient>
-  <radialGradient id="hl${u}" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-  <radialGradient id="sh${u}" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg${u})"/>
-  <polygon points="${nodes.map(p=>p.map(v=>v.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="#ffffff" stroke-opacity=".35" stroke-width="6" stroke-dasharray="14 12"/>
-  ${nodes.map(p=>`<line x1="256" y1="248" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}" stroke="#ffffff" stroke-opacity=".5" stroke-width="6"/>`).join("")}
-  <ellipse cx="256" cy="420" rx="170" ry="26" fill="url(#sh${u})"/>
-  <circle cx="200" cy="212" r="104" fill="url(#sT${u})" opacity=".93"/>
-  <circle cx="312" cy="212" r="104" fill="url(#sP${u})" opacity=".9"/>
-  <circle cx="256" cy="306" r="104" fill="url(#sC${u})" opacity=".9"/>
-  <ellipse cx="168" cy="166" rx="40" ry="24" fill="url(#hl${u})"/><ellipse cx="282" cy="166" rx="40" ry="24" fill="url(#hl${u})"/><ellipse cx="226" cy="262" rx="40" ry="24" fill="url(#hl${u})" opacity=".8"/>
-  <circle cx="256" cy="244" r="38" fill="url(#sG${u})" stroke="#fff" stroke-width="7"/>
-  <ellipse cx="244" cy="230" rx="14" ry="9" fill="#fff" opacity=".8"/>
-  ${nodes.map((p,i)=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="27" fill="#ffffff"/><circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="16" fill="${ncol[i]}"/>`).join("")}
-  <g font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="50" fill="#ffffff" text-anchor="middle"><text x="166" y="206">T</text><text x="346" y="206">P</text><text x="256" y="372">C</text></g></svg>`;
+  return `<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><image href="icon-192.png?v=201" width="512" height="512"/></svg>`;
 }
 
 /* ================= INDICATORS (one strip on every tool; the same data builds the Alignment Matrix) =================
@@ -672,51 +657,51 @@ const CARDS = [
   lines:["The program has 18 sessions in 5 phases.","We move from networks (Connectivism) to knowledge (TPACK) to change (SAMR).","Each phase builds on the one before."],
   ex:"Phase 2 builds your network. Phase 5 is your final lesson and your future plan.",
   real:"a school year has a journey too. Plan the term in steps, and tell students where they are.",
-  q:[{q:"How many phases does the program have?",o:["3","5","18"],a:1},{q:"Which comes first?",o:["SAMR","TPACK","Connectivism"],a:2}]},
+  q:[{q:"How many phases does the program have?",o:["3","5","18"],a:1,why:"The program has five phases, from foundations to the final reflection.",h:"Look at the journey map on the card and count the phases."},{q:"Which comes first?",o:["SAMR","TPACK","Connectivism"],a:2,why:"We start with Connectivism (networks), then TPACK, then SAMR.",h:"Think of the order: networks, then knowledge, then levels."}]},
  {id:"ccer",s:1,ic:"cycle",t:"The CCER Cycle",vis:"ccer",
   lines:["Every session follows four moves.","Connect → Construct → Enact → Reflect.","Then the cycle starts again, a little better."],
   ex:"Connect: watch a warm-up video. Construct: design your own warm-up. Enact: teach it to peers. Reflect: what worked?",
   real:"use the same four moves with your students: see an example, make something, show it, then say what was good.",
-  q:[{q:"You teach a short warm-up to your peers. Which stage?",o:["Connect","Enact","Reflect"],a:1},{q:"You write what you will change next time. Which stage?",o:["Reflect","Construct","Connect"],a:0}]},
+  q:[{q:"You teach a short warm-up to your peers. Which stage?",o:["Connect","Enact","Reflect"],a:1,why:"Enact means you do it: you teach or try the activity.",h:"Which stage is about doing, not thinking or writing?"},{q:"You write what you will change next time. Which stage?",o:["Reflect","Construct","Connect"],a:0,why:"Reflect means you look back and plan what to change.",h:"Which stage looks back after teaching?"}]},
  {id:"agency",s:2,ic:"flag",t:"Teacher Agency",vis:"agency",
   lines:["Agency means you make good teaching choices yourself.","It has three parts: past (iterational), present (practical-evaluative) and future (projective).","It grows with practice, support and reflection."],
   ex:"The projector fails. You use flashcards and the lesson goes on. That is agency in the present.",
   real:"when the plan does not work, you choose what to do next. Write one line about the choice after the lesson.",
   src:"Priestley, Biesta &amp; Robinson (2015).",tool:"agency",
-  q:[{q:"\"Next year I will use Padlet with my students.\" Which part?",o:["Iterational (past)","Practical-evaluative (present)","Projective (future)"],a:2},{q:"\"I remember my teacher used songs, so I use songs.\" Which part?",o:["Iterational (past)","Projective (future)","None"],a:0}]},
+  q:[{q:"\"Next year I will use Padlet with my students.\" Which part?",o:["Iterational (past)","Practical-evaluative (present)","Projective (future)"],a:2,why:"“Next year” is the future: projective agency.",h:"Look at the time words: past, now, or later?"},{q:"\"I remember my teacher used songs, so I use songs.\" Which part?",o:["Iterational (past)","Projective (future)","None"],a:0,why:"“I remember…” is about the past: iterational agency.",h:"Is she talking about the past, now, or later?"}]},
  {id:"tpack",s:2,ic:"venn",t:"TPACK",vis:"tpack",
   lines:["Good lessons join three kinds of knowledge.","Content (English), Pedagogy (how to teach), Technology (tools).","TPACK is the centre where all three meet, inside your context."],
   ex:"Teaching food words (C) with pictures and pair talk (P) on a Teams Flashcards set with sound (T).",
   real:"start with the content and the students, then choose the tool. One phone and a speaker can be enough.",
   src:"Mishra &amp; Koehler (2006).",
-  q:[{q:"Knowing how to use Padlet only, with no lesson aim, is…",o:["TK","TPACK","PCK"],a:0},{q:"Choosing a tool because it helps students say new words is…",o:["Only TK","TPACK thinking","Only CK"],a:1}]},
+  q:[{q:"Knowing how to use Padlet only, with no lesson aim, is…",o:["TK","TPACK","PCK"],a:0,why:"Knowing a tool alone, with no lesson aim, is Technological Knowledge (TK).",h:"Is there any teaching or content in this sentence?"},{q:"Choosing a tool because it helps students say new words is…",o:["Only TK","TPACK thinking","Only CK"],a:1,why:"The tool (T) is chosen for a teaching way (P) to learn words (C): all three together.",h:"Does the choice join the tool, the teaching, and the content?"}]},
  {id:"samr",s:2,ic:"ladder",t:"SAMR",vis:"samr",
   lines:["SAMR shows how much technology changes a task.","Substitution and Augmentation improve the task (Enhancement).","Modification and Redefinition change the task (Transformation)."],
   ex:"A worksheet on the screen is S. A voice tour that families listen to is R.",
   real:"not every lesson needs R. Choose the step that helps students learn today, and keep a Plan B on paper.",
   src:"Puentedura (2006).",
-  q:[{q:"A typed worksheet instead of paper is…",o:["Substitution","Modification","Redefinition"],a:0},{q:"Students co-write on Padlet and comment on each other is…",o:["Substitution","Modification","Augmentation"],a:1}],tool:"samr"},
+  q:[{q:"A typed worksheet instead of paper is…",o:["Substitution","Modification","Redefinition"],a:0,why:"The tool only replaces paper; the task does not change.",h:"Does the task change, or only the tool?"},{q:"Students co-write on Padlet and comment on each other is…",o:["Substitution","Modification","Augmentation"],a:1,why:"Students write together and comment: the task changes a lot (Modification).",h:"Can students do this task on paper in the same way?"}],tool:"samr"},
  {id:"connect",s:3,ic:"net",t:"Connectivism",vis:"connect",
   lines:["Learning through networks: we learn by connecting.","Distributed knowledge: knowledge lives in many places.","Capacity to know more, maintaining connections and decision-making are part of learning."],
   ex:"You need a song for colours. You ask a classmate, search YouTube and check a teacher group. Then you choose the best one.",
   real:"join one teacher group and keep it active. When you need an idea, your network helps you fast.",
   src:"Siemens (2005).",
-  q:[{q:"In Connectivism, learning happens…",o:["Only from the teacher","Through networks","Only from books"],a:1},{q:"Choosing what to learn and what to trust is…",o:["Decision-making as learning","Cheating","Not needed"],a:0}]},
+  q:[{q:"In Connectivism, learning happens…",o:["Only from the teacher","Through networks","Only from books"],a:1,why:"In Connectivism we learn through connections: people, tools, and resources.",h:"Think of our PLN: where does learning come from?"},{q:"Choosing what to learn and what to trust is…",o:["Decision-making as learning","Cheating","Not needed"],a:0,why:"Choosing what to learn and what to trust is part of learning.",h:"Is choosing good sources a skill or a problem?"}]},
  {id:"pln",s:3,ic:"teams",t:"My PLN",vis:"pln",
   lines:["PLN = Personal Learning Network.","It has people, platforms, resources and experiences.","You add one contribution every week."],
   ex:"People: my classmates. Platform: Padlet. Resource: British Council Kids. Experience: my school visit.",
   real:"share one useful link with your colleagues each week. They will share with you too.",
-  q:[{q:"Which is a \"platform\" in your PLN?",o:["My friend Aya","Padlet","My first lesson"],a:1},{q:"How often do you add to Our PLN?",o:["Every week","Once","Never"],a:0}]},
+  q:[{q:"Which is a \"platform\" in your PLN?",o:["My friend Aya","Padlet","My first lesson"],a:1,why:"A platform is an online place where we share, like Padlet.",h:"Which one is a website or an app, not a person or an event?"},{q:"How often do you add to Our PLN?",o:["Every week","Once","Never"],a:0,why:"We add one new contribution to Our PLN every week.",h:"Read the weekly homework list."}]},
  {id:"curate",s:4,ic:"filter",t:"Resource Curation",vis:"curate",
   lines:["Curation means choosing the best resources, not all of them.","Find → Check → Note → Share.","Check: matches the book, fits the level, correct, suitable."],
   ex:"You find 5 videos about animals. You keep one short, clear video and write how you will use it.",
   real:"before class, watch the whole video once. Check the English and check that it suits your students.",
-  q:[{q:"Curation means…",o:["Saving everything","Choosing and explaining the best","Deleting files"],a:1},{q:"Which is a check question?",o:["Does it match the book?","Is it long?","Is it new?"],a:0}]},
+  q:[{q:"Curation means…",o:["Saving everything","Choosing and explaining the best","Deleting files"],a:1,why:"Curating means choosing the best resource and saying why it helps.",h:"Does a curator keep everything?"},{q:"Which is a check question?",o:["Does it match the book?","Is it long?","Is it new?"],a:0,why:"A good check question tests if the resource fits our lesson and our students.",h:"Which question helps you decide if a resource is useful?"}]},
  {id:"abcd",s:5,ic:"target",t:"ABCD Objectives",vis:"abcd",
   lines:["A clear objective has four parts.","Audience, Behaviour (a verb you can see), Condition, Degree.","Avoid verbs like understand, know, learn."],
   ex:"Grade 4 students (A) will name (B) family members using picture cards (C) with at least 4 out of 5 correct (D).",
   real:"write the objective on your lesson plan and use D at the end of the lesson to check what students can do.",
-  q:[{q:"Which verb is measurable?",o:["understand","describe","know"],a:1},{q:"\"with at least 4 out of 5 correct\" is the…",o:["Audience","Condition","Degree"],a:2}],tool:"abcd"}
+  q:[{q:"Which verb is measurable?",o:["understand","describe","know"],a:1,why:"We can see or hear a student describe; we cannot see “understand” or “know”.",h:"Which verb can you see or hear in class?"},{q:"\"with at least 4 out of 5 correct\" is the…",o:["Audience","Condition","Degree"],a:2,why:"Degree means how well: a number or a level of success.",h:"Which ABCD letter tells “how well”?"}],tool:"abcd"}
 ];
 
 /* Glossary with sound (program words; opens with its session). s = session, w = word, d = meaning, e = example sentence */
@@ -827,29 +812,54 @@ async function getJSON(q){
 async function post(obj){
   if(DEMO) return {ok:true};
   const body=JSON.stringify(obj), h={"Content-Type":"text/plain;charset=utf-8"};
-  try{const r=await fetch(SHEET_URL,{method:"POST",headers:h,body}); try{return await r.json()}catch(e){return {ok:true}}}
-  catch(e){await fetch(SHEET_URL,{method:"POST",mode:"no-cors",headers:h,body}); return {ok:true}}
+  let r;
+  try{r=await fetch(SHEET_URL,{method:"POST",headers:h,body})}
+  catch(e){await fetch(SHEET_URL,{method:"POST",mode:"no-cors",headers:h,body}); return {ok:"unconfirmed"}}
+  if(!r.ok) throw new Error("HTTP "+r.status);
+  let j; try{j=await r.json()}catch(e){throw new Error("The Sheet did not answer")}
+  return j||{ok:false,error:"empty"};
 }
-function queueAdd(it){if(DEMO)return;const q=store.get("queue",[]).filter(x=>!(x.c===it.c&&String(x.s)===String(it.s)&&x.n===it.n&&x.k===it.k));q.push(it);store.set("queue",q)}
+const PERMANENT=["PIN","missing"];   /* the Sheet refused: sending again will not help */
+function queueAdd(it){if(DEMO)return;const q=store.get("queue",[]).filter(x=>!(x.c===it.c&&String(x.s)===String(it.s)&&x.n===it.n&&x.k===it.k));q.push(it);store.set("queue",q);refreshChip()}
+function queueDrop(it){const q=store.get("queue",[]).filter(x=>!(x.c===it.c&&String(x.s)===String(it.s)&&x.n===it.n&&x.k===it.k));store.set("queue",q);refreshChip()}
+let FLUSHING=false;
 async function flush(){
-  const q=store.get("queue",[]); if(!q.length) return;
-  const left=[];
-  for(const it of q){try{await post(it)}catch(e){left.push(it)}}
-  store.set("queue",left);
-  if(!left.length) toast("Saved ticks sent to the Sheet");
+  if(DEMO||FLUSHING) return; const q=store.get("queue",[]); if(!q.length){refreshChip();return}
+  FLUSHING=true; let sent=0, failed=false;
+  try{
+    for(const it of q){
+      let r; try{r=await post(it)}catch(e){failed=true; break}
+      if(r.ok===true){queueDrop(it); sent++}
+      else if(r.ok===false && PERMANENT.includes(r.error)) queueDrop(it);
+      else if(r.ok==="unconfirmed"){const q2=store.get("queue",[]).map(x=>(x.c===it.c&&String(x.s)===String(it.s)&&x.n===it.n&&x.k===it.k)?Object.assign({},x,{u:1}):x);store.set("queue",q2)}
+    }
+  } finally {FLUSHING=false}
+  if(failed) setNet(false);
+  const left=store.get("queue",[]).length;
+  if(sent && !left) toast("All your saved ticks are now in the Sheet ✓");
+  refreshChip();
 }
 async function sendTick(c,s,n,k,v){
   if(DEMO) return false;
-  const it={c,s,n,k,v};
+  const it={c,s,n,k,v}; if(k==="note") it.pin=mpin();
   if(!SHEET_URL || NET===false){queueAdd(it); return false}
-  try{await post(it); return true}catch(e){queueAdd(it); setNet(false); return false}
+  try{const r=await post(it);
+    if(r.ok===true){queueDrop(it); return true}
+    if(r.ok===false && PERMANENT.includes(r.error)){queueDrop(it); if(r.error==="PIN") toast("The Sheet needs the Mentor Desk PIN for this."); return false}
+    queueAdd(Object.assign(it, r.ok==="unconfirmed"?{u:1}:{})); return false}
+  catch(e){queueAdd(it); setNet(false); return false}
 }
+/* a tick sent without a readable answer stays in the queue until the Sheet shows it */
+function confirmQueue(c,s,n,row){if(!row)return;const q=store.get("queue",[]);const keep=q.filter(x=>!(x.c===c&&String(x.s)===String(s)&&x.n===n&&row[x.k]!==undefined&&String(row[x.k])===String(x.v)));if(keep.length!==q.length){store.set("queue",keep);refreshChip()}}
 function syncChip(){
   if(DEMO) return `<span class="sync off" data-sync title="Demo mode: nothing is sent">${ic("demo","sm")}<span class="st">Demo</span></span>`;
-  if(NET===true) return `<span class="sync on" data-sync title="Ticks are saved in the shared Sheet">${ic("cloud","sm")}<span class="st">Connected</span></span>`;
-  if(NET===false) return `<span class="sync off" data-sync title="Saved on this device only">${ic("device","sm")}<span class="st">This device</span></span>`;
+  const qn=(()=>{try{return store.get("queue",[]).length}catch(e){return 0}})();
+  if(qn) return `<span class="sync off" data-sync title="Saved on this device. Waiting to sync: ${qn}">${ic("refresh","sm")}<span class="st">Waiting (${qn})</span></span>`;
+  if(NET===true) return `<span class="sync on" data-sync title="Synced: your ticks are in the shared Sheet">${ic("cloud","sm")}<span class="st">Synced</span></span>`;
+  if(NET===false) return `<span class="sync off" data-sync title="Saved on this device">${ic("device","sm")}<span class="st">This device</span></span>`;
   return `<span class="sync" data-sync>${ic("refresh","sm")}<span class="st">Checking…</span></span>`;
 }
+function refreshChip(){document.querySelectorAll("[data-sync]").forEach(el=>{const t=document.createElement("span");t.innerHTML=syncChip();el.replaceWith(t.firstChild)})}
 function setNet(v){
   NET=v;
   document.querySelectorAll("[data-sync]").forEach(el=>{const t=document.createElement("span");t.innerHTML=syncChip();el.replaceWith(t.firstChild)});
@@ -885,7 +895,7 @@ function tasksFor(n){
   if([4,8,12,16].includes(n)) t.push({k:"mo",w:n>=6?"During":"After",t:"Monthly Reflective Journal",u:L("Monthly Journal"),ty:"journal"});
   t.push({k:"pln",w:n>=7?"After":(n>=6?"During":"After"),t:n>=7?"Add your new PLN contribution (before the next session)":"Add your PLN contribution",u:L("Our PLN (Padlet)"),ty:"padlet"});
   t.push({k:"sr",w:"After",t:"Watch the Summary & Review video",sub:"Also in Teams › Class Work › Session "+n,u:VIDEOS[n]||PLAYLIST||"",ty:"video"});
-  (GAMES[n]||[]).forEach((g,i)=>t.push({k:g.optional?"fc":"game",w:g.optional?"Optional":"During",t:(g.optional?"Practice game: ":"Play the session game: ")+g.title,sub:"In this app: "+gameName(n,g),ty:"play",gi:i}));
+  (GAMES[n]||[]).forEach((g,i)=>t.push({k:g.optional?"fc":"game",w:g.optional?"Optional":"During",t:(g.optional?"Practice (optional): ":"Quick check (no marks): ")+g.title,sub:"In this app: "+gameName(n,g),ty:"play",gi:i}));
   (SESSION_TASKS[n]||[]).forEach(x=>t.push(Object.assign({},x,{u:x.u?L(x.u)||x.u:""})));
   if(FINISH_TASK[n]) t.push({k:"fin",w:"After",t:FINISH_TASK[n],ty:"check"});
   t.push({k:"ai",w:"Optional",t:AITRY[n]?"AI Try: "+AITRY[n].t:"AI Try (if your teacher shared one)",ty:"ai"});
@@ -1045,7 +1055,8 @@ function visual(kind){
       road+= y0===y1?`<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}" stroke="${col}" stroke-width="14" stroke-linecap="round"/>`
         :`<path d="M${x0} ${y0} C${x0+(x0>200?36:-36)} ${y0} ${x1+(x1>200?36:-36)} ${y1} ${x1} ${y1}" stroke="${col}" stroke-width="14" fill="none" stroke-linecap="round"/>`;}
     const stops=Object.keys(SESSIONS).map(Number).map(n=>{const [x,y]=pt(n),o=isOpenS(n),here=n===cur,p=PHASES[PHASE(n)];
-      return `<g class="node" tabindex="0" data-info="${esc("<b>Session "+n+"</b>: "+SESSIONS[n]+"<br>Phase "+PHASE(n)+": "+p.n+(o?"":" · opens later"))}">
+      const card=`<div class="jcard" style="--c:${p.c}"><span class="jico">${ic(PHASE_IC[PHASE(n)])}</span><span class="jtx"><span class="jph">Phase ${PHASE(n)} · ${esc(p.n)}</span><b>Session ${n}: ${esc(SESSIONS[n])}</b>${o?`<button class="btn" data-go="session:${n}">${ic("right","sm")}Open Session ${n}</button>`:`<span class="small muted">${ic("lock","sm")} Opens later${sessDate(n)?" · "+esc(niceDate(sessDate(n))):""}</span>`}</span></div>`;
+      return `<g class="node" tabindex="0" style="cursor:pointer" data-info="${esc(card)}">
         ${here?`<circle cx="${x}" cy="${y}" r="27" fill="none" stroke="var(--accent)" stroke-width="5"/>`:""}
         <circle cx="${x}" cy="${y}" r="19" fill="${o?p.c:"var(--card)"}" stroke="${p.c}" stroke-width="3"/>
         <text x="${x}" y="${y+6}" text-anchor="middle" font-size="16" font-weight="800" style="fill:${o?"var(--onTile)":"var(--muted)"}">${n}</text></g>`}).join("");
@@ -1053,7 +1064,7 @@ function visual(kind){
     return `<svg class="vis" viewBox="0 0 424 290" role="img" aria-label="Program journey: 18 sessions in 5 phases">${road}${stops}
       <g pointer-events="none"><rect x="${Math.min(Math.max(hx-48,2),326)}" y="${hy-58}" width="96" height="24" rx="12" fill="var(--accent)"/><text x="${Math.min(Math.max(hx,50),374)}" y="${hy-41}" text-anchor="middle" font-size="13" font-weight="800" style="fill:#1b1b1b">You are here</text></g></svg>
       <div class="phases">${PHASES.slice(1).map((p,i)=>`<button class="ph" style="--c:${p.c}" data-info="${esc("<b>Phase "+(i+1)+" (Sessions "+p.s+")</b>: "+p.n)}"><b>${i+1}</b>${esc(p.n.split(/[:&,]/)[0].trim())}</button>`).join("")}</div>
-      <div class="info" data-out>Tap a session or a phase.</div>`;
+      <div class="info" data-out>Tap a session number to see it, then open it.</div>`;
   }
   return "";
 }
@@ -1308,7 +1319,7 @@ function card(id){
     <p class="small muted">${ic("video","sm")} Watch: the Summary &amp; Review video in Teams › Class Work › Session ${c.s}.</p>
     ${c.id==="samr"?sprac():""}
     <div class="quiz stack" style="gap:6px"><span class="label">Check myself (no marks)</span>
-      ${c.q.map((q,i)=>`<div><b>${i+1}. ${q.q}</b>${q.o.map((o,j)=>`<button data-q="${i}" data-j="${j}" data-a="${q.a}">${o}</button>`).join("")}</div>`).join("")}
+      ${c.q.map((q,i)=>`<div><b>${i+1}. ${q.q}</b>${q.o.map((o,j)=>`<button data-q="${i}" data-j="${j}" data-a="${q.a}">${o}</button>`).join("")}<div data-qf="${i}" data-why="${esc(q.why||"")}" data-h="${esc(q.h||"")}"></div></div>`).join("")}
     </div></div>`;
 }
 function lockCard(id){
@@ -1350,6 +1361,7 @@ function start(){
   const k=Math.min(store.get("tourStep",0),4), s=TOUR5[k];
   const cols=["var(--grow)","var(--plan)","var(--teach)","var(--check)","var(--learn)"];
   return `${topbar()}${backBtn()}<div class="panel">
+   ${k===0?`<img src="ctg-illustration.jpg?v=201" alt="Connect, Teach and Grow: Connectivism, TPACK and SAMR" class="illus">`:""}
    <span class="label">Start here · Step ${k+1} of 5</span><div class="steps">${TOUR5.map((_,i)=>`<span class="${i<=k?"on":""}"></span>`).join("")}</div>
    <div class="head"><span class="hico" style="background:${cols[k]}">${ic(s[0])}</span><h1>${s[1]}</h1></div>
    <p>${s[2]}</p>
@@ -1365,11 +1377,14 @@ function wireStart(){
 }
 
 /* ---------- Today in class ---------- */
-function today(){
-  const n=current(), ex=exFor(n), newTools=TOOLS.filter(t=>t.s===n);
+function today(arg){
+  const n=arg?+arg:current(), isNow=n===current(), ex=exFor(n), newTools=TOOLS.filter(t=>t.s===n);
+  if(arg && !isOpenS(n)) return `${topbar()}${backBtn()}<div class="panel"><div class="jcard" style="--c:${PHASES[PHASE(n)].c}"><span class="jico">${ic(PHASE_IC[PHASE(n)])}</span><span class="jtx"><span class="jph">Phase ${PHASE(n)} · ${esc(PHASES[PHASE(n)].n)}</span><h1 style="margin:0">Session ${n}: ${esc(SESSIONS[n])}</h1><span class="muted">${ic("lock","sm")} This session opens later${sessDate(n)?" ("+esc(niceDate(sessDate(n)))+")":""}.</span></span></div></div>`;
+  const lc=CARDS.filter(c=>c.s===n);
   const quick=[["Activities & Questions","Post answers and questions"],["Our PLN (Padlet)","Our class network board"],["Three Takeaways","At the end of the session"]];
   return `${topbar()}${backBtn()}<div class="stack"><div class="panel">
-   <div class="head"><span class="hico" style="background:var(--accent);color:#1b1b1b">${ic("sun")}</span><div><span class="label">Today in class · Session ${n}</span><h1>${esc(SESSIONS[n])}</h1></div></div>
+   <div class="head"><span class="hico" style="background:var(--accent);color:#1b1b1b">${ic("sun")}</span><div><span class="label">${isNow?"Today in class · ":""}Session ${n} · Phase ${PHASE(n)}</span><h1>${esc(SESSIONS[n])}</h1></div></div>
+   ${lc.length?`<span class="label">LEARN: Session ${n}</span><div class="list">${lc.map(c=>`<button class="item" data-go="card:${c.id}"><span class="ico" style="background:${PHASES[PHASE(c.s)].c}">${ic(c.ic)}</span><span class="txt"><b>${c.t}</b></span></button>`).join("")}</div>`:""}
    ${n>=5?`<p class="muted">${esc(ex.l)}</p>`:""}
    ${n===5?`<div class="tip"><b>Today:</b> a three-minute app tour. <button class="btn alt" data-go="start">${ic("play","sm")}Start here</button></div>`:""}
    ${qodCard(n)}
@@ -1379,7 +1394,7 @@ function today(){
    <div class="list">${newTools.length?newTools.map(toolItem).join(""):`<p class="muted small">No new tool today. Use the tools you already have.</p>`}</div>
   </div>
   <div class="panel"><span class="label">In class</span><div class="list">${quick.map(q=>{const u=L(q[0]),l=LINKS.find(x=>x.t===q[0]);return `<a class="item" href="${esc(u)}" target="_blank" rel="noopener"><span class="ico" style="background:var(--ink);color:var(--bg)">${ic(l.ic)}</span><span class="txt"><b>${q[0]}</b><span class="small muted">${q[1]}</span></span>${ic("ext","sm")}</a>`}).join("")}</div>
-  <button class="btn" data-go="tool:tasks">${ic("tasks","sm")}My Tasks for Session ${n}</button></div></div>`;
+  <button class="btn" data-go="tool:tasks">${ic("tasks","sm")}My Tasks</button></div></div>`;
 }
 
 /* ---------- ABCD Builder ---------- */
@@ -1692,7 +1707,16 @@ function wireTasks(){
   const fbk=(c,n,s)=>{const el=$("#tFb");if(!el)return;const st=store.get(tKey(c,n,s),{}),req=required(tasksFor(s)),miss=req.filter(t=>!truthy(st[t.k])),r=req.length?Math.round(100*(req.length-miss.length)/req.length):0;
     const short=t=>TSHORT[t.k]||t.t, note=store.get(`note|${c}|${n}|${s}`,"");
     const msg=r===100?["g","award",`Excellent, ${esc(n)}! All Session ${s} tasks are done. ⭐`]:r>=50?["y","star",`Good progress, ${esc(n)}! Still to do: ${esc(miss.map(short).join(", "))}.`]:["b","compass",`You can do it, ${esc(n)}! Start with: ${esc(short(miss[0]))}.`];
-    el.innerHTML=`<div class="fbk ${msg[0]}">${ic(msg[1])}<span>${msg[2]}</span></div>`+(note?`<div class="fbk b">${ic("msg")}<span><b>My teacher's note:</b> ${esc(note)}</span></div>`:"");};
+    const auto=[];
+    if(st.gscore){const [a,b]=String(st.gscore).split("/").map(Number);
+      auto.push(a===b?`${ic("check","sm")} Quick check: <b>${a}/${b}</b>. You know ${esc(st.gtitle||"this topic")} well.`
+        :`${ic("info","sm")} Quick check: <b>${a}/${b}</b>.${(st.grev||[]).length?` Review: <b>${esc(st.grev.join(", "))}</b>.`:""} <button class="linkb" data-go="game:${s}:0">Play again</button> to practise.`)}
+    const jd=["tt","wk","mo"].filter(k=>req.some(t=>t.k===k)), jn=jd.filter(k=>truthy(st[k])).length;
+    if(jd.length) auto.push(jn===jd.length?`${ic("journal","sm")} Your reflections for Session ${s} are done. Reflecting every week helps you grow as a teacher.`
+        :`${ic("journal","sm")} Reflections: ${jn} of ${jd.length} done. Use the Journal Helper: it takes five minutes.`);
+    let full=0, open=0; for(let x=1;x<=current();x++){if(!isOpenS(x))continue; const rq=required(tasksFor(x)); if(!rq.length) continue; const sx=store.get(tKey(c,n,x),{}); if(!Object.keys(sx).length) continue; open++; if(rq.every(t=>truthy(sx[t.k]))) full++}
+    if(open>1) auto.push(`${ic("award","sm")} Sessions with all tasks done: <b>${full} of ${open}</b>.${full<open?" Open My Tasks for an earlier session to finish it.":" Great work!"}`);
+    el.innerHTML=`<div class="fbk ${msg[0]}">${ic(msg[1])}<span>${msg[2]}</span></div>`+(auto.length?`<div class="fbk b"><span><b>My feedback (automatic):</b><br>${auto.join("<br>")}</span></div>`:"")+(note?`<div class="fbk b">${ic("msg")}<span><b>My teacher's note:</b> ${esc(note)}</span></div>`:"");};
   const paint=(c,n,s)=>{
     const st=store.get(tKey(c,n,s),{}), list=tasksFor(s);
     paintBar(c,n,s); fbk(c,n,s);
@@ -1709,7 +1733,8 @@ function wireTasks(){
   const classBar=(c,s,data)=>{
     const nm=names(c); if(!data||!nm.length){$("#tCls").hidden=true;return}
     const r=required(tasksFor(s)); let tot=0;
-    nm.forEach(n=>{const x=data[n]||{};tot+=r.filter(t=>truthy(x[t.k])).length});
+    if(data.__agg) tot=r.reduce((a,t)=>a+Math.min(nm.length,data.__agg[t.k]||0),0);
+    else nm.forEach(n=>{const x=data[n]||{};tot+=r.filter(t=>truthy(x[t.k])).length});
     const p=Math.round(100*tot/(r.length*nm.length));
     $("#tCls").hidden=false;$("#tCBar").style.width=p+"%";$("#tCTxt").textContent=`Our class has done ${p}% of the Session ${s} tasks. Every tick helps!`;
   };
@@ -1720,7 +1745,7 @@ function wireTasks(){
     paint(c,n,s);
     const my=++token, data=await loadTicks(c,s);
     if(my!==token || !data) return;
-    if(!DEMO){const mine=data[n]; if(mine){
+    if(!DEMO){const mine=data[n]; confirmQueue(c,s,n,mine); if(mine){
       const o=store.get(tKey(c,n,s),{});
       const pending=store.get("queue",[]).filter(x=>x.c===c&&String(x.s)===String(s)&&x.n===n).map(x=>x.k);
       Object.entries(mine).forEach(([k,v])=>{if(!pending.includes(k)) o[k]=truthy(v)});
@@ -1878,14 +1903,14 @@ function matrix(){
    <p class="small muted">Checklist = Teaching Performance Observation Checklist (12 items). TAS = Teacher Agency Scale (27 items). The app is a program component, not a measurement instrument.</p></div>`;
 }
 /* ---------- Info screens ---------- */
-function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="label">About &amp; Cite</span><div class="head">${appIcon("b").replace('<svg ','<svg style="width:64px;height:64px;flex:0 0 auto" ')}<h1>${APP.name}</h1></div>
+function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="label">About &amp; Cite</span><img src="ctg-illustration.jpg?v=201" alt="Connect, Teach and Grow: Connectivism, TPACK and SAMR" class="illus"><div class="head">${appIcon("b").replace('<svg ','<svg style="width:64px;height:64px;flex:0 0 auto" ')}<h1>${APP.name}</h1></div>
  <p>A pocket toolkit for EFL student teachers. It supports planning, teaching, checking and professional growth, and keeps a simple reference of every big idea in the program.</p>
  <p>Part of the PhD program: <i>A Proposed Connectivism-Based Program Integrating TPACK and SAMR Models for Developing EFL Prospective Teachers' Teaching Performance and Agency</i>, Faculty of Women for Arts, Science, and Education, Ain Shams University, 2026–2027.</p>
  <span class="label">How to cite (APA 7)</span><div class="out small" id="cite">Ismail, Z. (2026). <i>${APP.name}</i> (Version ${APP.version}) [Web application]. Faculty of Women, Ain Shams University. ${esc(APP_URL)}</div>
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
+ const v=[["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
   ["v1.8.1 · 29 Oct 2026","Our PLN from Session 7: in class you comment on one classmate’s post; at home you add your new contribution before the next session (My Tasks shows it as homework)."],
   ["v1.8 · 29 Oct 2026","Session 7 is ready: the game Why Does It Help? (the four scaffolds), Heart and Blood word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 7, and the pre-session questions. Session 7 opens on 2 Nov 2026."],
   ["v1.7 · 29 Oct 2026","New home screen order: Today in class, My Tasks, the five sections, My Links, then I need… and Search. A small search button at the top of every screen. Tools and LEARN cards of earlier sessions fold under “Earlier sessions”. Brighter colours, and every new tool and game has its own bright colour. Demo mode is now called Program map. Mentor Desk: copy a Session line for the Session Log, download the Session Report, and export all sessions as a CSV file (codes only). Pre-session questions for Sessions 5 and 6 in My Tasks. Back now returns to the screen you came from (also the phone’s back button). New app icon colours; Tip of the day and This week at the top; Search and I need… at the end of the home screen."],
@@ -2093,7 +2118,7 @@ function gameScreen(s,i){
     body=g.qs.map((q,j)=>`<div class="qcard"><b>${j+1}. ${esc(q.q)}</b><div class="yn">${q.o.map((o,k)=>`<button data-gq="${j}|${k}">${esc(o)}</button>`).join("")}</div><div data-gqf="${j}"></div></div>`).join("");
   }
   return `${topbar()}${backBtn("tool:games","Games")}<div class="panel" id="gameP">
-   ${secHead("check",esc(g.title),`GAME · Session ${s} · ${g.step}`)}
+   ${secHead("check",esc(g.title),`${g.optional?"PRACTICE (OPTIONAL)":"QUICK CHECK · NO MARKS"} · Session ${s} · ${g.step}`)}
    <p class="gname">${esc(gameName(s,g))}</p>
    ${guide(g.type==="match"?["Tap one card on the left","Tap its match","Green = correct"]:g.type==="cards"?["Look at the picture and word","Tap to turn the card","Say the answer aloud"]:["Read the question","Tap your answer","See your score"])}
    ${who}
@@ -2102,17 +2127,24 @@ function gameScreen(s,i){
    <div id="gEnd" hidden></div>
   </div>`;
 }
+const GREV={};
 function gameDone(s,i,score,total){
   const g=GAMES[s][i]; let m=me();
   const sel=$("#gMe"); if(!m.n && sel && sel.value){store.set("me",{c:myClass(),n:sel.value});m=me()}
   const c=myClass(), k=g.optional?"fc":"game";
-  if(m.n){const o=store.get(tKey(c,m.n,s),{});o[k]=true;store.set(tKey(c,m.n,s),o);
+  if(m.n){const o=store.get(tKey(c,m.n,s),{});o[k]=true;
+    if(!g.optional){o.gscore=`${score}/${total}`;o.grev=(GREV[s+"|"+i]||[]).map(j=>g.pairs[j][0]);o.gtitle=g.title}
+    store.set(tKey(c,m.n,s),o);
     sendTick(c,s,m.n,k,true); if(!g.optional) sendTick(c,s,m.n,"gscore",`${score}/${total}`); autoAtt(s); lastActive(c,m.n,s)}
   logUse("games",`S${s}-${i}:${score}/${total}`);
   ding(true); confetti();
   const e=$("#gEnd"); e.hidden=false;
+  const rev=g.optional?[]:(GREV[s+"|"+i]||[]).map(j=>g.pairs[j]);
+  const cheer=g.optional?"":(score===total?"Excellent! You know all of them.":score>=total-1?"Very good! Look at the one to review, then play again.":"Good try! Review the cards below and play again.");
   e.innerHTML=`${g.optional?`<p class="gscore">⭐ Well done!</p>`:`<p class="gscore">⭐ ${score} / ${total}</p>`}
-   <p style="text-align:center">${m.n?(g.optional?"Saved in My Tasks.":"Your score is saved for your teacher."):"Choose your name above, then play again to save your score."}</p>
+   ${g.optional?"":`<p style="text-align:center"><b>${cheer}</b><br><span class="small muted">You practised: ${esc(g.title)}</span></p>`}
+   ${rev.length?`<div class="fb bad">${ic("info","sm")}<span><b>Review:</b> ${rev.map(p=>`${esc(p[0])} → ${esc(p[1])}`).join(" • ")}</span></div>`:""}
+   <p style="text-align:center">${m.n?(g.optional?"Saved in My Tasks.":"Your score is saved for your teacher (not a grade)."):"Choose your name above, then play again to save your score."}</p>
    <div class="row" style="justify-content:center"><button class="btn alt" data-go="game:${s}:${i}">${ic("refresh","sm")}Play again</button><button class="btn" data-go="tool:tasks">${ic("tasks","sm")}My Tasks</button></div>`;
   e.scrollIntoView({behavior:"smooth",block:"center"});
 }
@@ -2120,13 +2152,20 @@ function wireGame(s,i){
   const g=(GAMES[s]||[])[i]; if(!g||!$("#gameP")) return;
   const sel=$("#gMe"); if(sel) sel.onchange=()=>{if(sel.value) store.set("me",{c:myClass(),n:sel.value})};
   if(g.type==="match"){
-    let pick=null, first={}, done=0;
+    let pick=null, first={}, done=0, wrong={};
+    const hintBox=()=>{let h=$("#gHint"); if(!h){h=document.createElement("div");h.id="gHint";h.setAttribute("aria-live","polite");$("#gBoard").after(h)} return h};
     const tryPair=(l,r)=>{const lj=+l.dataset.gl, rj=+r.dataset.gr;
       if(lj===rj){l.classList.remove("sel");l.classList.add("ok");r.classList.add("ok");l.disabled=r.disabled=true;done++;if(first[lj]===undefined)first[lj]=true;ding(false);
+        document.querySelectorAll("[data-gr].hintc").forEach(x=>x.classList.remove("hintc"));
+        hintBox().innerHTML=fb(true,`<b>Correct.</b> ${esc(g.pairs[lj][0])} → ${esc(g.pairs[lj][1])}`);
+        GREV[s+"|"+i]=g.pairs.map((p,j)=>first[j]===false?j:-1).filter(j=>j>=0);
         if(done===g.pairs.length){const sc=Object.values(first).filter(Boolean).length;setTimeout(()=>gameDone(s,i,sc,g.pairs.length),400)}}
-      else{first[lj]=false;r.classList.add("no");setTimeout(()=>r.classList.remove("no"),400);toast("Not this one. Try again!")}};
+      else{first[lj]=false;wrong[lj]=(wrong[lj]||0)+1;r.classList.add("no");setTimeout(()=>r.classList.remove("no"),400);
+        if(wrong[lj]>=2){const c=document.querySelector(`[data-gr="${lj}"]`); if(c) c.classList.add("hintc");
+          hintBox().innerHTML=fb(false,`<b>Not quite. Try again.</b> Hint: look at the card with the dotted line.`)}
+        else hintBox().innerHTML=fb(false,`<b>Not quite. Try again.</b> Hint: read “${esc(g.pairs[lj][0])}” again. Which card on the right tells what it does?`)}};
     document.querySelectorAll("[data-gl]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-gl]").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");pick=b});
-    document.querySelectorAll("[data-gr]").forEach(b=>b.onclick=()=>{if(!pick){toast("First tap an ingredient on the left");return}tryPair(pick,b);pick=null});
+    document.querySelectorAll("[data-gr]").forEach(b=>b.onclick=()=>{if(!pick){toast("First tap a card on the left");return}tryPair(pick,b);pick=null});
   } else if(g.type==="cards"){
     document.querySelectorAll("[data-fc]").forEach(b=>b.onclick=()=>{const c=g.cards[+b.dataset.fc],back=b.classList.toggle("back");
       b.innerHTML=back?`<span><b>${esc(c[2])}</b></span>`:`<span><span class="em">${c[0]}</span><br><b>${esc(c[1])}</b></span>`;if(back) speak(c[2])});
@@ -2458,7 +2497,7 @@ TOOL_SCREENS.turns=()=>shell("turns",["Find your turn","Tick the five ready chec
  <div class="list">${READY.map(([i,t],k)=>`<label class="task" style="font-weight:400;padding:6px 0"><input type="checkbox" data-rd="${k}"><span class="ty">${ic(i)}</span><span>${t}</span></label>`).join("")}</div><div id="rdOut"></div>`,"before you teach, check the five things. A ready teacher is a calm teacher.");
 TOOL_WIRE.turns=async()=>{
   const c=myClass(),s=current(),nm=names(c);$("#trS").textContent=s;
-  let order=nm.slice();const prev=await loadTicks(c,s-1);if(prev){const no=nm.filter(n=>!truthy((prev[n]||{}).mt));order=[...no,...nm.filter(n=>!no.includes(n))]}
+  let order=nm.slice();const prev=await loadTicks(c,s-1);if(prev&&!prev.__agg){const no=nm.filter(n=>!truthy((prev[n]||{}).mt));order=[...no,...nm.filter(n=>!no.includes(n))]}
   const key="turn|"+s,draw=()=>{const k=Math.min(store.get(key,0),order.length-1);
     $("#trList").innerHTML=order.map((n,i)=>`<div class="item" style="${i===k?"outline:3px solid var(--accent)":""}"><span class="ico" style="background:${i<k?"var(--ok)":i===k?"var(--accent)":"var(--muted)"}">${ic(i<k?"done":i===k?"teach":"person")}</span><span class="txt"><b>${i+1}. ${esc(n)}</b><span class="small muted">${i<k?"Done":i===k?"Teaching now":"Waiting"}</span></span></div>`).join("")};
   $("#trNext").onclick=()=>{store.set(key,Math.min(store.get(key,0)+1,order.length-1));draw()};
@@ -2592,6 +2631,8 @@ async function mLoad(cc,s){
   if(DEMO) return true;
   if(NET!==true) await connect();
   const d=await loadTicks(cc,s);
+  if(d && d.__agg){MLAST={key:cc+"|"+s,t:Date.now(),ok:false};return false}
+  if(d) Object.entries(d).forEach(([n,r])=>confirmQueue(cc,s,n,r));
   if(!d){MLAST={key:cc+"|"+s,t:Date.now(),ok:false};return false}
   const b=store.get(mKey(cc,s),{}), before=JSON.stringify(b); Object.entries(d).forEach(([n,r])=>{b[n]=Object.assign(b[n]||{},r)}); store.set(mKey(cc,s),b);
   MLAST={key:cc+"|"+s,t:Date.now(),ok:true,changed:JSON.stringify(b)!==before}; return true;
@@ -2776,7 +2817,7 @@ function render(r){
   else if(kind==="lockc") html=lockCard(arg);
   else if(kind==="pv") html=preview(arg);
   else if(kind==="about") html=about(); else if(kind==="news") html=news(); else if(kind==="tour") html=tour();
-  else if(kind==="start") html=start(); else if(kind==="today") html=today();
+  else if(kind==="start") html=start(); else if(kind==="today") html=today(); else if(kind==="session") html=today(arg);
   else if(kind==="gloss") html=gloss(); else if(kind==="getapp") html=getapp(); else if(kind==="privacy") html=privacy();
   else if(kind==="report") html=report(); else if(kind==="matrix") html=matrix();
   else if(kind==="mentor") html=mentor();
@@ -2792,7 +2833,8 @@ function render(r){
   app.innerHTML=html; window.scrollTo(0,0);
   app.querySelectorAll(".panel").forEach(wireVisual);
   wireInd();
-  app.querySelectorAll(".quiz button").forEach(b=>b.onclick=()=>{const ok=b.dataset.j===b.dataset.a;b.classList.add(ok?"right":"wrong");b.textContent=(ok?"✓ ":"✗ ")+b.textContent.replace(/^[✓✗] /,"").replace(/ — (Yes!|Try again)$/,"")+(ok?" — Yes!":" — Try again")});
+  app.querySelectorAll(".quiz button").forEach(b=>b.onclick=()=>{const ok=b.dataset.j===b.dataset.a;b.classList.add(ok?"right":"wrong");b.textContent=(ok?"✓ ":"✗ ")+b.textContent.replace(/^[✓✗] /,"").replace(/ — (Yes!|Try again)$/,"")+(ok?" — Yes!":" — Try again");
+    const f=app.querySelector(`[data-qf="${b.dataset.q}"]`); if(f){const w=f.dataset.why,h=f.dataset.h; f.innerHTML=ok?(w?fb(true,`<b>Correct.</b> ${w}`):""):fb(false,`<b>Not quite. Try again.</b> Hint: ${h||"Read the card again, then choose another answer."}`)}});
   if(kind==="home"||kind==="search") wireSearch();
   if(kind==="search"){const q=$("#q"); if(q) setTimeout(()=>q.focus(),50)}
   if(kind==="start") wireStart();
@@ -2823,9 +2865,9 @@ document.addEventListener("click",e=>{
   if(e.target.closest("[data-demo-exit]")){exitDemo();return}
   if(e.target.closest("[data-print]")) window.print();
 });
-(()=>{const h=decodeURIComponent((location.hash||"").slice(1)); const r0=/^(game|tool|card|sec|today|start):?/.test(h)?h:"home"; ROUTE=""; try{history.replaceState({r:r0},"")}catch(e){} NAVPOP=true; render(r0)})();
+(()=>{const h=decodeURIComponent((location.hash||"").slice(1)); const r0=/^(game|tool|card|sec|today|start|session):?/.test(h)?h:"home"; ROUTE=""; try{history.replaceState({r:r0},"")}catch(e){} NAVPOP=true; render(r0)})();
 connect();
-window.addEventListener("hashchange",()=>{const h=decodeURIComponent((location.hash||"").slice(1)); if(/^(game|tool|card|sec|today|start):?/.test(h)) render(h)});
+window.addEventListener("hashchange",()=>{const h=decodeURIComponent((location.hash||"").slice(1)); if(/^(game|tool|card|sec|today|start|session):?/.test(h)) render(h)});
 /* new version check (GitHub copy only) */
 async function checkVersion(){
   if(inFrame||DEMO||!/github\.io$/.test(location.hostname)||$("#upd")) return;
@@ -2833,7 +2875,9 @@ async function checkVersion(){
     if(m&&m[1]!==APP.version){const b=document.createElement("button");b.id="upd";b.className="upd";b.innerHTML=ic("refresh","sm")+"New version of the app: tap to refresh";b.onclick=()=>location.reload();document.body.appendChild(b)}}catch(e){}
 }
 setTimeout(checkVersion,4000);
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible") checkVersion()});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){checkVersion(); if(!DEMO){if(NET===true) flush(); else connect()}}});
+window.addEventListener("online",()=>{if(!DEMO) connect()});
+setInterval(()=>{if(!DEMO && NET===true && store.get("queue",[]).length) flush()},60000);
 </script>
 </body>
 </html>
