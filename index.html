@@ -389,7 +389,7 @@ const GAMES = {
      cards:[["🫀","heart","What pumps blood?"],["🫁","lungs","What do we breathe with?"],["💪","muscles","What helps us move?"],["🦴","bones","What makes our bones strong?"],["🩸","blood","What carries oxygen?"],["✊","fist","Show me your fist!"],["🏃","fit","What do you do to stay fit?"],["😟","stressed","When do you feel stressed?"],["🌬️","oxygen","What do we need to live?"],["🧠","organ","Is the heart an organ?"]]}],
  8:[{step:"Step 2",type:"match",title:"Failure and Backup",how:"Tap a failure, then tap its low-tech backup.",
      pairs:[["No internet","Printed cards (or download it before class).","cloud"],["Projector stops","The board, the book pictures, or printed slides.","eye"],["Platform crash","A paper game, or play it aloud.","bug"],["Battery dies","Paper flashcards and my voice.","device"]]},
-    {step:"Home",type:"cards",optional:true,title:"The Nile River",how:"Tap a card to turn it. Say the word, then answer the question.",
+    {step:"Home",type:"cards",optional:true,title:"The Nile River",how:"Tap a card to turn it: listen to the word, say it two times, then answer the question.",
      cards:[["🐊","crocodile","Where do crocodiles live?"],["🎯","hunt","What do crocodiles hunt?"],["🌿","water weeds","What do small fish eat?"],["🦟","insects","What do birds eat?"],["🏞️","river","What is the longest river in Africa?"],["🐟","fish","What lives in the river?"],["🐦","birds","What flies over the Nile?"],["🌱","plants","What grows near the river?"],["🛡️","protect","How can we protect the Nile?"],["⚠️","dangerous","Is a crocodile dangerous?"]]}]
 };
 const gameName=(s,g)=>`S${s} ${g.step} – ${g.title}`;
@@ -2104,7 +2104,7 @@ TOOL_WIRE.games=()=>{wireAI("gamesAI",()=>AIP("Make a short matching game (4 pai
 function gameScreen(s,i){
   const g=(GAMES[s]||[])[i]; if(!g) return home();
   const m=me(), nm=names(myClass());
-  if(!isOpenS(s)) return `${topbar()}${backBtn("tool:games","Games")}<div class="panel"><h1>${esc(gameName(s,g))}</h1><p>This game opens with Session ${s}${sessDate(s)?" on "+esc(niceDate(sessDate(s))):""}.</p></div>`;
+  if(!isOpenS(s) && !(g.optional && s<=current()+1)) return `${topbar()}${backBtn("tool:games","Games")}<div class="panel"><h1>${esc(gameName(s,g))}</h1><p>This game opens with Session ${s}${sessDate(s)?" on "+esc(niceDate(sessDate(s))):""}.</p></div>`;
   const who=m.n?`<p class="small">${ic("person","sm")} Playing as <b>${esc(m.n)}</b>. <button class="linkb" data-go="tool:tasks">Not you?</button></p>`:
     `<div class="field"><label for="gMe">${L2("person","Choose your name (so your teacher sees your score)")}</label><select id="gMe"><option value="">Choose your name</option>${nm.map(x=>`<option>${esc(x)}</option>`).join("")}</select></div>`;
   let body="";
@@ -2169,7 +2169,7 @@ function wireGame(s,i){
     document.querySelectorAll("[data-gr]").forEach(b=>b.onclick=()=>{if(!pick){toast("First tap a card on the left");return}tryPair(pick,b);pick=null});
   } else if(g.type==="cards"){
     document.querySelectorAll("[data-fc]").forEach(b=>b.onclick=()=>{const c=g.cards[+b.dataset.fc],back=b.classList.toggle("back");
-      b.innerHTML=back?`<span><b>${esc(c[2])}</b></span>`:`<span><span class="em">${c[0]}</span><br><b>${esc(c[1])}</b></span>`;if(back) speak(c[2])});
+      b.innerHTML=back?`<span><b>${esc(c[2])}</b></span>`:`<span><span class="em">${c[0]}</span><br><b>${esc(c[1])}</b></span>`;if(back) speak(c[1]+". "+c[2])});
     $("#gFcDone").onclick=()=>gameDone(s,i,g.cards.length,g.cards.length);
   } else if(g.type==="quiz"){
     const res={};
