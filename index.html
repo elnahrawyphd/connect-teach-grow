@@ -112,6 +112,7 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,te
 .fc{min-height:120px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:inherit;padding:10px;display:grid;place-items:center;text-align:center}
 .fc .em{font-size:2.2rem;line-height:1}.fc b{font-size:1.1rem}.fc.back{background:color-mix(in srgb,var(--learn) 16%,var(--card));border-color:var(--learn)}
 [data-gr].hintc{outline:3px dashed var(--accent);outline-offset:2px}
+.pmap{margin:0 0 8px;text-align:center}.pmap figcaption{font-size:.9rem;color:var(--muted);margin-top:-4px}
 .illus{display:block;width:min(320px,80%);height:auto;margin:6px auto 12px;border-radius:22px}
 .gscore{text-align:center;font-family:var(--display);font-size:2.6rem;font-weight:800;color:var(--ok)}
 .gname{font-family:var(--display);font-weight:800;font-size:1.05rem}
@@ -1903,7 +1904,7 @@ function matrix(){
    <p class="small muted">Checklist = Teaching Performance Observation Checklist (12 items). TAS = Teacher Agency Scale (27 items). The app is a program component, not a measurement instrument.</p></div>`;
 }
 /* ---------- Info screens ---------- */
-function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="label">About &amp; Cite</span><img src="ctg-illustration.jpg?v=201" alt="Connect, Teach and Grow: Connectivism, TPACK and SAMR" class="illus"><div class="head">${appIcon("b").replace('<svg ','<svg style="width:64px;height:64px;flex:0 0 auto" ')}<h1>${APP.name}</h1></div>
+function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="label">About &amp; Cite</span><figure class="pmap"><img src="program-map.jpg?v=201" alt="The program at a glance: Connectivism, TPACK and SAMR for teacher agency, teaching performance and EFL teaching" class="illus"><figcaption>The program at a glance: Connectivism → TPACK → SAMR, for teacher agency and teaching performance in EFL.</figcaption></figure><div class="head">${appIcon("b").replace('<svg ','<svg style="width:64px;height:64px;flex:0 0 auto" ')}<h1>${APP.name}</h1></div>
  <p>A pocket toolkit for EFL student teachers. It supports planning, teaching, checking and professional growth, and keeps a simple reference of every big idea in the program.</p>
  <p>Part of the PhD program: <i>A Proposed Connectivism-Based Program Integrating TPACK and SAMR Models for Developing EFL Prospective Teachers' Teaching Performance and Agency</i>, Faculty of Women for Arts, Science, and Education, Ain Shams University, 2026–2027.</p>
  <span class="label">How to cite (APA 7)</span><div class="out small" id="cite">Ismail, Z. (2026). <i>${APP.name}</i> (Version ${APP.version}) [Web application]. Faculty of Women, Ain Shams University. ${esc(APP_URL)}</div>
