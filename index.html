@@ -358,7 +358,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0.2", updated:"4 Nov 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0.3", updated:"4 Nov 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 const mpin = v => {try{if(v===undefined) return sessionStorage.getItem("ctg_mpin")||""; if(v) sessionStorage.setItem("ctg_mpin",v); else sessionStorage.removeItem("ctg_mpin")}catch(e){return ""}};
@@ -917,7 +917,7 @@ function autoAtt(s){
 }
 let LAST_SENT=0;
 function lastActive(c,n,s){
-  if(DEMO||!n) return; activeDay(); const now=Date.now(); if(now-LAST_SENT<60000) return; LAST_SENT=now;
+  if(DEMO||!n) return; const now=Date.now(); if(now-LAST_SENT<60000) return; LAST_SENT=now;
   sendTick(c,s,n,"last",hhmm()+" · "+niceDate(todayISO()));
 }
 /* v2.0.2: LEARN "Check myself" answers (first try per question) + one row per active day, for the teacher's records */
@@ -1858,7 +1858,7 @@ function wireAgency(){
   $("#agT").addEventListener("input",f); f();
   $("#agSave").onclick=()=>{const r=f(),m=me();if(!r.txt){toast("Write your moment first");return}if(!r.ok){toast("Check the red lines first");return}
     const list=store.get("agency",[]); const it={d:AG_DIM,t:r.txt,s:current(),dt:todayISO()}; list.push(it); store.set("agency",list);
-    if(m.n) sendTick(myClass(),current(),m.n,"agency",JSON.stringify({d:AGD[AG_DIM][0],t:r.txt}));
+    if(m.n){sendTick(myClass(),current(),m.n,"agency",JSON.stringify({d:AGD[AG_DIM][0],t:r.txt})); activeDay()}
     logUse("agency",AG_DIM); toast(m.n?"Saved ⭐ Your teacher can see it.":"Saved on this phone ⭐"); render("tool:agency")};
   $("#agCopy").onclick=()=>{const r=f();if(!r.txt){toast("Write your moment first");return}copy(`My agency moment (${AGD[AG_DIM][0]}): ${r.txt}`,"Copied. Paste it in your Weekly Journal.")};
   wireAI("agAI",()=>AIP(`This is one "agency moment" from my teaching: a ${AGD[AG_DIM][0]} (${AGD[AG_DIM][1]}) teaching choice. Is it clear? Does it show my own choice and why?`,f().txt||"[my sentence]"),()=>{
@@ -2154,7 +2154,7 @@ function gameDone(s,i,score,total){
   if(m.n){const o=store.get(tKey(c,m.n,s),{});o[k]=true;
     if(!g.optional){o.gscore=`${score}/${total}`;o.grev=(GREV[s+"|"+i]||[]).map(j=>g.pairs[j][0]);o.gtitle=g.title}
     store.set(tKey(c,m.n,s),o);
-    sendTick(c,s,m.n,k,true); if(!g.optional) sendTick(c,s,m.n,"gscore",`${score}/${total}`); autoAtt(s); lastActive(c,m.n,s)}
+    sendTick(c,s,m.n,k,true); if(!g.optional) sendTick(c,s,m.n,"gscore",`${score}/${total}`); activeDay(); autoAtt(s); lastActive(c,m.n,s)}
   logUse("games",`S${s}-${i}:${score}/${total}`);
   ding(true); confetti();
   const e=$("#gEnd"); e.hidden=false;
@@ -2546,7 +2546,7 @@ TOOL_WIRE.mycard=()=>{
   $("#mcEx").onclick=()=>{MC.forEach(m=>{setPick("mcS_"+m[0],"");$("#mcT_"+m[0]).value=m[4]});f()};
   $("#mcClr").onclick=()=>{MC.forEach(m=>{setPick("mcS_"+m[0],"");$("#mcT_"+m[0]).value=""});f()};
   $("#mcCopy").onclick=()=>{copy(f(),"Copied. Post it in Teams.");logUse("mycard","copy")};
-  $("#mcSave").onclick=()=>{const t=f();if(!t.trim()){toast("Write your lines first");return}const l=store.get("mycards",[]);l.push({s:current(),t,dt:todayISO()});store.set("mycards",l);const m=me();if(m.n)sendTick(myClass(),current(),m.n,"mycard",t.slice(0,300));toast("Saved ⭐")};
+  $("#mcSave").onclick=()=>{const t=f();if(!t.trim()){toast("Write your lines first");return}const l=store.get("mycards",[]);l.push({s:current(),t,dt:todayISO()});store.set("mycards",l);const m=me();if(m.n){sendTick(myClass(),current(),m.n,"mycard",t.slice(0,300)); activeDay()}toast("Saved ⭐")};
   wireAI("mycardAI",()=>AIP("This is My Card after my Mini-Teach turn (I tried / I changed / Next time). Is it clear? Help me make the next step specific.",f()),()=>({tip:"Make “Next time” specific: one action you can see.",ex:"Not: “be better”. Yes: “check with one question after each word.”"}));
   f();
 };
