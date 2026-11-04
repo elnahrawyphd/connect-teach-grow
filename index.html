@@ -358,7 +358,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0", updated:"3 Nov 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0.2", updated:"4 Nov 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 const mpin = v => {try{if(v===undefined) return sessionStorage.getItem("ctg_mpin")||""; if(v) sessionStorage.setItem("ctg_mpin",v); else sessionStorage.removeItem("ctg_mpin")}catch(e){return ""}};
@@ -917,8 +917,25 @@ function autoAtt(s){
 }
 let LAST_SENT=0;
 function lastActive(c,n,s){
-  if(DEMO||!n) return; const now=Date.now(); if(now-LAST_SENT<60000) return; LAST_SENT=now;
+  if(DEMO||!n) return; activeDay(); const now=Date.now(); if(now-LAST_SENT<60000) return; LAST_SENT=now;
   sendTick(c,s,n,"last",hhmm()+" · "+niceDate(todayISO()));
+}
+/* v2.0.2: LEARN "Check myself" answers (first try per question) + one row per active day, for the teacher's records */
+const CHK={};
+function chkStart(id,total){CHK[id]={total,first:{}}}
+function chkAnswer(id,s,q,ok){
+  const st=CHK[id]; if(!st||DEMO) return; const m=me(); if(!m.n) return;
+  if(st.first[q]===undefined) st.first[q]=!!ok; else return;
+  const done=Object.keys(st.first).length, right=Object.values(st.first).filter(Boolean).length, c=myClass();
+  const lk=`chk|${c}|${m.n}|${id}`, best=store.get(lk,null);
+  if(best && (best.d>done || (best.d===done && best.r>=right))) return;
+  store.set(lk,{r:right,d:done});
+  sendTick(c,s,m.n,"chk_"+id,`${right}/${st.total} right first time · ${done}/${st.total} answered`);
+  activeDay();
+}
+function activeDay(){
+  if(DEMO) return; const m=me(); if(!m.n) return; const c=myClass(), t=todayISO(), k=`day|${c}|${m.n}|${t}`;
+  if(store.get(k,false)) return; store.set(k,true); sendTick(c,current(),m.n,"day_"+t,true);
 }
 function markUsed(id){const u=store.get("used",[]);if(!u.includes(id)){u.push(id);store.set("used",u)}}
 
@@ -1301,6 +1318,7 @@ function sprac(){return `<div class="stack" style="gap:10px" id="sprac"><span cl
 function wireSprac(){
   document.querySelectorAll("[data-pr]").forEach(b=>b.onclick=()=>{
     const [i,k]=b.dataset.pr.split("|"), p=SPRAC[+i], ok=k===p.lv;
+    chkAnswer("samr_which",(CARDS.find(x=>x.id==="samr")||{}).s||1,"p"+i,ok);
     b.parentElement.querySelectorAll("button").forEach(x=>x.classList.remove("on"));
     b.classList.add("on");
     document.querySelector(`[data-prf="${i}"]`).innerHTML= ok ? fb(true,`<b>Correct: ${p.lv} · ${SAMR_RUNG[p.lv][0]}.</b> ${SAMR_RUNG[p.lv][1]}`) : fb(false,`<b>Not quite. Try again.</b> Hint: ${p.h}`);
@@ -1319,7 +1337,7 @@ function card(id){
     <div class="row">${listenBtn("cardTxt")}${c.tool&&TOOLS.find(t=>t.id===c.tool)?`<button class="btn" data-go="tool:${c.tool}">${ic("right","sm")}Try it</button>`:""}</div>
     <p class="small muted">${ic("video","sm")} Watch: the Summary &amp; Review video in Teams › Class Work › Session ${c.s}.</p>
     ${c.id==="samr"?sprac():""}
-    <div class="quiz stack" style="gap:6px"><span class="label">Check myself (no marks)</span>
+    <div class="quiz stack" style="gap:6px"><span class="label">Check myself (no marks)</span><span class="small muted">Your first answer to each question is saved for your teacher (not a grade).</span>
       ${c.q.map((q,i)=>`<div><b>${i+1}. ${q.q}</b>${q.o.map((o,j)=>`<button data-q="${i}" data-j="${j}" data-a="${q.a}">${o}</button>`).join("")}<div data-qf="${i}" data-why="${esc(q.why||"")}" data-h="${esc(q.h||"")}"></div></div>`).join("")}
     </div></div>`;
 }
@@ -1911,7 +1929,7 @@ function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
+ const v=[["v2.0.2 · 4 Nov 2026","LEARN › Check myself: your FIRST answer to each question is now saved in your teacher's Sheet with the session number (not a grade). Practise as much as you like: only the first try counts, and your best result is kept."],["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
   ["v1.8.1 · 29 Oct 2026","Our PLN from Session 7: in class you comment on one classmate’s post; at home you add your new contribution before the next session (My Tasks shows it as homework)."],
   ["v1.8 · 29 Oct 2026","Session 7 is ready: the game Why Does It Help? (the four scaffolds), Heart and Blood word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 7, and the pre-session questions. Session 7 opens on 2 Nov 2026."],
   ["v1.7 · 29 Oct 2026","New home screen order: Today in class, My Tasks, the five sections, My Links, then I need… and Search. A small search button at the top of every screen. Tools and LEARN cards of earlier sessions fold under “Earlier sessions”. Brighter colours, and every new tool and game has its own bright colour. Demo mode is now called Program map. Mentor Desk: copy a Session line for the Session Log, download the Session Report, and export all sessions as a CSV file (codes only). Pre-session questions for Sessions 5 and 6 in My Tasks. Back now returns to the screen you came from (also the phone’s back button). New app icon colours; Tip of the day and This week at the top; Search and I need… at the end of the home screen."],
@@ -2654,7 +2672,7 @@ function mentor(){
   const b=store.get(mKey(cc,s),{}), prep=store.get("prep|"+s,{}), pl=prepList(s);
   const lastB=store.get("backup",""), daysB=lastB?Math.floor((new Date(todayISO())-new Date(lastB))/864e5):999;
   const cell=(n,k,on,extra)=>`<td><button data-cell="${esc(n)}|${k}" aria-label="${esc(n+" "+k)}" class="${on?"y":"n"}">${ic(on?"done":"empty")}</button>${extra||""}</td>`;
-  const key=cc+"|"+s, nTick=nm.filter(n=>Object.entries(b[n]||{}).some(([k,v])=>!["note","last","agency"].includes(k)&&(present(v)||(k==="gscore"&&v)))).length;
+  const key=cc+"|"+s, nTick=nm.filter(n=>Object.entries(b[n]||{}).some(([k,v])=>!["note","last","agency"].includes(k)&&!/^(day|chk)_/.test(k)&&(present(v)||(k==="gscore"&&v)))).length;
   const stat=DEMO?"Demo class on this device.":MLAST.key===key&&MLAST.ok===true?`Loaded ${new Date(MLAST.t).toTimeString().slice(0,5)} · ${nTick} of ${nm.length} students have ticks · updates every 30 seconds`:MLAST.key===key&&MLAST.ok===false?(SCRIPT_V&&SCRIPT_V<6?"The Sheet script must be updated to v6 (one time): Apps Script › paste Code_v6 › Deploy › Manage deployments › Edit › New version › Deploy.":"Could not reach the Sheet. Check the internet. The table may be old."):"Loading the newest ticks…";
   const ag=nm.filter(n=>(b[n]||{}).agency).length;
   return `${topbar()}${backBtn()}<div class="stack">
@@ -2834,7 +2852,9 @@ function render(r){
   app.innerHTML=html; window.scrollTo(0,0);
   app.querySelectorAll(".panel").forEach(wireVisual);
   wireInd();
-  app.querySelectorAll(".quiz button").forEach(b=>b.onclick=()=>{const ok=b.dataset.j===b.dataset.a;b.classList.add(ok?"right":"wrong");b.textContent=(ok?"✓ ":"✗ ")+b.textContent.replace(/^[✓✗] /,"").replace(/ — (Yes!|Try again)$/,"")+(ok?" — Yes!":" — Try again");
+  if(kind==="card"){const cc=CARDS.find(x=>x.id===arg); if(cc&&cc.q&&cc.q.length) chkStart(cc.id,cc.q.length)}
+  app.querySelectorAll(".quiz button").forEach(b=>b.onclick=()=>{const ok=b.dataset.j===b.dataset.a;
+    if(kind==="card"){const cc=CARDS.find(x=>x.id===arg); if(cc) chkAnswer(cc.id,cc.s,"q"+b.dataset.q,ok)}b.classList.add(ok?"right":"wrong");b.textContent=(ok?"✓ ":"✗ ")+b.textContent.replace(/^[✓✗] /,"").replace(/ — (Yes!|Try again)$/,"")+(ok?" — Yes!":" — Try again");
     const f=app.querySelector(`[data-qf="${b.dataset.q}"]`); if(f){const w=f.dataset.why,h=f.dataset.h; f.innerHTML=ok?(w?fb(true,`<b>Correct.</b> ${w}`):""):fb(false,`<b>Not quite. Try again.</b> Hint: ${h||"Read the card again, then choose another answer."}`)}});
   if(kind==="home"||kind==="search") wireSearch();
   if(kind==="search"){const q=$("#q"); if(q) setTimeout(()=>q.focus(),50)}
@@ -2847,7 +2867,7 @@ function render(r){
     if($("#redefp")) wireRedef(); if($("#growp")) wireGrowth(); if($("#agp")) wireAgency();
     if(TOOL_WIRE[arg] && $("#"+arg+"p")) TOOL_WIRE[arg]();
   }
-  if(kind==="card" && $("#sprac")) wireSprac();
+  if(kind==="card" && $("#sprac")){chkStart("samr_which",SPRAC.length); wireSprac()}
   const cb=$("#citeCopy"); if(cb) cb.onclick=()=>copy($("#cite").innerText);
   const gc=$("#gaCopy"); if(gc) gc.onclick=()=>copy(APP_URL,"Link copied");
   const mx=$("#mxCopy"); if(mx) mx.onclick=()=>copy([MXH.join("\t"),...matrixRows().map(r=>r.join("\t"))].join("\n"),"Table copied. Paste it in Word.");
