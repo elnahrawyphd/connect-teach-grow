@@ -358,7 +358,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0.4", updated:"5 Nov 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0.5", updated:"6 Nov 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 const mpin = v => {try{if(v===undefined) return sessionStorage.getItem("ctg_mpin")||""; if(v) sessionStorage.setItem("ctg_mpin",v); else sessionStorage.removeItem("ctg_mpin")}catch(e){return ""}};
@@ -369,9 +369,9 @@ const DEFAULT_NAMES = ["Alaa O.","Alaa M.","Aya","Georgina","Habiba","Sagda","So
 /* Sessions open for students when the Sheet cannot be reached. The Settings sheet (or Mentor Desk) overrides it. */
 const RELEASED_UP_TO = 5;
 /* Optional: open a session automatically on a date (YYYY-MM-DD). */
-const SESSION_DATES = { 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-25" };
+const SESSION_DATES = { 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-11" };
 /* Date shown in the This Week banner (display only; it does not open a session). Mentor Desk (Script v4) overrides it. */
-const NEXT_DATES = { 5:"2026-10-27", 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-25" };
+const NEXT_DATES = { 5:"2026-10-27", 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-11" };
 /* Summary & Review videos (YouTube, Unlisted). Add the playlist link and one link per session. */
 const PLAYLIST = "https://www.youtube.com/playlist?list=PLKz1A7W5D9_c";
 const VIDEOS = { /* 5:"https://youtu.be/..." */ };
@@ -510,7 +510,7 @@ const exFor = n => EX[TOPIC[n]] || EX.food;
 /* Session-specific tasks (filled from each session plan; more are added with each batch) */
 const SESSION_TASKS = {
  5:[{k:"s5",w:"After",t:"Write one ABCD objective with the app and post it in Activities, Questions and Clarifications",u:"Activities & Questions",ty:"target"}],
- 9:[{k:"s9",w:"After",t:"Prepare your Lesson Opening Kit for Session 10 (Handout 7)",ty:"layers"}],
+ 9:[{k:"s9",w:"After",t:"Prepare your 4 assignments for Session 10 (Handout 7)",ty:"layers"}],
  14:[{k:"s14",w:"After",t:"Write your Redefinition goal for Phase 5",ty:"star"}],
  15:[{k:"s15",w:"After",t:"Finish your Redefinition Task Card (Handout 3)",ty:"bulb"}],
  16:[{k:"s16",w:"After",t:"Turn in your lesson plan in Teams Assignments",ty:"layers"}],
@@ -1935,7 +1935,7 @@ function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v2.0.4 · 5 Nov 2026","Session 9 is ready: the game The Recipe (Short, Show, Steps, Check), The Giving Tree word cards with sound, Journal Helper ideas for Session 9, and the task “Prepare your Lesson Opening Kit” for Session 10."],["v2.0.2 · 4 Nov 2026","LEARN › Check myself: your FIRST answer to each question is now saved in your teacher's Sheet with the session number (not a grade). Practise as much as you like: only the first try counts, and your best result is kept."],["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
+ const v=[["v2.0.5 · 6 Nov 2026","Session 9 is now on Wednesday 11 November. Journal Helper ideas for Session 9 now match our new game on one screen (Baamboozle), and the Session 10 task is: prepare your 4 assignments."],["v2.0.4 · 5 Nov 2026","Session 9 is ready: the game The Recipe (Short, Show, Steps, Check), The Giving Tree word cards with sound, Journal Helper ideas for Session 9, and the task “Prepare your Lesson Opening Kit” for Session 10."],["v2.0.2 · 4 Nov 2026","LEARN › Check myself: your FIRST answer to each question is now saved in your teacher's Sheet with the session number (not a grade). Practise as much as you like: only the first try counts, and your best result is kept."],["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
   ["v1.8.1 · 29 Oct 2026","Our PLN from Session 7: in class you comment on one classmate’s post; at home you add your new contribution before the next session (My Tasks shows it as homework)."],
   ["v1.8 · 29 Oct 2026","Session 7 is ready: the game Why Does It Help? (the four scaffolds), Heart and Blood word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 7, and the pre-session questions. Session 7 opens on 2 Nov 2026."],
   ["v1.7 · 29 Oct 2026","New home screen order: Today in class, My Tasks, the five sections, My Links, then I need… and Search. A small search button at the top of every screen. Tools and LEARN cards of earlier sessions fold under “Earlier sessions”. Brighter colours, and every new tool and game has its own bright colour. Demo mode is now called Program map. Mentor Desk: copy a Session line for the Session Log, download the Session Report, and export all sessions as a CSV file (codes only). Pre-session questions for Sessions 5 and 6 in My Tasks. Back now returns to the screen you came from (also the phone’s back button). New app icon colours; Tip of the day and This week at the top; Search and I need… at the end of the home screen."],
@@ -2031,16 +2031,16 @@ const JH = {
   why:["students hear the right sound","a picture shows the meaning","a question shows if students understand","it matches the unit in the book"],
   learned:["a new word needs a picture and a sound","a model sentence shows how we use the word","a check question is better than “Do you understand?”","a short time makes me speak clearly"],
   next:["say the word slowly two times","wait three seconds for answers","use a gesture with my word","prepare one more check question"]},
- 9:{words:["clear line","short","ICQ","smooth move","quiz","my choice"],
+ 9:{words:["clear line","short","ICQ","smooth move","game","my choice"],
   rate:{network:"the Cambridge English tips • my group",tpack:"clear English + a smooth move between tools",agency:"I chose my teacher lines"},
-  surprised:["one short line works better than a long one","“Eyes on me” stopped the class at once","my classmates found the quiz fast with the question number","a quiz on the phone gives scores at once"],
-  learn:["how to make a Forms quiz","more check questions (ICQs) for Grade 5","how to move between two tools without stopping","how to give clear feedback"],
+  surprised:["one short line works better than a long one","“Eyes on the screen” stopped the class at once","my classmates found the tile fast with the number","one screen keeps the whole class together"],
+  learn:["how to make a Baamboozle game","more check questions (ICQs) for Grade 5","how to move between two tools without stopping","how to give clear feedback"],
   apply:["ask a check question after every instruction","say one action and the page number","use Stop • Say • Check when I change the tool","give feedback with “Well done! ___ is correct.”"],
-  happened:["in my Mini-Teach, I moved the class to the quiz","in my Mini-Teach, a classmate could not find the quiz","when I wrote my Transition Card, I chose my lines","when my classmate gave feedback, she said the word"],
-  did:["I said “Stop, please. Eyes on me.”","I said the question number two times","I asked “Where is the quiz? Which question?”","I said “Well done! ___ is correct.”","I showed the quiz post on the screen"],
-  why:["students know what to do","everyone finds the same question","the class stops and listens","the feedback is clear"],
-  learned:["short lines are clear lines","a check question shows if students understand","one fixed place for the link saves time","clear feedback says what is correct"],
-  next:["wait three seconds after “Eyes on me”","say the page number","speak more slowly","show the quiz post on the screen"]},
+  happened:["in my Mini-Teach, I moved the class to the game","in my Mini-Teach, a team chose the wrong number","when I wrote my Transition Card, I chose my lines","when my classmate gave feedback, she said the word"],
+  did:["I said “Stop, please. Eyes on the screen.”","I said my number two times","I asked “Which number?”","I said “Well done! ___ is correct.”","I called the team by name"],
+  why:["students know what to do","everyone finds the same tile","the class stops and looks","the feedback is clear"],
+  learned:["short lines are clear lines","a check question shows if students understand","one screen and a number save time","clear feedback says what is correct"],
+  next:["wait three seconds after “Eyes on the screen”","say the number two times","speak more slowly","say the team before the number"]},
  8:{words:["Plan B","black screen","paper flashcard","the board","same goal","my choice"],
   rate:{network:"my Plan B reply • the Plan B Box",tpack:"Keep the goal, change the tool",agency:"I chose my backup"},
   surprised:["the lesson can go on when the screen turns black","a printed card works as well as a slide","my classmates did not stop in the drill","one paper card keeps the same goal"],
