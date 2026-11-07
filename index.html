@@ -358,7 +358,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0.5", updated:"6 Nov 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0.6", updated:"7 Nov 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 const mpin = v => {try{if(v===undefined) return sessionStorage.getItem("ctg_mpin")||""; if(v) sessionStorage.setItem("ctg_mpin",v); else sessionStorage.removeItem("ctg_mpin")}catch(e){return ""}};
@@ -369,9 +369,9 @@ const DEFAULT_NAMES = ["Alaa O.","Alaa M.","Aya","Georgina","Habiba","Sagda","So
 /* Sessions open for students when the Sheet cannot be reached. The Settings sheet (or Mentor Desk) overrides it. */
 const RELEASED_UP_TO = 5;
 /* Optional: open a session automatically on a date (YYYY-MM-DD). */
-const SESSION_DATES = { 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-11" };
+const SESSION_DATES = { 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-11", 10:"2026-11-18" };
 /* Date shown in the This Week banner (display only; it does not open a session). Mentor Desk (Script v4) overrides it. */
-const NEXT_DATES = { 5:"2026-10-27", 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-11" };
+const NEXT_DATES = { 5:"2026-10-27", 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-11", 10:"2026-11-18" };
 /* Summary & Review videos (YouTube, Unlisted). Add the playlist link and one link per session. */
 const PLAYLIST = "https://www.youtube.com/playlist?list=PLKz1A7W5D9_c";
 const VIDEOS = { /* 5:"https://youtu.be/..." */ };
@@ -394,7 +394,9 @@ const GAMES = {
  9:[{step:"Step 2",type:"match",title:"The Recipe",how:"Tap a part of a clear instruction, then tap what it means.",
      pairs:[["Short","One action at a time. Few words.","chat"],["Show","Point to the page, or model it first.","eye"],["Steps","“First…, then…”","layers"],["Check","Ask a check question: “What do you open?”","check"]]},
     {step:"Home",type:"cards",optional:true,title:"The Giving Tree",how:"Tap a card to turn it: listen to the word, say it two times, then answer the question.",
-     cards:[["🌳","tree","What did Tom love?"],["🪵","trunk","What is the main, thick part of a tree?"],["👑","crown","What did Tom make from the leaves?"],["💧","care for","How can we care for a tree?"],["🌿","branch","Where did the bird build its nest?"],["⛱️","shade","Where do we sit on a hot day?"],["😠","selfish","Was Tom kind or selfish?"],["🍃","leaves","What colour are the leaves?"],["🍎","apples","What did Tom eat?"],["🧗","climb","What did Tom like to do?"],["💪","strong","Is the tree weak or strong at the end?"]]}]
+     cards:[["🌳","tree","What did Tom love?"],["🪵","trunk","What is the main, thick part of a tree?"],["👑","crown","What did Tom make from the leaves?"],["💧","care for","How can we care for a tree?"],["🌿","branch","Where did the bird build its nest?"],["⛱️","shade","Where do we sit on a hot day?"],["😠","selfish","Was Tom kind or selfish?"],["🍃","leaves","What colour are the leaves?"],["🍎","apples","What did Tom eat?"],["🧗","climb","What did Tom like to do?"],["💪","strong","Is the tree weak or strong at the end?"]]}],
+ 10:[{step:"Step 2",type:"match",title:"My 15 Minutes",how:"Tap a part of your lesson opening, then tap its minutes.",
+     pairs:[["Hello + objective","0–2 minutes: say hello and today’s goal.","target"],["Warm-up","2–5 minutes: a picture and a question.","timer"],["My words","5–11 minutes: Show • Say • Use • Check.","book"],["Game + feedback","11–14 minutes, then Goodbye (14–15).","play"]]}]
 };
 const gameName=(s,g)=>`S${s} ${g.step} – ${g.title}`;
 const gameLink=(s,i)=>APP_URL+"#game:"+s+":"+(i||0);
@@ -462,6 +464,7 @@ const REUSE = {
  7:{pre:["What does the teacher do in the presentation stage?","Name two things that help students understand a new word."]},
  9:{pre:["What does a teacher say to start a new activity?","Why do students need short, clear instructions?"],pick:[["Idea","ICQs: check questions (British Council Voices)"],["Website","Cambridge English blog: Challenges in teaching young learners online"]]},
  8:{pre:["What can stop working in a class with technology?","What can a teacher do when the projector stops?"],pick:[["Idea","The Plan B Box"],["Website","British Council Voices: Tips for teaching in a low-tech classroom"]]},
+ 10:{pre:["What are the parts of a good lesson opening?","How can feedback help a new teacher?"],pick:[["Idea","Two Stars and a Wish (Saskatchewan Teachers’ Federation)"],["Website","Edutopia 60-Second Strategy: Peer Review"]]},
  11:{pick:[["Website","Edutopia 60-Second Strategy: Cooperative Learning Roles"],["Tool","Microsoft co-authoring guide"]]},
  12:{pick:[["Website","HMH: What Is an Exit Ticket?"],["Idea","Word of the Day closure (The TEFL Org)"]]},
  13:{pick:[["Tool","Kahoot teacher guide"],["Website","Edutopia: 3 Tips for Better Peer Feedback"]]},
@@ -479,7 +482,7 @@ const AITRY = {
  7:{t:"A model sentence",tool:"ChatGPT",alt:"Gemini",task:"Give me one short model sentence for each word for Grade 5 students. I will check them in the Cambridge Dictionary.",work:"[my three words]"},
  8:{t:"A Plan B idea",tool:"Gemini",alt:"ChatGPT",task:"My activity uses technology. Give me one low-tech Plan B that keeps the same objective.",work:"[my activity and its tool]"},
  9:{t:"Make my instruction simple",tool:"Claude",alt:"Gemini",task:"Make my classroom instruction simple: eight words or fewer, for Grade 5 students.",work:"[my instruction]"},
- 10:{t:"One tip for my kit",tool:"Gemini",alt:"Copilot",task:"Give me one tip to make my lesson opening kit clearer. (No AI during the rounds.)",work:"[my kit: objective, warm-up, three words, Plan B]"},
+ 10:{t:"One small step for my goal",tool:"Claude",alt:"Gemini",task:"I am a student teacher. Give me ONE small first step I can practise in 5 minutes at home for my goal. Simple English, maximum 20 words. (At home only: no AI during the rounds.)",work:"[my goal]"},
  11:{t:"Check our sentences and steps",tool:"Claude",alt:"Gemini",task:"Check our group sentences and our task steps for Grade 5 students.",work:"[our sentences and steps]"},
  12:{t:"Exit-ticket questions",tool:"Gemini",alt:"Copilot",task:"Write three short exit-ticket questions for my lesson, for Grade 5 students.",work:"[my lesson objective]"},
  13:{t:"Write my own live question",tool:"Gemini",alt:"ChatGPT",task:"Help me write one live check question with four short answers for my lesson.",work:"[my lesson topic]"},
@@ -511,6 +514,7 @@ const exFor = n => EX[TOPIC[n]] || EX.food;
 const SESSION_TASKS = {
  5:[{k:"s5",w:"After",t:"Write one ABCD objective with the app and post it in Activities, Questions and Clarifications",u:"Activities & Questions",ty:"target"}],
  9:[{k:"s9",w:"After",t:"Prepare your 4 assignments for Session 10 (Handout 7)",ty:"layers"}],
+ 10:[{k:"s10",w:"After",t:"Keep Handout 4 (your goal and first step) for Session 14",ty:"star"}],
  14:[{k:"s14",w:"After",t:"Write your Redefinition goal for Phase 5",ty:"star"}],
  15:[{k:"s15",w:"After",t:"Finish your Redefinition Task Card (Handout 3)",ty:"bulb"}],
  16:[{k:"s16",w:"After",t:"Turn in your lesson plan in Teams Assignments",ty:"layers"}],
@@ -1935,7 +1939,7 @@ function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v2.0.5 · 6 Nov 2026","Session 9 is now on Wednesday 11 November. Journal Helper ideas for Session 9 now match our new game on one screen (Baamboozle), and the Session 10 task is: prepare your 4 assignments."],["v2.0.4 · 5 Nov 2026","Session 9 is ready: the game The Recipe (Short, Show, Steps, Check), The Giving Tree word cards with sound, Journal Helper ideas for Session 9, and the task “Prepare your Lesson Opening Kit” for Session 10."],["v2.0.2 · 4 Nov 2026","LEARN › Check myself: your FIRST answer to each question is now saved in your teacher's Sheet with the session number (not a grade). Practise as much as you like: only the first try counts, and your best result is kept."],["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
+ const v=[["v2.0.6 · 7 Nov 2026","Session 10 (Checkpoint I) is ready for Wednesday 18 November: the game My 15 Minutes (each part of your lesson opening with its minutes), Journal Helper ideas for Session 10, and the task “Keep Handout 4 (your goal) for Session 14”."],["v2.0.5 · 6 Nov 2026","Session 9 is now on Wednesday 11 November. Journal Helper ideas for Session 9 now match our new game on one screen (Baamboozle), and the Session 10 task is: prepare your 4 assignments."],["v2.0.4 · 5 Nov 2026","Session 9 is ready: the game The Recipe (Short, Show, Steps, Check), The Giving Tree word cards with sound, Journal Helper ideas for Session 9, and the task “Prepare your Lesson Opening Kit” for Session 10."],["v2.0.2 · 4 Nov 2026","LEARN › Check myself: your FIRST answer to each question is now saved in your teacher's Sheet with the session number (not a grade). Practise as much as you like: only the first try counts, and your best result is kept."],["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
   ["v1.8.1 · 29 Oct 2026","Our PLN from Session 7: in class you comment on one classmate’s post; at home you add your new contribution before the next session (My Tasks shows it as homework)."],
   ["v1.8 · 29 Oct 2026","Session 7 is ready: the game Why Does It Help? (the four scaffolds), Heart and Blood word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 7, and the pre-session questions. Session 7 opens on 2 Nov 2026."],
   ["v1.7 · 29 Oct 2026","New home screen order: Today in class, My Tasks, the five sections, My Links, then I need… and Search. A small search button at the top of every screen. Tools and LEARN cards of earlier sessions fold under “Earlier sessions”. Brighter colours, and every new tool and game has its own bright colour. Demo mode is now called Program map. Mentor Desk: copy a Session line for the Session Log, download the Session Report, and export all sessions as a CSV file (codes only). Pre-session questions for Sessions 5 and 6 in My Tasks. Back now returns to the screen you came from (also the phone’s back button). New app icon colours; Tip of the day and This week at the top; Search and I need… at the end of the home screen."],
@@ -2041,6 +2045,16 @@ const JH = {
   why:["students know what to do","everyone finds the same tile","the class stops and looks","the feedback is clear"],
   learned:["short lines are clear lines","a check question shows if students understand","one screen and a number save time","clear feedback says what is correct"],
   next:["wait three seconds after “Eyes on the screen”","say the number two times","speak more slowly","say the team before the number"]},
+ 10:{words:["lesson opening","timer","Peer Check","two stars","my goal","my choice"],
+  rate:{network:"Two Stars and a Wish • my group’s feedback",tpack:"timer + word slides + game in one opening",agency:"I chose my goal"},
+  surprised:["15 minutes go very fast when I teach","the big timer helped me keep my time","my classmates saw things I did not see","the real checklist was easy to use with ✓ ~ ✗"],
+  learn:["how to keep my opening in 15 minutes","more warm-up ideas for Grade 5","how to give kind and clear feedback","how to reach my goal before Session 14"],
+  apply:["start every lesson with a clear objective","use a big timer in my class","ask a colleague for two stars and a wish","choose one goal after every lesson"],
+  happened:["in my round, I taught my 15-minute opening","in my round, the game did not open and I used my Plan B","as the timekeeper, I said “Five minutes left.”","when my group gave me feedback, I heard my two stars and a wish"],
+  did:["I said my objective at the start","I showed a picture for my warm-up","I taught my words with Show, Say, Use, Check","I moved the class to the game","I wrote my goal and my first step"],
+  why:["students know the goal","it keeps my time","it is one of the 7 points","my wish showed me what to improve"],
+  learned:["a lesson opening has five parts","feedback shows what to do next","one goal is easier than many goals","a timer helps me and my students"],
+  next:["ask a check question after the move","say the game number two times","speak more slowly","make my objective measurable"]},
  8:{words:["Plan B","black screen","paper flashcard","the board","same goal","my choice"],
   rate:{network:"my Plan B reply • the Plan B Box",tpack:"Keep the goal, change the tool",agency:"I chose my backup"},
   surprised:["the lesson can go on when the screen turns black","a printed card works as well as a slide","my classmates did not stop in the drill","one paper card keeps the same goal"],
