@@ -358,7 +358,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0.6", updated:"7 Nov 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0.7", updated:"12 Nov 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 const mpin = v => {try{if(v===undefined) return sessionStorage.getItem("ctg_mpin")||""; if(v) sessionStorage.setItem("ctg_mpin",v); else sessionStorage.removeItem("ctg_mpin")}catch(e){return ""}};
@@ -369,9 +369,9 @@ const DEFAULT_NAMES = ["Alaa O.","Alaa M.","Aya","Georgina","Habiba","Sagda","So
 /* Sessions open for students when the Sheet cannot be reached. The Settings sheet (or Mentor Desk) overrides it. */
 const RELEASED_UP_TO = 5;
 /* Optional: open a session automatically on a date (YYYY-MM-DD). */
-const SESSION_DATES = { 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-11", 10:"2026-11-18" };
+const SESSION_DATES = { 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-12", 10:"2026-11-24" };
 /* Date shown in the This Week banner (display only; it does not open a session). Mentor Desk (Script v4) overrides it. */
-const NEXT_DATES = { 5:"2026-10-27", 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-11", 10:"2026-11-18" };
+const NEXT_DATES = { 5:"2026-10-27", 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-12", 10:"2026-11-24" };
 /* Summary & Review videos (YouTube, Unlisted). Add the playlist link and one link per session. */
 const PLAYLIST = "https://www.youtube.com/playlist?list=PLKz1A7W5D9_c";
 const VIDEOS = { /* 5:"https://youtu.be/..." */ };
@@ -810,8 +810,8 @@ const isOpenS = s => s<=openUpTo();
 const toolOpen = t => t.always || isOpenS(t.s);
 const current = () => openUpTo();
 function nextDate(){
-  const c=myClass(), n=current(), d=((CFG.next||{})[c]) || NEXT_DATES[n] || "";
-  return d && d>=todayISO() ? d : "";
+  const c=myClass(), n=current(), t=todayISO();
+  return [((CFG.next||{})[c]), NEXT_DATES[n], NEXT_DATES[n+1]].find(d=>d && d>=t) || "";
 }
 
 /* ================= SHEET (shared tracker) ================= */
@@ -1866,7 +1866,9 @@ function wireAgency(){
   wirePick("agS",()=>{const st=val("agS").replace(/…$/,"").trim(),ta=$("#agT");
     if(st&&!isOther("agS")&&(!ta.value.trim()||ta.value.trim()===lastSt)){ta.value=st+" ";lastSt=st;ta.focus()}f()});
   $("#agT").addEventListener("input",f); f();
-  $("#agSave").onclick=()=>{const r=f(),m=me();if(!r.txt){toast("Write your moment first");return}if(!r.ok){toast("Check the red lines first");return}
+  let agWarned=false;
+  $("#agSave").onclick=()=>{const r=f(),m=me();if(!r.txt){toast("Write your moment first");$("#agT").focus();return}
+    if(!r.ok&&!agWarned){agWarned=true;const c=$("#agChk");if(c)c.scrollIntoView({behavior:"smooth",block:"center"});toast("Fix the red line, then tap Save again (or tap Save again to keep it as it is).");return}
     const list=store.get("agency",[]); const it={d:AG_DIM,t:r.txt,s:current(),dt:todayISO()}; list.push(it); store.set("agency",list);
     if(m.n){sendTick(myClass(),current(),m.n,"agency",JSON.stringify({d:AGD[AG_DIM][0],t:r.txt})); activeDay()}
     logUse("agency",AG_DIM); toast(m.n?"Saved ⭐ Your teacher can see it.":"Saved on this phone ⭐"); render("tool:agency")};
@@ -1939,7 +1941,7 @@ function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v2.0.6 · 7 Nov 2026","Session 10 (Checkpoint I) is ready for Wednesday 18 November: the game My 15 Minutes (each part of your lesson opening with its minutes), Journal Helper ideas for Session 10, and the task “Keep Handout 4 (your goal) for Session 14”."],["v2.0.5 · 6 Nov 2026","Session 9 is now on Wednesday 11 November. Journal Helper ideas for Session 9 now match our new game on one screen (Baamboozle), and the Session 10 task is: prepare your 4 assignments."],["v2.0.4 · 5 Nov 2026","Session 9 is ready: the game The Recipe (Short, Show, Steps, Check), The Giving Tree word cards with sound, Journal Helper ideas for Session 9, and the task “Prepare your Lesson Opening Kit” for Session 10."],["v2.0.2 · 4 Nov 2026","LEARN › Check myself: your FIRST answer to each question is now saved in your teacher's Sheet with the session number (not a grade). Practise as much as you like: only the first try counts, and your best result is kept."],["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
+ const v=[["v2.0.7 · 12 Nov 2026","Session 10 (Checkpoint I) is now on Tuesday 24 November. The home screen shows the next session date again. My Agency Moments: if a line is red, Save shows you the line; tap Save again to keep your moment as it is."],["v2.0.6 · 7 Nov 2026","Session 10 (Checkpoint I) is ready: the game My 15 Minutes (each part of your lesson opening with its minutes), Journal Helper ideas for Session 10, and the task “Keep Handout 4 (your goal) for Session 14”."],["v2.0.5 · 6 Nov 2026","Session 9 is now on Wednesday 11 November. Journal Helper ideas for Session 9 now match our new game on one screen (Baamboozle), and the Session 10 task is: prepare your 4 assignments."],["v2.0.4 · 5 Nov 2026","Session 9 is ready: the game The Recipe (Short, Show, Steps, Check), The Giving Tree word cards with sound, Journal Helper ideas for Session 9, and the task “Prepare your Lesson Opening Kit” for Session 10."],["v2.0.2 · 4 Nov 2026","LEARN › Check myself: your FIRST answer to each question is now saved in your teacher's Sheet with the session number (not a grade). Practise as much as you like: only the first try counts, and your best result is kept."],["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
   ["v1.8.1 · 29 Oct 2026","Our PLN from Session 7: in class you comment on one classmate’s post; at home you add your new contribution before the next session (My Tasks shows it as homework)."],
   ["v1.8 · 29 Oct 2026","Session 7 is ready: the game Why Does It Help? (the four scaffolds), Heart and Blood word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 7, and the pre-session questions. Session 7 opens on 2 Nov 2026."],
   ["v1.7 · 29 Oct 2026","New home screen order: Today in class, My Tasks, the five sections, My Links, then I need… and Search. A small search button at the top of every screen. Tools and LEARN cards of earlier sessions fold under “Earlier sessions”. Brighter colours, and every new tool and game has its own bright colour. Demo mode is now called Program map. Mentor Desk: copy a Session line for the Session Log, download the Session Report, and export all sessions as a CSV file (codes only). Pre-session questions for Sessions 5 and 6 in My Tasks. Back now returns to the screen you came from (also the phone’s back button). New app icon colours; Tip of the day and This week at the top; Search and I need… at the end of the home screen."],
