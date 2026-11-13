@@ -358,7 +358,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0.9", updated:"13 Nov 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.1.0", updated:"13 Nov 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 const mpin = v => {try{if(v===undefined) return sessionStorage.getItem("ctg_mpin")||""; if(v) sessionStorage.setItem("ctg_mpin",v); else sessionStorage.removeItem("ctg_mpin")}catch(e){return ""}};
@@ -515,7 +515,8 @@ const SESSION_TASKS = {
  5:[{k:"s5",w:"After",t:"Write one ABCD objective with the app and post it in Activities, Questions and Clarifications",u:"Activities & Questions",ty:"target"}],
  9:[{k:"s9",w:"After",t:"Prepare your 4 assignments for Session 10 (Handout 7)",ty:"layers"}],
  10:[{k:"s10",w:"Before",t:"Post My Checkpoint Card in Teams (by Sun 22 Nov)",sub:"Teams › Activities, Questions and Clarifications › reply under “S10 | My Checkpoint Card”",ty:"layers"},
-     {k:"peer",w:"During",t:"Peer Check: rate each classmate in your group",sub:"In this app: GROW › Peer Check (after each turn)",u:"#tool:peer",ty:"star"}],
+     {k:"peer",w:"During",t:"Peer Check: rate each classmate in your group",sub:"In this app: GROW › Peer Check (after each turn)",u:"#tool:peer",ty:"star"},
+     {k:"rec",w:"During",t:"My Feedback Record: my choice + my goal for next term",sub:"In this app: GROW › My Feedback Record",u:"#tool:record",ty:"check"}],
  14:[{k:"s14",w:"After",t:"Write your Redefinition goal for Phase 5",ty:"star"}],
  15:[{k:"s15",w:"After",t:"Finish your Redefinition Task Card (Handout 3)",ty:"bulb"}],
  16:[{k:"s16",w:"After",t:"Turn in your lesson plan in Teams Assignments",ty:"layers"}],
@@ -653,6 +654,7 @@ const TOOLS = [
  {id:"agency",sec:"grow",s:5,ic:"compass",t:"My Agency Moments",d:"Past, present and future teaching choices.",how:"Choose past, present or future. Finish the sentence. Save it.",dig:"Weekly Journal (Critical Incident)",paper:"Agency card",kw:"agency past present future choice iterational projective"},
  {id:"turns",sec:"grow",s:10,ic:"flag",t:"Turn Board + Ready for Mini-Teach?",d:"Your turn and a quick check.",how:"Find your turn. Tick the five ready checks.",dig:"Teams post",paper:"Printed board",pv:["Who teaches next","Ready? objective · tools · Plan B · timer · smile"],kw:"mini-teach turn"},
  {id:"peer",sec:"grow",s:10,ic:"star",t:"Peer Check",d:"Rate a classmate: 7 points, her best point, one tip.",how:"Choose her name. Tap ✓ ~ ✗ for each point. Choose her best point and one tip. Send.",dig:"This app",paper:"Handout 3 (backup)",pv:["✓ yes · ~ partly · ✗ not yet","⭐ best point · 💡 one tip"],kw:"peer check feedback stars tip"},
+ {id:"record",sec:"grow",s:10,ic:"check",t:"My Feedback Record",d:"My group’s feedback, Ms. Zainab’s feedback, my choice, and my goal for next term.",how:"Read your feedback. Write your choice and your one goal. Send.",dig:"This app",paper:"Handout 4 (backup)",pv:["⭐ best points · 💡 tips","🎯 my goal for next term"],kw:"feedback record goal next term"},
  {id:"mycard",sec:"grow",s:10,ic:"idcard",t:"My Card",d:"I tried / I changed / Next time.",how:"Write three short lines after your turn.",dig:"Teams post",paper:"My Card",pv:["I tried ___.","I changed ___.","Next time I will ___."],kw:"reflection"},
  {id:"idea",sec:"grow",s:18,ic:"wrench",t:"My Tool Idea",d:"Design a tool for your future class.",how:"Name your tool. Say what it does for students.",dig:"Padlet",paper:"Idea card",pv:["My tool's name","What it does for my students","Which SAMR level it reaches"],kw:"design agency future"}
 ];
@@ -1256,7 +1258,7 @@ function home(){
     <button class="hcard" style="--c:#d94f00;color:var(--ink);text-align:left;font:inherit" data-go="today"><span class="hico">${ic("sun")}</span><span class="txt"><span class="label">1 · Today in class</span><b>Everything for Session ${n}, in order</b><span class="small muted">${games.length?esc(games.filter(g=>!g.optional).map(g=>g.title).join(" · "))+" · ":""}Agency Moment · Journal Helper · Our PLN · Before You Leave</span></span>${ic("right","sm")}</button>
     ${games.length?`<div class="list">${games.map((g,i)=>`<button class="item newc" style="--nc:${newCol(i)}" data-go="game:${n}:${i}"><span class="ico">${ic(g.type==="cards"?"cards":"play")}</span><span class="txt"><b>${esc(g.title)}</b><span class="small muted">${esc(g.step)}${g.optional?" · Optional":""}</span></span><span class="pill new">${ic("star","sm")}NEW</span></button>`).join("")}</div>`:""}
     <button class="hcard" style="--c:#a020c8;color:var(--ink);text-align:left;font:inherit" data-go="tool:tasks"><span class="hico">${ic("tasks")}</span><span class="txt"><span class="label">2 · My Tasks</span><b>${m.n?`${esc(m.n)}: ${done} of ${list.length} tasks done${done===list.length?" ⭐":""}`:"Choose your name and tick your tasks"}</b><span class="bar" aria-hidden="true" style="margin-top:4px"><span style="width:${list.length?Math.round(100*done/list.length):0}%"></span></span></span>${ic("right","sm")}</button>
-    ${current()>=10?peerCard()+rev1Card():""}
+    ${current()>=10?peerCard()+recCard()+rev1Card():""}
     <span class="label">3 · Tools</span>
     <div class="tiles">${["plan","teach","check","grow"].map(k=>`<button class="tile t-${k}" data-go="sec:${k}">${ic(SECS[k].ic,"lg")}<b>${SECS[k].t}</b><span>${SECS[k].d}</span></button>`).join("")}
       <button class="tile t-learn wide" data-go="sec:learn">${ic("learn","lg")}<b>LEARN</b><span>${SECS.learn.d}: TPACK, SAMR, CCER, PLN, ABCD… and a glossary with sound</span></button></div>
@@ -1946,7 +1948,8 @@ function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v2.0.9 · 13 Nov 2026","Session 10 is open now. NEW: Peer Check (GROW): after each turn, rate your classmates with ✓ ~ ✗ on the 7 points, choose her best point and one tip, and send. Then tap “Show my feedback”. NEW: a badge for each phase in My Growth Path. My Tasks for Session 10: watch the videos, play the game, add your PLN post, and post your Checkpoint Card."],
+ const v=[["v2.1.0 · 13 Nov 2026","NEW: My Feedback Record (GROW): read your group’s Peer Check and, later, Ms. Zainab’s feedback; write your choice and your one goal for next term, then Send. No paper needed."],
+ ["v2.0.9 · 13 Nov 2026","Session 10 is open now. NEW: Peer Check (GROW): after each turn, rate your classmates with ✓ ~ ✗ on the 7 points, choose her best point and one tip, and send. Then tap “Show my feedback”. NEW: a badge for each phase in My Growth Path. My Tasks for Session 10: watch the videos, play the game, add your PLN post, and post your Checkpoint Card."],
  ["v2.0.8 · 13 Nov 2026","NEW on the home screen: Term 1 Review. Ten stops, one for each session (1 to 10): open the LEARN card, answer Check myself, and play the session game (Sessions 6 to 10). Finish all ten and get your Term 1 Card. Old sessions you review count for App Stars."],["v2.0.7 · 12 Nov 2026","Session 10 (Checkpoint I) is now on Tuesday 24 November. The home screen shows the next session date again. My Agency Moments: if a line is red, Save shows you the line; tap Save again to keep your moment as it is."],["v2.0.6 · 7 Nov 2026","Session 10 (Checkpoint I) is ready: the game My 15 Minutes (each part of your lesson opening with its minutes), Journal Helper ideas for Session 10, and your goal for next term."],["v2.0.5 · 6 Nov 2026","Session 9 is now on Wednesday 11 November. Journal Helper ideas for Session 9 now match our new game on one screen (Baamboozle), and the Session 10 task is: prepare your 4 assignments."],["v2.0.4 · 5 Nov 2026","Session 9 is ready: the game The Recipe (Short, Show, Steps, Check), The Giving Tree word cards with sound, Journal Helper ideas for Session 9, and the task “Prepare your Lesson Opening Kit” for Session 10."],["v2.0.2 · 4 Nov 2026","LEARN › Check myself: your FIRST answer to each question is now saved in your teacher's Sheet with the session number (not a grade). Practise as much as you like: only the first try counts, and your best result is kept."],["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
   ["v1.8.1 · 29 Oct 2026","Our PLN from Session 7: in class you comment on one classmate’s post; at home you add your new contribution before the next session (My Tasks shows it as homework)."],
   ["v1.8 · 29 Oct 2026","Session 7 is ready: the game Why Does It Help? (the four scaffolds), Heart and Blood word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 7, and the pre-session questions. Session 7 opens on 2 Nov 2026."],
@@ -2721,6 +2724,7 @@ function mentor(){
    ${!DEMO&&NET!==true?`<div class="tip small"><b>${NET===false?"Not connected:":"Checking…"}</b> ${NET===false?"changes stay on this device. Wait for the Connected chip before you open a session.":"wait for the Connected chip."}</div>`:""}
    <div class="row"><button class="btn" id="mOpenNext" ${openUpTo(cc)>=18?"disabled":""}>${ic("play","sm")}Open Session ${Math.min(openUpTo(cc)+1,18)}</button>
    <div class="field" style="flex:1;min-width:150px"><label for="mOpen">Or choose a number</label><select id="mOpen">${Array.from({length:18},(_,i)=>i+1).map(x=>`<option value="${x}" ${x===openUpTo(cc)?"selected":""}>Session ${x}</option>`).join("")}</select></div><button class="btn alt" id="mOpenGo" style="align-self:flex-end">${ic("calendar","sm")}Open</button></div></div>
+   <div class="panel" style="border:2px solid #c2185b"><span class="label">${ic("star","sm")} Session 10 · Checkpoint I</span><p>Rate each lesson from your videos with drop-down menus. Each student sees your strength and tip in My Feedback Record.</p><div class="row"><button class="btn" data-go="tfb">${ic("teach","sm")}Trainer Feedback</button></div></div>
    <div class="panel"><span class="label">${MENTOR.name}</span><h1>Follow-up board</h1>
    <div class="two">
    <div class="field"><label for="mC">Class</label><select id="mC">${classes().map(x=>`<option ${x===cc?"selected":""}>${esc(x)}</option>`).join("")}</select></div>
@@ -2947,6 +2951,78 @@ TOOL_WIRE.peer=()=>{
   };
   paint();done();
 };
+
+/* ---------- v2.1.0: My Feedback Record (students) + Trainer Feedback (Mentor Desk) ---------- */
+const tipText=c=>(PEER_TIPS.find(x=>x[0]===c)||["",c||""])[1];
+const ptText=c=>{const p=PEER_PTS.find(x=>x[0]===c);return p?p[0]+" "+p[1]:(c||"")};
+const parseV=v=>{try{return typeof v==="string"?JSON.parse(v):(v||{})}catch(e){return {}}};
+TOOL_SCREENS.record=()=>shell("record",["Read the feedback from your group (and later from Ms. Zainab)","Write your choice","Choose ONE goal for next term and your first step, then Send"],`
+ <span class="label">${ic("groups","sm")} 1 · From my group (Peer Check)</span><div id="rcPeer"><p class="small muted">Loading…</p></div>
+ <span class="label">${ic("teach","sm")} 2 · From Ms. Zainab</span><div id="rcTr"><p class="small muted">Loading…</p></div>
+ <div class="row"><button class="btn alt" id="rcLoad">${ic("refresh","sm")}Refresh</button></div>
+ <span class="label">${ic("bulb","sm")} 3 · My choice</span>
+ <div class="two"><div class="field"><label for="rcC1">I chose…</label><input id="rcC1" placeholder="picture slides"></div><div class="field"><label for="rcC2">…because it helps students…</label><input id="rcC2" placeholder="see and hear the new words"></div></div>
+ <span class="label">${ic("flag","sm")} 4 · My one goal for next term</span>
+ <div class="two"><div class="field"><label for="rcG">Next term, I will improve…</label><select id="rcG"><option value="">Choose a point…</option>${PEER_PTS.map(([c,t])=>`<option value="${c}">${c} ${esc(t)}</option>`).join("")}</select></div>
+ <div class="field"><label for="rcBy">…by…</label><input id="rcBy" placeholder="saying the game number two times"></div></div>
+ <div class="field"><label for="rcStep">My first step:</label><input id="rcStep" placeholder="practise my move lines with a timer"></div>
+ <div class="tip small">💡 Your tip from Peer Check is a good goal!</div>
+ <div class="row"><button class="btn" id="rcSend">${ic("done","sm")}Send</button></div><div id="rcOut"></div>`,"keep one goal at a time and check it after each lesson you teach.");
+TOOL_WIRE.record=()=>{
+  const m=me(), c=myClass(), S=10, k="rec|"+S;
+  if(!m.n){$("#rcOut").innerHTML=`<div class="tip">First choose your name in <button class="linkb" data-go="tool:tasks">My Tasks</button>.</div>`}
+  const d=store.get(k,{}); ["C1","C2","G","By","Step"].forEach(x=>{if(d[x]) $("#rc"+x).value=d[x]});
+  const load=async()=>{
+    if(!m.n) return;
+    const b=await loadTicks(c,S);
+    if(!b||b.__agg){$("#rcPeer").innerHTML=$("#rcTr").innerHTML=`<p class="small muted">Not available now. Try again with the internet.</p>`;return}
+    const rows=Object.entries(b).map(([n,r])=>[n,r&&r["peer_"+m.n]]).filter(x=>x[1]&&x[0]!==m.n);
+    $("#rcPeer").innerHTML=rows.length?rows.map(([n,v])=>{const o=parseV(v);return `<div class="qcard"><b>${esc(n)}</b> · ${PEER_PTS.map(([kk],i)=>kk+" "+((o.p||"")[i]||"")).join(" · ")}<br>⭐ ${esc(ptText(o.b))}<br>💡 ${esc(tipText(o.t))}</div>`}).join(""):`<p class="small muted">No Peer Check yet. Your group sends it after your turn.</p>`;
+    const t=parseV((b[m.n]||{}).tfb);
+    $("#rcTr").innerHTML=t.b?`<div class="qcard" style="border-left:5px solid var(--accent)">⭐ ${esc(ptText(t.b))}<br>💡 ${esc(tipText(t.t))}${t.x?`<br>✍️ ${esc(t.x)}`:""}</div>`:`<p class="small muted">Ms. Zainab watches the lesson videos after the session and sends her feedback here. Come back later.</p>`;
+  };
+  $("#rcLoad").onclick=load; load();
+  $("#rcSend").onclick=()=>{
+    if(!m.n){toast("Choose your name in My Tasks first");return}
+    const r={C1:val("rcC1"),C2:val("rcC2"),G:val("rcG"),By:val("rcBy"),Step:val("rcStep")};
+    if(!r.C1||!r.C2){$("#rcOut").innerHTML=fb(false,"Write your choice: I chose … because it helps students …");return}
+    if(!r.G||!r.By||!r.Step){$("#rcOut").innerHTML=fb(false,"Choose your point, write “by …” and your first step.");return}
+    store.set(k,r); sendTick(c,S,m.n,"recd",JSON.stringify(r));
+    const st=store.get(tKey(c,m.n,S),{}); st.rec=true; store.set(tKey(c,m.n,S),st); sendTick(c,S,m.n,"rec",true); activeDay();
+    $("#rcOut").innerHTML=fb(true,`<b>Sent ✓</b> I chose ${esc(r.C1)} because it helps students ${esc(r.C2)}.<br>Next term, I will improve ${esc(ptText(r.G))} by ${esc(r.By)}. My first step: ${esc(r.Step)}.`);
+    toast(CHEERS[Math.floor(Math.random()*CHEERS.length)]);
+  };
+};
+function tfbScreen(){
+  const c=store.get("mC",myClass()), nm=names(c), d=store.get("tfb|10",{});
+  const sel=(id,opts)=>`<select id="${id}"><option value="">–</option>${opts}</select>`;
+  return `${topbar()}${backBtn("mentor",MENTOR.name)}<div class="panel" id="tfbp"><span class="label">${MENTOR.name} · Session 10</span><h1>Trainer Feedback</h1>
+  <div class="tip small">Watch her lesson video. Choose her name, give each point 1–5, choose one strength and one tip, and Send. She sees the strength and the tip in <b>My Feedback Record</b>; the numbers go to your Sheet for the grade (not to her).</div>
+  <div class="field"><label for="tfWho">Student</label><select id="tfWho"><option value="">Choose…</option>${nm.map(n=>`<option>${esc(n)}</option>`).join("")}</select></div>
+  <div class="list">${PEER_PTS.map(([k,t])=>`<div class="item" style="align-items:center"><span class="txt"><b>${k}</b> ${esc(t)}</span>${sel("tf"+k,[1,2,3,4,5].map(x=>`<option>${x}</option>`).join(""))}</div>`).join("")}
+  <div class="item" style="align-items:center"><span class="txt"><b>Card</b> Checkpoint Card in Teams (2 complete by Sun 22 Nov · 1 late or parts missing · 0 none)</span>${sel("tfCard",[0,1,2].map(x=>`<option>${x}</option>`).join(""))}</div></div>
+  <div class="two"><div class="field"><label for="tfB">⭐ Her strength</label>${sel("tfB",PEER_PTS.map(([k,t])=>`<option value="${k}">${k} ${esc(t)}</option>`).join(""))}</div>
+  <div class="field"><label for="tfT">💡 One tip</label>${sel("tfT",PEER_TIPS.map(([k,t])=>`<option value="${k}">${esc(t)}</option>`).join(""))}</div></div>
+  <div class="field"><label for="tfX">One more line (optional; no names)</label><input id="tfX" maxlength="160" placeholder="Great warm-up! Keep it."></div>
+  <div class="row"><button class="btn" id="tfSend">${ic("done","sm")}Send to her</button></div><div id="tfOut"></div>
+  <span class="label">Sent</span><div class="chips">${nm.map(n=>`<span class="chip ${d[n]?"on":""}">${d[n]?ic("done","sm"):""}${esc(n)}</span>`).join("")}</div></div>`;
+}
+function wireTfb(){
+  const c=store.get("mC",myClass()), d=store.get("tfb|10",{});
+  const fill=()=>{const o=d[val("tfWho")]||{};PEER_PTS.forEach(([k],i)=>$("#tf"+k).value=(o.r||[])[i]||"");$("#tfCard").value=o.card??"";$("#tfB").value=o.b||"";$("#tfT").value=o.t||"";$("#tfX").value=o.x||""};
+  $("#tfWho").onchange=fill;
+  $("#tfSend").onclick=()=>{
+    const who=val("tfWho"); if(!who){$("#tfOut").innerHTML=fb(false,"Choose the student.");return}
+    const r=PEER_PTS.map(([k])=>val("tf"+k)); if(r.some(x=>!x)){$("#tfOut").innerHTML=fb(false,"Give every point 1–5.");return}
+    if(!val("tfB")||!val("tfT")){$("#tfOut").innerHTML=fb(false,"Choose her strength and one tip.");return}
+    const o={r:r.map(Number),card:val("tfCard")===""?"":Number(val("tfCard")),b:val("tfB"),t:val("tfT"),x:val("tfX")};
+    d[who]=o; store.set("tfb|10",d); sendTick(c,10,who,"tfb",JSON.stringify(o));
+    $("#tfOut").innerHTML=fb(true,`<b>Sent to ${esc(who)} ✓</b> ${PEER_PTS.map(([k],i)=>k+" "+o.r[i]).join(" · ")} · Card ${o.card} · ⭐ ${esc(o.b)} · 💡 ${esc(tipText(o.t))}`);
+    setTimeout(()=>render("tfb"),1600);
+  };
+}
+
+function recCard(){return `<button class="hcard" style="--c:#6a1b9a;color:var(--ink);text-align:left;font:inherit" data-go="tool:record"><span class="hico">${ic("check")}</span><span class="txt"><span class="label">Session 10 · Checkpoint I</span><b>My Feedback Record</b><span class="small muted">Read your feedback and write your goal for next term.</span></span></button>`}
 function peerCard(){return `<button class="hcard" style="--c:#c2185b;color:var(--ink);text-align:left;font:inherit" data-go="tool:peer"><span class="hico">${ic("star")}</span><span class="txt"><span class="label">Session 10 · Checkpoint I</span><b>Peer Check</b><span class="small muted">Rate each classmate in your group after her turn.</span></span></button>`}
 
 /* ---------- Router ---------- */
@@ -2968,6 +3044,7 @@ function render(r){
   else if(kind==="gloss") html=gloss(); else if(kind==="getapp") html=getapp(); else if(kind==="privacy") html=privacy();
   else if(kind==="report") html=report(); else if(kind==="matrix") html=matrix();
   else if(kind==="mentor") html=mentor();
+  else if(kind==="tfb") html=mentorOn?tfbScreen():mentor();
   else if(kind==="game") html=gameScreen(+arg,+(arg2||0));
   else if(kind==="rev1") html=rev1Screen();
   else if(kind==="tool"){
@@ -2989,6 +3066,7 @@ function render(r){
   if(kind==="search"){const q=$("#q"); if(q) setTimeout(()=>q.focus(),50)}
   if(kind==="start") wireStart();
   if(kind==="mentor") wireMentor(); else {wireMentor._auto=false; clearInterval(MAUTO)}
+  if(kind==="tfb"&&mentorOn) wireTfb();
   if(kind==="game") wireGame(+arg,+(arg2||0));
   if(kind==="report") wireReport();
   if(kind==="tool"){
