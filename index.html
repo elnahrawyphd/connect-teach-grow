@@ -358,7 +358,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0.8", updated:"13 Nov 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.0.9", updated:"13 Nov 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 const mpin = v => {try{if(v===undefined) return sessionStorage.getItem("ctg_mpin")||""; if(v) sessionStorage.setItem("ctg_mpin",v); else sessionStorage.removeItem("ctg_mpin")}catch(e){return ""}};
@@ -367,7 +367,7 @@ const SHEET_URL = "https://script.google.com/macros/s/AKfycbw7fHr2Fef6H6x4CHmnqx
 const DEFAULT_CLASS = "Microteaching 2026-2027";
 const DEFAULT_NAMES = ["Alaa O.","Alaa M.","Aya","Georgina","Habiba","Sagda","Sondos","Maram","Nour","Rahma"];
 /* Sessions open for students when the Sheet cannot be reached. The Settings sheet (or Mentor Desk) overrides it. */
-const RELEASED_UP_TO = 5;
+const RELEASED_UP_TO = 10;
 /* Optional: open a session automatically on a date (YYYY-MM-DD). */
 const SESSION_DATES = { 6:"2026-10-28", 7:"2026-11-02", 8:"2026-11-04", 9:"2026-11-12", 10:"2026-11-24" };
 /* Date shown in the This Week banner (display only; it does not open a session). Mentor Desk (Script v4) overrides it. */
@@ -514,7 +514,8 @@ const exFor = n => EX[TOPIC[n]] || EX.food;
 const SESSION_TASKS = {
  5:[{k:"s5",w:"After",t:"Write one ABCD objective with the app and post it in Activities, Questions and Clarifications",u:"Activities & Questions",ty:"target"}],
  9:[{k:"s9",w:"After",t:"Prepare your 4 assignments for Session 10 (Handout 7)",ty:"layers"}],
- 10:[{k:"s10",w:"After",t:"Keep Handout 4 (your goal and first step) for Session 14",ty:"star"}],
+ 10:[{k:"s10",w:"Before",t:"Post My Checkpoint Card in Teams (by Sun 22 Nov)",sub:"Teams › Activities, Questions and Clarifications › reply under “S10 | My Checkpoint Card”",ty:"layers"},
+     {k:"peer",w:"During",t:"Peer Check: rate each classmate in your group",sub:"In this app: GROW › Peer Check (after each turn)",u:"#tool:peer",ty:"star"}],
  14:[{k:"s14",w:"After",t:"Write your Redefinition goal for Phase 5",ty:"star"}],
  15:[{k:"s15",w:"After",t:"Finish your Redefinition Task Card (Handout 3)",ty:"bulb"}],
  16:[{k:"s16",w:"After",t:"Turn in your lesson plan in Teams Assignments",ty:"layers"}],
@@ -651,6 +652,7 @@ const TOOLS = [
  {id:"growth",sec:"grow",s:5,ic:"award",t:"My Growth Path",d:"Your stars, tools tried and sessions done.",how:"Look at your stars. Thank a classmate.",dig:"Teams post",paper:"Stars on your handout",kw:"stars badge progress thank"},
  {id:"agency",sec:"grow",s:5,ic:"compass",t:"My Agency Moments",d:"Past, present and future teaching choices.",how:"Choose past, present or future. Finish the sentence. Save it.",dig:"Weekly Journal (Critical Incident)",paper:"Agency card",kw:"agency past present future choice iterational projective"},
  {id:"turns",sec:"grow",s:10,ic:"flag",t:"Turn Board + Ready for Mini-Teach?",d:"Your turn and a quick check.",how:"Find your turn. Tick the five ready checks.",dig:"Teams post",paper:"Printed board",pv:["Who teaches next","Ready? objective · tools · Plan B · timer · smile"],kw:"mini-teach turn"},
+ {id:"peer",sec:"grow",s:10,ic:"star",t:"Peer Check",d:"Rate a classmate: 7 points, her best point, one tip.",how:"Choose her name. Tap ✓ ~ ✗ for each point. Choose her best point and one tip. Send.",dig:"This app",paper:"Handout 3 (backup)",pv:["✓ yes · ~ partly · ✗ not yet","⭐ best point · 💡 one tip"],kw:"peer check feedback stars tip"},
  {id:"mycard",sec:"grow",s:10,ic:"idcard",t:"My Card",d:"I tried / I changed / Next time.",how:"Write three short lines after your turn.",dig:"Teams post",paper:"My Card",pv:["I tried ___.","I changed ___.","Next time I will ___."],kw:"reflection"},
  {id:"idea",sec:"grow",s:18,ic:"wrench",t:"My Tool Idea",d:"Design a tool for your future class.",how:"Name your tool. Say what it does for students.",dig:"Padlet",paper:"Idea card",pv:["My tool's name","What it does for my students","Which SAMR level it reaches"],kw:"design agency future"}
 ];
@@ -800,7 +802,7 @@ const me = () => store.get("me",{c:"",n:""});
 const myClass = () => {const m=me(); return (m.c && CFG.classes[m.c]) ? m.c : (classes()[0]||DEFAULT_CLASS)};
 function openUpTo(c){
   c = c || myClass();
-  let n = Number((CFG.open||{})[c]) || RELEASED_UP_TO;
+  let n = Math.max(Number((CFG.open||{})[c]) || 0, RELEASED_UP_TO);
   const t = todayISO();
   if(!DEMO) for(const [s,d] of Object.entries(SESSION_DATES)) if(d<=t && +s>n) n=+s;
   if(mentorOn && store.get("preview",false)) n=18;
@@ -1254,7 +1256,7 @@ function home(){
     <button class="hcard" style="--c:#d94f00;color:var(--ink);text-align:left;font:inherit" data-go="today"><span class="hico">${ic("sun")}</span><span class="txt"><span class="label">1 · Today in class</span><b>Everything for Session ${n}, in order</b><span class="small muted">${games.length?esc(games.filter(g=>!g.optional).map(g=>g.title).join(" · "))+" · ":""}Agency Moment · Journal Helper · Our PLN · Before You Leave</span></span>${ic("right","sm")}</button>
     ${games.length?`<div class="list">${games.map((g,i)=>`<button class="item newc" style="--nc:${newCol(i)}" data-go="game:${n}:${i}"><span class="ico">${ic(g.type==="cards"?"cards":"play")}</span><span class="txt"><b>${esc(g.title)}</b><span class="small muted">${esc(g.step)}${g.optional?" · Optional":""}</span></span><span class="pill new">${ic("star","sm")}NEW</span></button>`).join("")}</div>`:""}
     <button class="hcard" style="--c:#a020c8;color:var(--ink);text-align:left;font:inherit" data-go="tool:tasks"><span class="hico">${ic("tasks")}</span><span class="txt"><span class="label">2 · My Tasks</span><b>${m.n?`${esc(m.n)}: ${done} of ${list.length} tasks done${done===list.length?" ⭐":""}`:"Choose your name and tick your tasks"}</b><span class="bar" aria-hidden="true" style="margin-top:4px"><span style="width:${list.length?Math.round(100*done/list.length):0}%"></span></span></span>${ic("right","sm")}</button>
-    ${current()>=10?rev1Card():""}
+    ${current()>=10?peerCard()+rev1Card():""}
     <span class="label">3 · Tools</span>
     <div class="tiles">${["plan","teach","check","grow"].map(k=>`<button class="tile t-${k}" data-go="sec:${k}">${ic(SECS[k].ic,"lg")}<b>${SECS[k].t}</b><span>${SECS[k].d}</span></button>`).join("")}
       <button class="tile t-learn wide" data-go="sec:learn">${ic("learn","lg")}<b>LEARN</b><span>${SECS.learn.d}: TPACK, SAMR, CCER, PLN, ABCD… and a glossary with sound</span></button></div>
@@ -1807,6 +1809,8 @@ function growth(){
    <span class="label">One star for each session with all tasks done</span>
    <div class="stars">${res.map(x=>`<button class="st1 ${x.star?"on":x.part?"part":""}" ${x.open?`data-gs="${x.s}"`:"disabled"} aria-label="Session ${x.s}: ${x.star?"star earned":x.open?x.r.d+" of "+x.r.all+" done":"opens later"}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">${x.open?IC.star:IC.lock}</svg>${x.s}</button>`).join("")}</div>
    <div class="info" id="gInfo">Tap a session to open its tasks.</div>
+   <span class="label">My phase badges</span><div class="stack" style="gap:8px">${[1,2,3,4,5].map(p=>{const rr=res.filter(x=>PHASE(x.s)===p), on=rr.every(x=>x.star), d=rr.filter(x=>x.star).length;
+     return `<div class="badge ${on?"on":""}" style="${on?`border-color:${PHASECOL[p]}`:""}">${on?starSVG(""):`<svg viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.6" aria-hidden="true">${IC.award}</svg>`}<div><b>Phase ${p}: ${esc(PHASES[p].n)}</b><p class="small muted">Sessions ${PHASES[p].s} · ${on?"Badge earned! ⭐":d+" of "+rr.length+" stars"}</p></div></div>`}).join("")}</div>
    <div class="badge ${badge?"on":""}">${badge?starSVG(""):`<svg viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.6" aria-hidden="true">${IC.award}</svg>`}<div><b>${badge?"Program badge: Connected Teacher!":"Program badge (locked)"}</b><p class="small muted">${badge?"You finished the program. Your network grows with you.":"Earn the Session 18 star to open your badge."}</p></div></div>
    <div class="stack" style="gap:6px"><span class="label">Tools I tried on this phone</span><div class="chips">${TOOLS.filter(toolOpen).map(t=>`<button class="chip ${used.includes(t.id)?"on":""}" data-go="tool:${t.id}">${ic(used.includes(t.id)?"done":t.ic,"sm")}${esc(t.t)}</button>`).join("")}</div></div>
    <div class="panel" style="padding:12px;background:color-mix(in srgb,var(--grow) 6%,var(--card))"><span class="label">${ic("heart","sm")} Thank a classmate</span>
@@ -1942,7 +1946,8 @@ function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v2.0.8 · 13 Nov 2026","NEW on the home screen: Term 1 Review. Ten stops, one for each session (1 to 10): open the LEARN card, answer Check myself, and play the session game (Sessions 6 to 10). Finish all ten and get your Term 1 Card. Old sessions you review count for App Stars."],["v2.0.7 · 12 Nov 2026","Session 10 (Checkpoint I) is now on Tuesday 24 November. The home screen shows the next session date again. My Agency Moments: if a line is red, Save shows you the line; tap Save again to keep your moment as it is."],["v2.0.6 · 7 Nov 2026","Session 10 (Checkpoint I) is ready: the game My 15 Minutes (each part of your lesson opening with its minutes), Journal Helper ideas for Session 10, and the task “Keep Handout 4 (your goal) for Session 14”."],["v2.0.5 · 6 Nov 2026","Session 9 is now on Wednesday 11 November. Journal Helper ideas for Session 9 now match our new game on one screen (Baamboozle), and the Session 10 task is: prepare your 4 assignments."],["v2.0.4 · 5 Nov 2026","Session 9 is ready: the game The Recipe (Short, Show, Steps, Check), The Giving Tree word cards with sound, Journal Helper ideas for Session 9, and the task “Prepare your Lesson Opening Kit” for Session 10."],["v2.0.2 · 4 Nov 2026","LEARN › Check myself: your FIRST answer to each question is now saved in your teacher's Sheet with the session number (not a grade). Practise as much as you like: only the first try counts, and your best result is kept."],["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
+ const v=[["v2.0.9 · 13 Nov 2026","Session 10 is open now. NEW: Peer Check (GROW): after each turn, rate your classmates with ✓ ~ ✗ on the 7 points, choose her best point and one tip, and send. Then tap “Show my feedback”. NEW: a badge for each phase in My Growth Path. My Tasks for Session 10: watch the videos, play the game, add your PLN post, and post your Checkpoint Card."],
+ ["v2.0.8 · 13 Nov 2026","NEW on the home screen: Term 1 Review. Ten stops, one for each session (1 to 10): open the LEARN card, answer Check myself, and play the session game (Sessions 6 to 10). Finish all ten and get your Term 1 Card. Old sessions you review count for App Stars."],["v2.0.7 · 12 Nov 2026","Session 10 (Checkpoint I) is now on Tuesday 24 November. The home screen shows the next session date again. My Agency Moments: if a line is red, Save shows you the line; tap Save again to keep your moment as it is."],["v2.0.6 · 7 Nov 2026","Session 10 (Checkpoint I) is ready: the game My 15 Minutes (each part of your lesson opening with its minutes), Journal Helper ideas for Session 10, and your goal for next term."],["v2.0.5 · 6 Nov 2026","Session 9 is now on Wednesday 11 November. Journal Helper ideas for Session 9 now match our new game on one screen (Baamboozle), and the Session 10 task is: prepare your 4 assignments."],["v2.0.4 · 5 Nov 2026","Session 9 is ready: the game The Recipe (Short, Show, Steps, Check), The Giving Tree word cards with sound, Journal Helper ideas for Session 9, and the task “Prepare your Lesson Opening Kit” for Session 10."],["v2.0.2 · 4 Nov 2026","LEARN › Check myself: your FIRST answer to each question is now saved in your teacher's Sheet with the session number (not a grade). Practise as much as you like: only the first try counts, and your best result is kept."],["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
   ["v1.8.1 · 29 Oct 2026","Our PLN from Session 7: in class you comment on one classmate’s post; at home you add your new contribution before the next session (My Tasks shows it as homework)."],
   ["v1.8 · 29 Oct 2026","Session 7 is ready: the game Why Does It Help? (the four scaffolds), Heart and Blood word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 7, and the pre-session questions. Session 7 opens on 2 Nov 2026."],
   ["v1.7 · 29 Oct 2026","New home screen order: Today in class, My Tasks, the five sections, My Links, then I need… and Search. A small search button at the top of every screen. Tools and LEARN cards of earlier sessions fold under “Earlier sessions”. Brighter colours, and every new tool and game has its own bright colour. Demo mode is now called Program map. Mentor Desk: copy a Session line for the Session Log, download the Session Report, and export all sessions as a CSV file (codes only). Pre-session questions for Sessions 5 and 6 in My Tasks. Back now returns to the screen you came from (also the phone’s back button). New app icon colours; Tip of the day and This week at the top; Search and I need… at the end of the home screen."],
@@ -2048,14 +2053,14 @@ const JH = {
   why:["students know what to do","everyone finds the same tile","the class stops and looks","the feedback is clear"],
   learned:["short lines are clear lines","a check question shows if students understand","one screen and a number save time","clear feedback says what is correct"],
   next:["wait three seconds after “Eyes on the screen”","say the number two times","speak more slowly","say the team before the number"]},
- 10:{words:["lesson opening","timer","Peer Check","two stars","my goal","my choice"],
-  rate:{network:"Two Stars and a Wish • my group’s feedback",tpack:"timer + word slides + game in one opening",agency:"I chose my goal"},
+ 10:{words:["lesson opening","timer","Peer Check","best point","my goal","my choice"],
+  rate:{network:"Peer Check in the app • my group’s ticks",tpack:"timer + word slides + game in one opening",agency:"I chose my goal"},
   surprised:["15 minutes go very fast when I teach","the big timer helped me keep my time","my classmates saw things I did not see","the real checklist was easy to use with ✓ ~ ✗"],
-  learn:["how to keep my opening in 15 minutes","more warm-up ideas for Grade 5","how to give kind and clear feedback","how to reach my goal before Session 14"],
-  apply:["start every lesson with a clear objective","use a big timer in my class","ask a colleague for two stars and a wish","choose one goal after every lesson"],
-  happened:["in my round, I taught my 15-minute opening","in my round, the game did not open and I used my Plan B","as the timekeeper, I said “Five minutes left.”","when my group gave me feedback, I heard my two stars and a wish"],
+  learn:["how to keep my opening in 15 minutes","more warm-up ideas for Grade 5","how to give kind and clear feedback","how to reach my goal next term"],
+  apply:["start every lesson with a clear objective","use a big timer in my class","ask a colleague to check my lesson with the 7 points","choose one goal after every lesson"],
+  happened:["in my round, I taught my 15-minute opening","in my round, the game did not open and I used my Plan B","as the timekeeper, I said “Five minutes left.”","when I read my Peer Check, I saw my best point and one tip"],
   did:["I said my objective at the start","I showed a picture for my warm-up","I taught my words with Show, Say, Use, Check","I moved the class to the game","I wrote my goal and my first step"],
-  why:["students know the goal","it keeps my time","it is one of the 7 points","my wish showed me what to improve"],
+  why:["students know the goal","it keeps my time","it is one of the 7 points","my tip showed me what to improve"],
   learned:["a lesson opening has five parts","feedback shows what to do next","one goal is easier than many goals","a timer helps me and my students"],
   next:["ask a check question after the move","say the game number two times","speak more slowly","make my objective measurable"]},
  8:{words:["Plan B","black screen","paper flashcard","the board","same goal","my choice"],
@@ -2541,7 +2546,7 @@ TOOL_WIRE.lp=()=>{
 /* ---------- Turn Board + Ready for Mini-Teach? (S10) ---------- */
 const READY=[["target","My objective is written (ABCD)."],["wrench","My tools are open and work."],["buoy","My Plan B card is ready."],["timer","The timer is ready."],["sun","I smile and speak slowly."]];
 TOOL_SCREENS.turns=()=>shell("turns",["Find your turn","Tick the five ready checks","Teach, then give feedback"],`
- <div class="tip"><b>Your task:</b> teach your part of the lesson (15 minutes). Your classmates act as Grade 5 students. Then give feedback: <i>I saw… Next time…</i></div>
+ <div class="tip"><b>Your task:</b> teach your part of the lesson (15 minutes). Your classmates act as Grade 5 students. Then rate each classmate in <b>Peer Check</b> (GROW): ✓ ~ ✗, her best point, one tip.</div>
  <span class="label">${ic("flag","sm")} Turn order · Session <span id="trS"></span></span>
  <div class="list" id="trList"></div>
  <div class="row"><button class="btn alt" id="trBack">${ic("left","sm")}Back</button><button class="btn" id="trNext">Next turn${ic("right","sm")}</button></div>
@@ -2887,6 +2892,62 @@ function rev1Screen(){
     ${m.n?`<p><b>${esc(m.n)}</b>: ${d} of 10 stops done</p>`:`<p>First choose your name in My Tasks, so your answers count.</p><button class="btn" data-go="tool:tasks">${ic("tasks","sm")}Choose my name</button>`}
     <div class="bar" aria-hidden="true"><span style="width:${d*10}%"></span></div>${how}</div>${cardDone}${rows}</div>`;
 }
+
+
+/* ---------- v2.0.9: Peer Check (Session 10) ---------- */
+const PEER_PTS=[["A1","A clear objective"],["A2","A picture or sound"],["A3","A warm-up"],["A4","Plan B ready"],["B1","Show • Say • Use • Check"],["B4","A smooth move to the tool"],["B5","Short, clear English"]];
+const PEER_TIPS=[["A1","Say your objective at the start, slowly."],["A2","Show bigger pictures or play the sound."],["A3","Keep the warm-up short; let everyone answer."],["A4","Keep your Plan B card on the desk."],["B1","Use each word in a sentence, then check."],["B4","Say: “Stop, please. Eyes on the screen. Ready? Go!”"],["B5","Use short sentences and speak slowly."],["T","Watch the time: 15 minutes."]];
+const PEER_GROUPS={A:["Sondos","Maram","Sagda"],B:["Alaa O.","Alaa M.","Nour"],C:["Georgina","Rahma","Habiba","Aya"]};
+const peerGroupOf=n=>Object.keys(PEER_GROUPS).find(g=>PEER_GROUPS[g].includes(n))||"";
+const PEER_SYM={y:"✓",p:"~",n:"✗"};
+TOOL_SCREENS.peer=()=>shell("peer",["Choose your classmate","Tap ✓ ~ ✗ for the 7 points","Choose her best point and one tip, then Send"],`
+ <div class="tip"><b>When?</b> Right after each turn in your group (5 minutes). Rate every classmate in your group, not yourself.<br><b>✓</b> = yes &nbsp;·&nbsp; <b>~</b> = partly &nbsp;·&nbsp; <b>✗</b> = not yet</div>
+ <div class="field"><label for="pcWho">${L2("person","1 · Who taught?")}</label><select id="pcWho"></select></div>
+ <span class="label">2 · Did she…?</span>
+ <div class="list" id="pcPts">${PEER_PTS.map(([c,t])=>`<div class="item" style="align-items:center"><span class="txt"><b>${c}</b> ${esc(t)}</span><span class="yn" style="display:flex;gap:6px">${["y","p","n"].map(v=>`<button class="btn alt" style="min-width:48px;font-size:20px" data-pc="${c}" data-v="${v}" aria-label="${c} ${v==="y"?"yes":v==="p"?"partly":"not yet"}">${PEER_SYM[v]}</button>`).join("")}</span></div>`).join("")}</div>
+ <div class="two"><div class="field"><label for="pcBest">${L2("star","3 · ⭐ Her best point")}</label><select id="pcBest"><option value="">Choose…</option>${PEER_PTS.map(([c,t])=>`<option value="${c}">${c} ${esc(t)}</option>`).join("")}</select></div>
+ <div class="field"><label for="pcTip">${L2("bulb","4 · 💡 One tip for her")}</label><select id="pcTip"><option value="">Choose…</option>${PEER_TIPS.map(([c,t])=>`<option value="${c}">${esc(t)}</option>`).join("")}</select></div></div>
+ <div class="row"><button class="btn" id="pcSend">${ic("done","sm")}Send</button></div><div id="pcOut"></div>
+ <span class="label">${ic("check","sm")} I rated</span><div class="chips" id="pcDone"></div>
+ <span class="label">${ic("heart","sm")} My feedback from my group</span><div id="pcMine"><p class="small muted">After your turn, tap the button to see it.</p></div>
+ <div class="row"><button class="btn alt" id="pcLoad">${ic("refresh","sm")}Show my feedback</button></div>`,"ask a colleague to watch your lesson with the same 7 points. One best point and one tip are enough.");
+TOOL_WIRE.peer=()=>{
+  const m=me(), c=myClass(), S=10;
+  if(!m.n){$("#pcOut").innerHTML=`<div class="tip">First choose your name in <button class="linkb" data-go="tool:tasks">My Tasks</button>.</div>`}
+  const g=peerGroupOf(m.n), mates=g?PEER_GROUPS[g].filter(x=>x!==m.n):[];
+  const others=names(c).filter(x=>x!==m.n&&!mates.includes(x));
+  $("#pcWho").innerHTML=`<option value="">Choose…</option>${mates.length?`<optgroup label="My group ${g}">${mates.map(x=>`<option>${esc(x)}</option>`).join("")}</optgroup>`:""}<optgroup label="Other classmates">${others.map(x=>`<option>${esc(x)}</option>`).join("")}</optgroup>`;
+  let marks={};
+  const paint=()=>document.querySelectorAll("[data-pc]").forEach(b=>{const on=marks[b.dataset.pc]===b.dataset.v;b.classList.toggle("alt",!on);b.style.background=on?(b.dataset.v==="y"?"var(--ok)":b.dataset.v==="p"?"#e0a100":"#c0392b"):"";b.style.color=on?"#fff":""});
+  document.querySelectorAll("[data-pc]").forEach(b=>b.onclick=()=>{marks[b.dataset.pc]=b.dataset.v;paint()});
+  const done=()=>{const d=store.get("peer|"+S,{});$("#pcDone").innerHTML=Object.keys(d).length?Object.keys(d).map(x=>`<span class="chip on">${ic("done","sm")}${esc(x)}</span>`).join(""):`<span class="small muted">Nobody yet.</span>`;
+    if(mates.length&&mates.every(x=>d[x])&&m.n){const st=store.get(tKey(c,m.n,S),{});if(!truthy(st.peer)){st.peer=true;store.set(tKey(c,m.n,S),st);sendTick(c,S,m.n,"peer",true)}}};
+  $("#pcWho").onchange=()=>{const d=store.get("peer|"+S,{})[val("pcWho")];marks=d?Object.assign({},d.p):{};$("#pcBest").value=d?d.b:"";$("#pcTip").value=d?d.t:"";paint();$("#pcOut").innerHTML=""};
+  $("#pcSend").onclick=()=>{
+    const who=val("pcWho"), miss=PEER_PTS.filter(([k])=>!marks[k]).map(([k])=>k);
+    if(!m.n){toast("Choose your name in My Tasks first");return}
+    if(!who){$("#pcOut").innerHTML=fb(false,"Choose who taught.");return}
+    if(miss.length){$("#pcOut").innerHTML=fb(false,"Tap ✓ ~ ✗ for: "+miss.join(", "));return}
+    if(!val("pcBest")||!val("pcTip")){$("#pcOut").innerHTML=fb(false,"Choose her best point and one tip.");return}
+    const rec={p:marks,b:val("pcBest"),t:val("pcTip")};
+    const d=store.get("peer|"+S,{});d[who]=rec;store.set("peer|"+S,d);
+    const code=PEER_PTS.map(([k])=>PEER_SYM[marks[k]]).join("");
+    sendTick(c,S,m.n,"peer_"+who,JSON.stringify({p:code,b:rec.b,t:rec.t}));activeDay();
+    $("#pcOut").innerHTML=fb(true,`<b>Sent ✓</b> ${esc(who)}: ${PEER_PTS.map(([k])=>k+" "+PEER_SYM[marks[k]]).join(" · ")} · ⭐ ${rec.b} · 💡 ${esc((PEER_TIPS.find(x=>x[0]===rec.t)||["",""])[1])}`);
+    marks={};$("#pcWho").value="";$("#pcBest").value="";$("#pcTip").value="";paint();done();toast(CHEERS[Math.floor(Math.random()*CHEERS.length)]);
+  };
+  $("#pcLoad").onclick=async()=>{
+    if(!m.n){toast("Choose your name in My Tasks first");return}
+    $("#pcMine").innerHTML=`<p class="small muted">Loading…</p>`;
+    const b=await loadTicks(c,S); if(!b||b.__agg){$("#pcMine").innerHTML=`<p class="small muted">Not available now. Try again with the internet.</p>`;return}
+    const rows=Object.entries(b).map(([n,r])=>[n,r&&r["peer_"+m.n]]).filter(x=>x[1]);
+    if(!rows.length){$("#pcMine").innerHTML=`<p class="small muted">No feedback yet.</p>`;return}
+    $("#pcMine").innerHTML=rows.map(([n,v])=>{let o={};try{o=typeof v==="string"?JSON.parse(v):v}catch(e){}
+      return `<div class="qcard"><b>${esc(n)}</b><br>${PEER_PTS.map(([k],i)=>k+" "+((o.p||"")[i]||"")).join(" · ")}<br>⭐ ${esc((PEER_PTS.find(x=>x[0]===o.b)||["",""]).join(" "))}<br>💡 ${esc((PEER_TIPS.find(x=>x[0]===o.t)||["",""])[1])}</div>`}).join("");
+  };
+  paint();done();
+};
+function peerCard(){return `<button class="hcard" style="--c:#c2185b;color:var(--ink);text-align:left;font:inherit" data-go="tool:peer"><span class="hico">${ic("star")}</span><span class="txt"><span class="label">Session 10 · Checkpoint I</span><b>Peer Check</b><span class="small muted">Rate each classmate in your group after her turn.</span></span></button>`}
 
 /* ---------- Router ---------- */
 let ROUTE_PREV="home";
