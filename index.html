@@ -358,7 +358,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.1.1", updated:"14 Nov 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.1.2", updated:"14 Nov 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 const mpin = v => {try{if(v===undefined) return sessionStorage.getItem("ctg_mpin")||""; if(v) sessionStorage.setItem("ctg_mpin",v); else sessionStorage.removeItem("ctg_mpin")}catch(e){return ""}};
@@ -403,6 +403,12 @@ const gameLink=(s,i)=>APP_URL+"#game:"+s+":"+(i||0);
 const sessDate=s=>SESSION_DATES[s]||NEXT_DATES[s]||"";
 const isAuto=v=>/^auto/.test(String(v==null?"":v));
 const present=v=>truthy(v)||isAuto(v);
+/* v2.1.2: real performance. The teacher's check (v_<task> = ok / no) wins over the student's tick. */
+const VER=["pre","pln","tt","wk","mo"];
+const vState=(st,k)=>{const v=st&&st["v_"+k];return v==="ok"?"ok":v==="no"?"no":""};
+const isDone=(st,t)=>{st=st||{};const v=VER.includes(t.k)?vState(st,t.k):"";if(v)return v==="ok";return present(st[t.k])||(t.k==="game"&&!!st.gscore)};
+const VHELP={pre:"Answer the two questions in a comment under post N.1 on the Micro-Teaching Padlet.",pln:"Add a new post in YOUR section of Our PLN (Padlet).",tt:"Send the Three Takeaways form.",wk:"Send the Weekly Journal form.",mo:"Send the Monthly Journal form."};
+const vBadge=(st,t,s)=>{const v=VER.includes(t.k)?vState(st,t.k):"";if(v==="ok")return `<span class="small" style="color:#1b7f3b;font-weight:700">✓ Checked by your teacher</span>`;if(v==="no")return `<span class="small" style="color:#c62828;font-weight:700">✗ Your teacher could not find it yet. ${esc((VHELP[t.k]||"").replace("N.1",s+".1"))}</span>`;return ""};
 const hhmm=()=>{const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")};
 const FINISH_TASK = { /* 6:"Finish your warm-up card" */ };
 /* v1.7: every NEW tool, activity or game gets its own bright colour */
@@ -919,7 +925,7 @@ function tasksFor(n){
 const tKey = (c,n,s) => `t|${c}|${n}|${s}`;
 const mKey=(c,s)=>`m|${c}|${s}`;
 const required = list => list.filter(t=>t.w!=="Optional");
-function sessionDone(c,n,s){const st=store.get(tKey(c,n,s),{}),r=required(tasksFor(s));return {d:r.filter(t=>truthy(st[t.k])).length,all:r.length}}
+function sessionDone(c,n,s){const st=store.get(tKey(c,n,s),{}),r=required(tasksFor(s));return {d:r.filter(t=>isDone(st,t)).length,all:r.length}}
 /* tools tried on this phone */
 /* auto attendance: only on the session date, from in-class actions */
 function autoAtt(s){
@@ -1738,23 +1744,23 @@ function wireTasks(){
   const cls=()=>cSel?cSel.value:myClass();
   let token=0;
   const paintBar=(c,n,s)=>{const r=sessionDone(c,n,s);$("#tBar").style.width=Math.round(100*r.d/r.all)+"%";return r};
-  const fbk=(c,n,s)=>{const el=$("#tFb");if(!el)return;const st=store.get(tKey(c,n,s),{}),req=required(tasksFor(s)),miss=req.filter(t=>!truthy(st[t.k])),r=req.length?Math.round(100*(req.length-miss.length)/req.length):0;
+  const fbk=(c,n,s)=>{const el=$("#tFb");if(!el)return;const st=store.get(tKey(c,n,s),{}),req=required(tasksFor(s)),miss=req.filter(t=>!isDone(st,t)),r=req.length?Math.round(100*(req.length-miss.length)/req.length):0;
     const short=t=>TSHORT[t.k]||t.t, note=store.get(`note|${c}|${n}|${s}`,"");
     const msg=r===100?["g","award",`Excellent, ${esc(n)}! All Session ${s} tasks are done. ⭐`]:r>=50?["y","star",`Good progress, ${esc(n)}! Still to do: ${esc(miss.map(short).join(", "))}.`]:["b","compass",`You can do it, ${esc(n)}! Start with: ${esc(short(miss[0]))}.`];
     const auto=[];
     if(st.gscore){const [a,b]=String(st.gscore).split("/").map(Number);
       auto.push(a===b?`${ic("check","sm")} Quick check: <b>${a}/${b}</b>. You know ${esc(st.gtitle||"this topic")} well.`
         :`${ic("info","sm")} Quick check: <b>${a}/${b}</b>.${(st.grev||[]).length?` Review: <b>${esc(st.grev.join(", "))}</b>.`:""} <button class="linkb" data-go="game:${s}:0">Play again</button> to practise.`)}
-    const jd=["tt","wk","mo"].filter(k=>req.some(t=>t.k===k)), jn=jd.filter(k=>truthy(st[k])).length;
+    const jd=["tt","wk","mo"].filter(k=>req.some(t=>t.k===k)), jn=jd.filter(k=>isDone(st,{k})).length;
     if(jd.length) auto.push(jn===jd.length?`${ic("journal","sm")} Your reflections for Session ${s} are done. Reflecting every week helps you grow as a teacher.`
         :`${ic("journal","sm")} Reflections: ${jn} of ${jd.length} done. Use the Journal Helper: it takes five minutes.`);
-    let full=0, open=0; for(let x=1;x<=current();x++){if(!isOpenS(x))continue; const rq=required(tasksFor(x)); if(!rq.length) continue; const sx=store.get(tKey(c,n,x),{}); if(!Object.keys(sx).length) continue; open++; if(rq.every(t=>truthy(sx[t.k]))) full++}
+    let full=0, open=0; for(let x=1;x<=current();x++){if(!isOpenS(x))continue; const rq=required(tasksFor(x)); if(!rq.length) continue; const sx=store.get(tKey(c,n,x),{}); if(!Object.keys(sx).length) continue; open++; if(rq.every(t=>isDone(sx,t))) full++}
     if(open>1) auto.push(`${ic("award","sm")} Sessions with all tasks done: <b>${full} of ${open}</b>.${full<open?" Open My Tasks for an earlier session to finish it.":" Great work!"}`);
     el.innerHTML=`<div class="fbk ${msg[0]}">${ic(msg[1])}<span>${msg[2]}</span></div>`+(auto.length?`<div class="fbk b"><span><b>My feedback (automatic):</b><br>${auto.join("<br>")}</span></div>`:"")+(note?`<div class="fbk b">${ic("msg")}<span><b>My teacher's note:</b> ${esc(note)}</span></div>`:"");};
   const paint=(c,n,s)=>{
     const st=store.get(tKey(c,n,s),{}), list=tasksFor(s);
     paintBar(c,n,s); fbk(c,n,s);
-    $("#tList").innerHTML=list.map(t=>`<div class="task"><input type="checkbox" id="k_${t.k}" ${truthy(st[t.k])?"checked":""}><span class="ty">${ic(t.ty)}</span><div class="txt"><span class="when">${t.w}</span><label for="k_${t.k}" style="font-weight:400">${esc(t.t)}</label>${t.sub?`<span class="small muted">${esc(t.sub)}</span>`:""}${t.u?`<a class="small" href="${esc(t.u)}" target="_blank" rel="noopener">Open ${ic("ext","sm")}</a>`:""}${taskExtra(t,s)}</div></div>`).join("");
+    $("#tList").innerHTML=list.map(t=>`<div class="task"><input type="checkbox" id="k_${t.k}" ${truthy(st[t.k])||vState(st,t.k)==="ok"?"checked":""}><span class="ty">${ic(t.ty)}</span><div class="txt"><span class="when">${t.w}</span><label for="k_${t.k}" style="font-weight:400">${esc(t.t)}</label>${t.sub?`<span class="small muted">${esc(t.sub)}</span>`:""}${t.u?`<a class="small" href="${esc(t.u)}" target="_blank" rel="noopener">Open ${ic("ext","sm")}</a>`:""}${vBadge(st,t,s)}${taskExtra(t,s)}</div></div>`).join("");
     $("#tList").querySelectorAll("[data-aitry]").forEach(b=>b.onclick=()=>{const a=AITRY[+b.dataset.aitry];copy(AIP(a.task,a.work),"Prompt copied. Paste it in "+a.tool+".");logUse("ai","task:"+b.dataset.aitry)});
     $("#tList").querySelectorAll("input[type=checkbox]").forEach(i=>i.onchange=()=>{const k=i.id.slice(2);const o=store.get(tKey(c,n,s),{});const was=sessionDone(c,n,s);o[k]=i.checked;store.set(tKey(c,n,s),o);
       const r=paintBar(c,n,s); fbk(c,n,s);
@@ -1768,7 +1774,7 @@ function wireTasks(){
     const nm=names(c); if(!data||!nm.length){$("#tCls").hidden=true;return}
     const r=required(tasksFor(s)); let tot=0;
     if(data.__agg) tot=r.reduce((a,t)=>a+Math.min(nm.length,data.__agg[t.k]||0),0);
-    else nm.forEach(n=>{const x=data[n]||{};tot+=r.filter(t=>truthy(x[t.k])).length});
+    else nm.forEach(n=>{const x=data[n]||{};tot+=r.filter(t=>isDone(x,t)).length});
     const p=Math.round(100*tot/(r.length*nm.length));
     $("#tCls").hidden=false;$("#tCBar").style.width=p+"%";$("#tCTxt").textContent=`Our class has done ${p}% of the Session ${s} tasks. Every tick helps!`;
   };
@@ -1782,7 +1788,7 @@ function wireTasks(){
     if(!DEMO){const mine=data[n]; confirmQueue(c,s,n,mine); if(mine){
       const o=store.get(tKey(c,n,s),{});
       const pending=store.get("queue",[]).filter(x=>x.c===c&&String(x.s)===String(s)&&x.n===n).map(x=>x.k);
-      Object.entries(mine).forEach(([k,v])=>{if(!pending.includes(k)) o[k]=truthy(v)});
+      Object.entries(mine).forEach(([k,v])=>{if(!pending.includes(k)) o[k]=/^v_/.test(k)?String(v):truthy(v)});
       store.set(`note|${c}|${n}|${s}`,mine.note||"");
       store.set(tKey(c,n,s),o); paint(c,n,s);}}
     classBar(c,s,data);
@@ -1808,7 +1814,7 @@ function growth(){
    ${indStrip("growth")}
    ${m.n?"":`<div class="tip">Choose your name in <button class="linkb" data-go="tool:tasks">My Tasks</button> first.</div>`}
    <div class="kpis"><div class="kpi"><b>${stars}</b><span class="small">stars</span></div><div class="kpi"><b>${used.length}<span class="small muted">/${openTools}</span></b><span class="small">tools tried</span></div><div class="kpi"><b>${moments}</b><span class="small">agency moments</span></div></div>
-   <span class="label">One star for each session with all tasks done</span>
+   <span class="label">One star for each session with all tasks done</span><p class="small muted" style="margin:0">Your teacher checks your Pre-Session answers and PLN posts on Padlet. Only real work counts.</p>
    <div class="stars">${res.map(x=>`<button class="st1 ${x.star?"on":x.part?"part":""}" ${x.open?`data-gs="${x.s}"`:"disabled"} aria-label="Session ${x.s}: ${x.star?"star earned":x.open?x.r.d+" of "+x.r.all+" done":"opens later"}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">${x.open?IC.star:IC.lock}</svg>${x.s}</button>`).join("")}</div>
    <div class="info" id="gInfo">Tap a session to open its tasks.</div>
    <span class="label">My phase badges</span><div class="stack" style="gap:8px">${[1,2,3,4,5].map(p=>{const rr=res.filter(x=>PHASE(x.s)===p), on=rr.every(x=>x.star), d=rr.filter(x=>x.star).length;
@@ -1948,7 +1954,7 @@ function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v2.1.1 · 14 Nov 2026","Mentor Desk: Student View (read-only Growth Path of each student)."],
+ const v=[["v2.1.2 · 14 Nov 2026","Stars now come from real work: Pre-Session answers and PLN posts are checked against Padlet by the teacher (green ✓ checked / red not found). Games, Peer Check, My Feedback Record and attendance were already automatic."],["v2.1.1 · 14 Nov 2026","Mentor Desk: Student View (read-only Growth Path of each student)."],
  ["v2.1.0 · 13 Nov 2026","NEW: My Feedback Record (GROW): read your group’s Peer Check and, later, Ms. Zainab’s feedback; write your choice and your one goal for next term, then Send. No paper needed."],
  ["v2.0.9 · 13 Nov 2026","Session 10 is open now. NEW: Peer Check (GROW): after each turn, rate your classmates with ✓ ~ ✗ on the 7 points, choose her best point and one tip, and send. Then tap “Show my feedback”. NEW: a badge for each phase in My Growth Path. My Tasks for Session 10: watch the videos, play the game, add your PLN post, and post your Checkpoint Card."],
  ["v2.0.8 · 13 Nov 2026","NEW on the home screen: Term 1 Review. Ten stops, one for each session (1 to 10): open the LEARN card, answer Check myself, and play the session game (Sessions 6 to 10). Finish all ten and get your Term 1 Card. Old sessions you review count for App Stars."],["v2.0.7 · 12 Nov 2026","Session 10 (Checkpoint I) is now on Tuesday 24 November. The home screen shows the next session date again. My Agency Moments: if a line is red, Save shows you the line; tap Save again to keep your moment as it is."],["v2.0.6 · 7 Nov 2026","Session 10 (Checkpoint I) is ready: the game My 15 Minutes (each part of your lesson opening with its minutes), Journal Helper ideas for Session 10, and your goal for next term."],["v2.0.5 · 6 Nov 2026","Session 9 is now on Wednesday 11 November. Journal Helper ideas for Session 9 now match our new game on one screen (Baamboozle), and the Session 10 task is: prepare your 4 assignments."],["v2.0.4 · 5 Nov 2026","Session 9 is ready: the game The Recipe (Short, Show, Steps, Check), The Giving Tree word cards with sound, Journal Helper ideas for Session 9, and the task “Prepare your Lesson Opening Kit” for Session 10."],["v2.0.2 · 4 Nov 2026","LEARN › Check myself: your FIRST answer to each question is now saved in your teacher's Sheet with the session number (not a grade). Practise as much as you like: only the first try counts, and your best result is kept."],["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
@@ -3000,11 +3006,11 @@ TOOL_WIRE.record=()=>{
 let SV={n:"",data:{},sel:0};
 function svScreen(){
   const c=store.get("mC",myClass()), nm=names(c), cur=current();
-  const res=[];for(let ss=1;ss<=18;ss++){const open=ss<=cur, row=(SV.data[ss]||{})[SV.n]||{}, req=required(tasksFor(ss)), d=req.filter(t=>present(row[t.k])||(t.k==="game"&&row.gscore)).length;res.push({s:ss,open,d,all:req.length,star:open&&SV.n&&d===req.length,part:open&&d>0&&d<req.length})}
+  const res=[];for(let ss=1;ss<=18;ss++){const open=ss<=cur, row=(SV.data[ss]||{})[SV.n]||{}, req=required(tasksFor(ss)), d=req.filter(t=>isDone(row,t)).length;res.push({s:ss,open,d,all:req.length,star:open&&SV.n&&d===req.length,part:open&&d>0&&d<req.length})}
   const stars=res.filter(x=>x.star).length, loaded=Object.keys(SV.data).length;
   let det="";
   if(SV.sel&&SV.n){const row=(SV.data[SV.sel]||{})[SV.n]||{};
-    det=`<div class="panel" style="padding:12px"><b>Session ${SV.sel}</b><div class="list">${tasksFor(SV.sel).map(t=>{const ok=present(row[t.k])||(t.k==="game"&&row.gscore);return `<div class="item"><span class="txt">${ok?"✅":t.w==="Optional"?"▫️":"⬜"} ${esc(t.t)}${t.w==="Optional"?' <span class="small muted">(optional)</span>':""}</span></div>`}).join("")}</div></div>`}
+    det=`<div class="panel" style="padding:12px"><b>Session ${SV.sel}</b><div class="list">${tasksFor(SV.sel).map(t=>{const ok=isDone(row,t),vs=VER.includes(t.k)?vState(row,t.k):"";return `<div class="item"><span class="txt">${ok?"✅":vs==="no"?"❌":t.w==="Optional"?"▫️":"⬜"} ${esc(t.t)}${vs==="ok"?' <span class="small" style="color:#1b7f3b">(checked)</span>':vs==="no"?' <span class="small" style="color:#c62828">(ticked but not found on Padlet)'.replace("ticked but ",present(row[t.k])?"ticked but ":"")+'</span>':""}${t.w==="Optional"?' <span class="small muted">(optional)</span>':""}</span></div>`}).join("")}</div></div>`}
   return `${topbar()}${backBtn("mentor",MENTOR.name)}<div class="panel" id="svp"><span class="label">${MENTOR.name} · read-only</span><h1>Student View</h1>
   <div class="tip small">See any student’s Growth Path from the Sheet. Nothing is changed and she does not see it. Ticks made offline appear when her phone syncs.</div>
   <div class="two"><div class="field"><label for="svWho">Student</label><select id="svWho"><option value="">Choose…</option>${nm.map(n=>`<option ${n===SV.n?"selected":""}>${esc(n)}</option>`).join("")}</select></div>
