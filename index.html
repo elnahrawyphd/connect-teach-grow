@@ -358,7 +358,7 @@ ol.steps2{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:4px
 <div class="toast" id="toast" hidden></div>
 <script>
 /* ================= SETTINGS (edit here) ================= */
-const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.1.2", updated:"14 Nov 2026" };
+const APP = { name:"Connect, Teach and Grow", short:"CTG", tagline:"Plan · Teach · Check · Grow · Learn", version:"2.1.3", updated:"17 Nov 2026" };
 const APP_URL = "https://elnahrawyphd.github.io/connect-teach-grow/";
 const MENTOR = { name:"Mentor Desk", pin:"1818" };
 const mpin = v => {try{if(v===undefined) return sessionStorage.getItem("ctg_mpin")||""; if(v) sessionStorage.setItem("ctg_mpin",v); else sessionStorage.removeItem("ctg_mpin")}catch(e){return ""}};
@@ -1264,7 +1264,7 @@ function home(){
     <button class="hcard" style="--c:#d94f00;color:var(--ink);text-align:left;font:inherit" data-go="today"><span class="hico">${ic("sun")}</span><span class="txt"><span class="label">1 · Today in class</span><b>Everything for Session ${n}, in order</b><span class="small muted">${games.length?esc(games.filter(g=>!g.optional).map(g=>g.title).join(" · "))+" · ":""}Agency Moment · Journal Helper · Our PLN · Before You Leave</span></span>${ic("right","sm")}</button>
     ${games.length?`<div class="list">${games.map((g,i)=>`<button class="item newc" style="--nc:${newCol(i)}" data-go="game:${n}:${i}"><span class="ico">${ic(g.type==="cards"?"cards":"play")}</span><span class="txt"><b>${esc(g.title)}</b><span class="small muted">${esc(g.step)}${g.optional?" · Optional":""}</span></span><span class="pill new">${ic("star","sm")}NEW</span></button>`).join("")}</div>`:""}
     <button class="hcard" style="--c:#a020c8;color:var(--ink);text-align:left;font:inherit" data-go="tool:tasks"><span class="hico">${ic("tasks")}</span><span class="txt"><span class="label">2 · My Tasks</span><b>${m.n?`${esc(m.n)}: ${done} of ${list.length} tasks done${done===list.length?" ⭐":""}`:"Choose your name and tick your tasks"}</b><span class="bar" aria-hidden="true" style="margin-top:4px"><span style="width:${list.length?Math.round(100*done/list.length):0}%"></span></span></span>${ic("right","sm")}</button>
-    ${current()>=10?peerCard()+recCard()+rev1Card():""}
+    ${current()>=10?peerCard()+recCard():""}${rev1Card()}
     <span class="label">3 · Tools</span>
     <div class="tiles">${["plan","teach","check","grow"].map(k=>`<button class="tile t-${k}" data-go="sec:${k}">${ic(SECS[k].ic,"lg")}<b>${SECS[k].t}</b><span>${SECS[k].d}</span></button>`).join("")}
       <button class="tile t-learn wide" data-go="sec:learn">${ic("learn","lg")}<b>LEARN</b><span>${SECS.learn.d}: TPACK, SAMR, CCER, PLN, ABCD… and a glossary with sound</span></button></div>
@@ -1954,7 +1954,7 @@ function about(){return `${topbar()}${backBtn()}<div class="panel"><span class="
  <div class="row"><button class="btn alt" id="citeCopy">${ic("copy","sm")}Copy citation</button><button class="btn alt" data-go="getapp">${ic("qr","sm")}App QR</button><button class="btn alt" data-go="matrix">${ic("grid","sm")}Alignment Matrix</button><button class="btn alt" data-go="privacy">${ic("shield","sm")}Privacy &amp; Data</button></div>
  <p class="small muted">Built by the researcher with Claude (Anthropic). No account and no cost for users. Task ticks go to the instructor's own Google Sheet when the app is connected; otherwise they stay on your device.</p></div>`}
 function news(){
- const v=[["v2.1.2 · 14 Nov 2026","Stars now come from real work: Pre-Session answers and PLN posts are checked against Padlet by the teacher (green ✓ checked / red not found). Games, Peer Check, My Feedback Record and attendance were already automatic."],["v2.1.1 · 14 Nov 2026","Mentor Desk: Student View (read-only Growth Path of each student)."],
+ const v=[["v2.1.3 · 17 Nov 2026","Term 1 Review is open now on the home screen. NEW: each of the 10 stops ends with a short situation from a school in Egypt: What would you do? Write your answer, then tap Show a model answer to compare."],["v2.1.2 · 14 Nov 2026","Stars now come from real work: Pre-Session answers and PLN posts are checked against Padlet by the teacher (green ✓ checked / red not found). Games, Peer Check, My Feedback Record and attendance were already automatic."],["v2.1.1 · 14 Nov 2026","Mentor Desk: Student View (read-only Growth Path of each student)."],
  ["v2.1.0 · 13 Nov 2026","NEW: My Feedback Record (GROW): read your group’s Peer Check and, later, Ms. Zainab’s feedback; write your choice and your one goal for next term, then Send. No paper needed."],
  ["v2.0.9 · 13 Nov 2026","Session 10 is open now. NEW: Peer Check (GROW): after each turn, rate your classmates with ✓ ~ ✗ on the 7 points, choose her best point and one tip, and send. Then tap “Show my feedback”. NEW: a badge for each phase in My Growth Path. My Tasks for Session 10: watch the videos, play the game, add your PLN post, and post your Checkpoint Card."],
  ["v2.0.8 · 13 Nov 2026","NEW on the home screen: Term 1 Review. Ten stops, one for each session (1 to 10): open the LEARN card, answer Check myself, and play the session game (Sessions 6 to 10). Finish all ten and get your Term 1 Card. Old sessions you review count for App Stars."],["v2.0.7 · 12 Nov 2026","Session 10 (Checkpoint I) is now on Tuesday 24 November. The home screen shows the next session date again. My Agency Moments: if a line is red, Save shows you the line; tap Save again to keep your moment as it is."],["v2.0.6 · 7 Nov 2026","Session 10 (Checkpoint I) is ready: the game My 15 Minutes (each part of your lesson opening with its minutes), Journal Helper ideas for Session 10, and your goal for next term."],["v2.0.5 · 6 Nov 2026","Session 9 is now on Wednesday 11 November. Journal Helper ideas for Session 9 now match our new game on one screen (Baamboozle), and the Session 10 task is: prepare your 4 assignments."],["v2.0.4 · 5 Nov 2026","Session 9 is ready: the game The Recipe (Short, Show, Steps, Check), The Giving Tree word cards with sound, Journal Helper ideas for Session 9, and the task “Prepare your Lesson Opening Kit” for Session 10."],["v2.0.2 · 4 Nov 2026","LEARN › Check myself: your FIRST answer to each question is now saved in your teacher's Sheet with the session number (not a grade). Practise as much as you like: only the first try counts, and your best result is kept."],["v2.0 · 3 Nov 2026","New app icon. Steadier saving: your ticks stay on your phone until the Sheet confirms them (This device / Waiting / Synced), and they are sent again by themselves when the internet comes back. Clearer feedback in the games (a hint after a wrong answer, a short review at the end). My Tasks now gives you automatic feedback on your results. My Journey: tap a session, then Open Session to see its LEARN cards, games and tools. Check myself in LEARN now says why an answer is right and gives a hint. Session games are a Quick check (no marks); home cards are Practice. Better top bar on small phones."],["v1.9 · 30 Oct 2026","Session 8 is ready: the game Failure and Backup (each failure with its low-tech backup), The Nile River word cards with sound (Session Games and Word Cards), Journal Helper ideas for Session 8 (also the Monthly Journal), and the pre-session questions. Session 8 opens on 4 Nov 2026. Tool pages now say “Since Session …”."],
@@ -2875,28 +2875,62 @@ function wireMentor(){
 
 /* v2.0.8: Term 1 Review (Sessions 1-10). Uses the LEARN cards, Check myself and the session games that already exist; progress is kept on this device only. */
 const REV1_N=[1,2,3,4,5,6,7,8,9,10];
+/* v2.1.3: one situation per stop (What would you do?). Answers stay on this device only. */
+const SCEN1={
+ 1:{s:"Your first week of field training. The school has no English activities for Grade 4, and you feel lost.",m:"I would ask my mentor and post a question in my PLN group. I chose this because my network gives me ideas fast, and then I decide what to try.",w:"Teacher agency + PLN: you do not wait; you ask your network and you choose."},
+ 2:{s:"Your mentor says: “Use the tablet in your lesson.” You want to teach the word “apple”.",m:"I would show a picture of an apple and play the sound on the tablet, then ask: “What is red and sweet?” I chose it because the tool fits my content and my teaching.",w:"TPACK: technology + content + teaching together, not technology just for fun."},
+ 3:{s:"A classmate in your field school has a great warm-up game. You have a good set of word pictures.",m:"I would share my pictures and ask her to share her game in our WhatsApp group. I chose it because we both learn more when we connect and share.",w:"Connectivism: learning grows through connections with people and resources."},
+ 4:{s:"You find five websites for a lesson about animals. You have little time.",m:"I would choose ONE that is easy, has no cost, and matches the book, and I would save it in my PLN. I chose it because a good resource fits my objective and my students.",w:"Curation: choose a few strong resources, not many weak ones."},
+ 5:{s:"Your mentor reads your plan: “Students will know the weather words.” She says it is not clear.",m:"I would write: “By the end of the lesson, Grade 5 students will be able to name four weather words using pictures, with three correct.” I chose it because ABCD makes it clear and easy to check.",w:"ABCD: Audience, Behavior (a verb you can see), Condition, Degree."},
+ 6:{s:"It is the first lesson after the break. Students are sleepy and talking.",m:"I would start a 2-minute picture guessing game on the screen. I chose it because a short warm-up wakes students up and connects to the lesson.",w:"A good warm-up is short, active, and linked to the new words."},
+ 7:{s:"You teach the new word “lungs”. Students cannot say it.",m:"I would show a picture, say “lungs” slowly, use it in a sentence (“We breathe with our lungs.”), then ask a check question. I chose it because Show, Say, Use, Check helps beginners step by step.",w:"Scaffolding: Show • Say • Use • Check."},
+ 8:{s:"Your Wordwall game is ready, but the internet stops.",m:"I would use my Plan B: printed picture cards and word cards on the board, the same words. I chose it because my objective stays the same without the internet.",w:"Plan B keeps the same objective with a low-tech tool."},
+ 9:{s:"You say “Open the game”, and everyone talks. Nobody looks at the screen.",m:"I would say: “Stop, please. Eyes on the screen. Ready? Go!” I chose it because short, clear instructions help students move to the tool smoothly.",w:"Teacher language: short steps, one at a time, then check."},
+ 10:{s:"After your Mini-Teach, a classmate says: “Your English was clear, but you forgot the check question.”",m:"I would thank her and set ONE goal: ask a check question after each word. I chose it because feedback helps me choose what to improve next.",w:"Feedback → one goal → better next time (Two Stars and a Wish)."}
+};
+const scenKey=n=>{const m=me();return `scen1|${myClass()}|${m.n||"-"}|${n}`};
+const scenGet=n=>store.get(scenKey(n),{t:"",d:false});
+const scenModel=n=>{const x=SCEN1[n];return x?fb(true,`<b>Model answer:</b> ${esc(x.m)}<br><span class="small"><b>Why:</b> ${esc(x.w)}</span><br><span class="small muted">Your answer can be different. Is your idea close? Good!</span>`):""};
+const words=t=>(t||"").trim().split(/\s+/).filter(Boolean).length;
 function rev1Parts(n){
   const m=me(), c=myClass(), cards=CARDS.filter(x=>x.s===n), seen=store.get("cseen",[]);
   const cdone=cards.map(x=>{if(x.q&&x.q.length){const b=m.n?store.get(`chk|${c}|${m.n}|${x.id}`,null):null; return !!(b&&b.d>=x.q.length)} return seen.includes(x.id)});
   const games=(GAMES[n]||[]).map((g,i)=>[g,i]).filter(([g])=>!g.optional);
   const o=m.n?store.get(tKey(c,m.n,n),{}):{};
   const gdone=games.length?(truthy(o.game)||!!o.gscore):true;
-  return {cards,cdone,games,gdone,gscore:o.gscore||"",done:cdone.every(Boolean)&&gdone};
+  const sdone=!SCEN1[n]||scenGet(n).d;
+  return {cards,cdone,games,gdone,sdone,gscore:o.gscore||"",done:cdone.every(Boolean)&&gdone&&sdone};
 }
 function rev1Count(){return REV1_N.filter(n=>rev1Parts(n).done).length}
 function rev1Card(){
   const d=rev1Count();
   return `<button class="hcard" style="--c:#0a8f6a;color:var(--ink);text-align:left;font:inherit" data-go="rev1"><span class="hico">${ic("route")}</span><span class="txt"><span class="label">Term 1 Review · Sessions 1–10</span><b>${d===10?"Done! Open your Term 1 Card ⭐":`${d} of 10 stops done`}</b><span class="bar" aria-hidden="true" style="margin-top:4px"><span style="width:${d*10}%"></span></span></span>${ic("right","sm")}</button>`;
 }
+function wireRev1(){
+  const app=$("#app");
+  app.querySelectorAll("[data-scen]").forEach(t=>{const n=+t.dataset.scen;
+    t.oninput=()=>{const g=scenGet(n);g.t=t.value;store.set(scenKey(n),g);
+      const ok=words(t.value)>=6, b=app.querySelector(`[data-scenshow="${n}"]`), h=app.querySelector(`[data-scenhint="${n}"]`);
+      if(b) b.disabled=!ok; if(h) h.textContent=ok?"Ready!":"Write at least 6 words first."}});
+  app.querySelectorAll("[data-scenshow]").forEach(b=>b.onclick=()=>{const n=+b.dataset.scenshow, t=app.querySelector(`[data-scen="${n}"]`);
+    if(!t||words(t.value)<6){toast("Write at least 6 words first.");return}
+    const was=scenGet(n).d; store.set(scenKey(n),{t:t.value,d:true});
+    const y=window.scrollY; render("rev1"); window.scrollTo(0,y);
+    const o=$("#app").querySelector(`[data-scenout="${n}"]`); if(o&&o.scrollIntoView) o.scrollIntoView({block:"center"});
+    if(!was) toast(rev1Parts(n).done?`Stop ${n} done ✓`:"Model answer shown. Finish the cards and the game to complete the stop.",2800)});
+}
 function rev1Screen(){
   const m=me(), d=rev1Count();
-  const how=`<div class="tip"><b>How it works</b><br>1 · Tap a LEARN card and read it.<br>2 · Answer “Check myself” at the end of the card.<br>3 · From Session 6, play the game.<br>Then the stop turns green ✓.<br><span class="small muted">Example: Stop 7 · open “Scaffolding” → answer the 2 questions → play “Why Does It Help?” → ✓</span></div>`;
+  const how=`<div class="tip"><b>How it works</b><br>1 · Tap a LEARN card and read it.<br>2 · Answer “Check myself” at the end of the card.<br>3 · From Session 6, play the game.<br>4 · What would you do? Write your answer, then tap Show a model answer.<br>Then the stop turns green ✓.<br><span class="small muted">Example: Stop 7 · open “Scaffolding” → answer the 2 questions → play “Why Does It Help?” → write your answer to the situation → ✓</span><br><span class="small"><b>Answer like this</b> (another situation: a student cries on the first day): “I would smile, say her name, and give her a small job. I chose it because a kind start helps her feel safe.”</span></div>`;
   const rows=REV1_N.map(n=>{const p=rev1Parts(n), col=PHASECOL[PHASE(n)];
     return `<div class="qcard" style="border-left:6px solid ${p.done?"var(--ok)":col}">
       <div class="row" style="align-items:center;gap:10px"><span class="ico" style="background:${p.done?"var(--ok)":col};color:#fff;border-radius:50%;width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;font-weight:800">${p.done?"✓":n}</span>
       <div style="flex:1"><span class="label" style="display:block">Stop ${n} · Session ${n}</span><b>${esc(SESSIONS[n])}</b></div></div>
       <div class="list" style="margin-top:8px">${p.cards.map((x,i)=>`<button class="item" data-go="card:${x.id}"><span class="ico" style="background:var(--learn)">${ic(x.ic)}</span><span class="txt"><b>${esc(x.t)}</b><span class="small muted">LEARN card${x.q&&x.q.length?" + Check myself":""}</span></span>${p.cdone[i]?`<span class="pill" style="background:var(--ok);color:#fff">✓</span>`:`<span class="pill">Open</span>`}</button>`).join("")}
-      ${p.games.map(([g,i])=>`<button class="item newc" style="--nc:${newCol(n)}" data-go="game:${n}:${i}"><span class="ico">${ic("play")}</span><span class="txt"><b>${esc(g.title)}</b><span class="small muted">Game · Session ${n}</span></span>${p.gdone?`<span class="pill" style="background:var(--ok);color:#fff">✓ ${esc(p.gscore)}</span>`:`<span class="pill">Play</span>`}</button>`).join("")}</div></div>`}).join("");
+      ${p.games.map(([g,i])=>`<button class="item newc" style="--nc:${newCol(n)}" data-go="game:${n}:${i}"><span class="ico">${ic("play")}</span><span class="txt"><b>${esc(g.title)}</b><span class="small muted">Game · Session ${n}</span></span>${p.gdone?`<span class="pill" style="background:var(--ok);color:#fff">✓ ${esc(p.gscore)}</span>`:`<span class="pill">Play</span>`}</button>`).join("")}</div>${SCEN1[n]?(()=>{const g=scenGet(n);return `<div class="tip" style="margin-top:8px;border-left-color:#e07a00"><span class="label">🎬 What would you do?</span><p style="margin:4px 0"><b>${esc(SCEN1[n].s)}</b></p>
+      <textarea data-scen="${n}" rows="3" aria-label="My answer, Stop ${n}" placeholder="I would ___. I chose it because ___.">${esc(g.t)}</textarea>
+      <div class="row" style="align-items:center;gap:8px;margin-top:6px"><button class="btn" data-scenshow="${n}" ${words(g.t)>=6?"":"disabled"}>Show a model answer</button>${g.d?`<span class="pill" style="background:var(--ok);color:#fff">✓</span>`:`<span class="small muted" data-scenhint="${n}">${words(g.t)>=6?"Ready!":"Write at least 6 words first."}</span>`}</div>
+      <div data-scenout="${n}" style="margin-top:6px">${g.d?scenModel(n):""}</div></div>`})():""}</div>`}).join("");
   const cardDone=d===10&&m.n?`<div class="panel" style="border:3px solid var(--ok);text-align:center"><span class="label">My Term 1 Card</span><h2>⭐ ${esc(m.n)} ⭐</h2><p><b>Term 1 Review complete: 10 of 10 stops</b></p>
      <p class="small">${REV1_N.filter(n=>rev1Parts(n).gscore).map(n=>`Session ${n}: ${esc(rev1Parts(n).gscore)}`).join(" · ")}</p>
      <p class="small muted">${esc(niceDate(todayISO()))} · ${APP.name}</p><p class="small">Take a screenshot and keep it. Well done!</p></div>`:"";
@@ -3107,6 +3141,7 @@ function render(r){
   if(kind==="tfb"&&mentorOn) wireTfb();
   if(kind==="sview"&&mentorOn) wireSv();
   if(kind==="game") wireGame(+arg,+(arg2||0));
+  if(kind==="rev1") wireRev1();
   if(kind==="report") wireReport();
   if(kind==="tool"){
     if($("#abcdp")) wireAbcd(); if($("#tList")) wireTasks(); if($("#samrp")) wireSamr();
